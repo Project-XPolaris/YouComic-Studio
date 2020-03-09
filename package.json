@@ -1,0 +1,141 @@
+{
+  "name": "youcomic-studio",
+  "version": "1.0.0",
+  "description": "Project polaris项目中YouComic Studio",
+  "main": "./dist/main/main.js",
+  "private": true,
+  "build": {
+    "files": [
+      "dist/",
+      "node_modules/",
+      "package.json"
+    ],
+    "mac": {
+      "category": "youcomic.studio"
+    },
+    "directories": {
+      "output": "release"
+    },
+    "appId": "com.projectpolaris.youcomic-studio",
+    "asar": true
+  },
+  "scripts": {
+    "start": "yarn run start:renderer && yarn run start:main",
+    "start:main": "electron-webpack dev",
+    "start:main:dev_tools": "cross-env DEV_TnOOLS=1 electron-webpack dev",
+    "start:renderer": "cross-env APP_ROOT=src/renderer PORT=8999 BROWSER=none umi dev",
+    "build:main:prod": "cross-env NODE_ENV=production webpack --config ./build/webpack.main.prod.config.js",
+    "build:main:dev": "cross-env NODE_ENV=development webpack --config ./build/webpack.main.config.js",
+    "build:renderer": "cross-env APP_ROOT=src/renderer umi build",
+    "build": "yarn run build:renderer && yarn run build:main:prod",
+    "watch": "tsc -w",
+    "debug:main": "electron --inspect=5858 -w ./dist/main/main.js",
+    "pack": "yarn run build && electron-builder --dir",
+    "dist": "electron-builder",
+    "package:win": "yarn run build && rm -rf release && electron-builder build --win --x64",
+    "package:linux": "yarn run build && rm -rf release && electron-builder build --linux",
+    "package:mac": "yarn run build && rm -rf release && electron-builder build --mac",
+    "release:win": "yarn run build && electron-builder build --ia32 --x64 --win -p always",
+    "release:mac": "yarn run build && electron-builder build --mac -p always",
+    "release:linux": "yarn run build && electron-builder build --linux -p always",
+    "release:linux:arm": "yarn run build electron-builder build --linux --armv7l -p always",
+    "release:all": "yarn run build && electron-builder build -mwl -p always",
+    "release": "yarn run build && electron-builder build",
+    "patch": "yarn version --patch && git push origin master && git push origin --tags",
+    "minor": "yarn version --minor && git push origin master && git push origin --tags",
+    "major": "yarn version --major && git push origin master && git push origin --tags",
+    "analyze": "cross-env ANALYZE=1 umi build",
+    "test:renderer": "cross-env APP_ROOT=src/renderer PORT=6008 BROWSER=none umi test",
+    "test:watch": "yarn run test:renderer -w",
+    "test": "yarn run test:renderer",
+    "lint": "umi-lint --eslint.ext='.js,jsx' --tslint --stylelint src",
+    "precommit": "umi-lint --staged --stylelint --tslint --eslint.ext='.js,jsx' --prettier --fix"
+  },
+  "keywords": [
+    "Electron",
+    "antd",
+    "quick",
+    "start",
+    "tutorial",
+    "typescript",
+    "umi",
+    "dva"
+  ],
+  "author": {
+    "name": "allentom",
+    "email": "takayamaaren@gmail.com"
+  },
+  "devDependencies": {
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-eslint": "^10.0.1",
+    "concurrently": "^4.1.0",
+    "cross-env": "^5.2.0",
+    "electron": "^4.0.5",
+    "electron-builder": "^20.38.5",
+    "electron-debug": "^2.0.0",
+    "electron-webpack": "^2.7.4",
+    "electron-webpack-ts": "^3.1.1",
+    "eslint": "^5.16.0",
+    "eslint-config-umi": "^1.4.5",
+    "eslint-plugin-flowtype": "^3.10.3",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.13.0",
+    "stylelint-config-css-modules": "^1.4.0",
+    "stylelint-config-prettier": "^5.2.0",
+    "stylelint-config-standard": "^18.3.0",
+    "stylelint-declaration-block-no-ignored-properties": "^2.1.0",
+    "stylelint-order": "^3.0.0",
+    "ts-loader": "^5.3.3",
+    "tslint": "^5.17.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-react": "^4.0.0",
+    "typescript": "^3.4.5",
+    "uglifyjs-webpack-plugin": "^2.1.1",
+    "umi": "^2.7.7",
+    "umi-lint": "^2.0.1",
+    "umi-plugin-react": "^1.15.2",
+    "umi-types": "^0.3.8",
+    "webpack": "4.28.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-merge": "^4.2.1"
+  },
+  "dependencies": {
+    "@ant-design/pro-layout": "^4.10.13",
+    "@types/form-data": "^2.5.0",
+    "@types/jimp": "^0.2.28",
+    "@types/lodash": "^4.14.149",
+    "@types/react-virtualized": "^9.21.8",
+    "@types/request": "^2.48.4",
+    "@types/uuid": "^3.4.7",
+    "antd": "^3.19.5",
+    "app-root-path": "^3.0.0",
+    "axios": "^0.19.0",
+    "directory-tree": "^2.2.4",
+    "dva": "^2.4.1",
+    "dva-logger": "^1.0.0",
+    "electron-store": "^3.3.0",
+    "form-data": "^3.0.0",
+    "fs-file-tree": "^1.1.0",
+    "home-or-tmp": "^3.0.0",
+    "jimp": "^0.9.3",
+    "lodash": "^4.17.15",
+    "mkdirp": "^1.0.3",
+    "node": "^13.8.0",
+    "react": "^16.12.0",
+    "react-gesture-responder": "^2.1.0",
+    "react-grid-dnd": "^2.1.2",
+    "react-virtualized": "^9.21.2",
+    "source-map-support": "^0.5.16",
+    "umi-request": "^1.2.19",
+    "uuid": "^3.4.0"
+  },
+  "electronWebpack": {
+    "main": {
+      "sourceDirectory": "src/main"
+    },
+    "renderer": {
+      "sourceDirectory": null
+    }
+  }
+}
