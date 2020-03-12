@@ -7,7 +7,7 @@ export async function generateImageThumbnail({ sourcePath, projectPath }) {
   const fileName = v4() + nodePath.extname(imageFilename);
 
   // generate thumbnail file name
-  const thumbnailFileName = v4() + nodePath.extname(name);
+  const thumbnailFileName = v4() + nodePath.extname(imageFilename);
 
   // target path
   const filePath = nodePath.join(projectPath,projectPathConfig.projectPagesDirectory,fileName);

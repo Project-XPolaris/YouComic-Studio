@@ -27,6 +27,7 @@ import {
   uploadBookPage,
   uploadCover,
 } from '@/services/youcomic/client';
+import uuid from 'uuid';
 
 export interface ProjectConfig {
   pages: Array<{
@@ -598,8 +599,7 @@ const CreateBookModel: CreateBookModelType = {
       if (createState.title === undefined || createState.title.trim().length === 0) {
         return;
       }
-      const loadingMessageKey = 'YouComicSingleProjectLoading';
-      message.loading({ content: '正在上传..', key: loadingMessageKey });
+
       // create book
       const createdBook: Book = yield call(createNewBook, { name: createState.title });
       // create tags
@@ -627,8 +627,7 @@ const CreateBookModel: CreateBookModelType = {
         uploadPageForm.append(`page_${idx + 1}`, fs.createReadStream(page.path));
       });
       yield call(uploadBookPage, { bookId: createdBook.id, form: uploadPageForm });
-      message.success({ content: '上传完成', key: loadingMessageKey, duration: 2 });
-
+      message.success("上传成功")
     },
   },
   reducers: {
