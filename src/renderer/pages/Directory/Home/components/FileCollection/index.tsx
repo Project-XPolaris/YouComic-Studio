@@ -1,21 +1,20 @@
 import React from 'react';
 import { ChildrenItem } from '@/pages/List/components/SideTree';
-import { Col, Dropdown, List, Menu } from 'antd';
+import { Col, List, Menu } from 'antd';
 import FileItem from '@/pages/Directory/Home/components/FileItem';
 
 import styles from './style.less';
 
 interface FileCollectionPropsType {
-  items?: ChildrenItem[]
+  items?: ChildrenItem[];
 }
-
 
 export default function FileCollection({ items = [] }: FileCollectionPropsType) {
   const renderItems = () => {
     return items.map(item => {
       return (
         <Col key={item.path}>
-          <FileItem item={item}/>
+          <FileItem item={item} />
         </Col>
       );
     });
@@ -42,7 +41,7 @@ export default function FileCollection({ items = [] }: FileCollectionPropsType) 
       renderItem={item => (
         <List.Item className={styles.item}>
           <a>
-          <FileItem item={item}/>
+            <FileItem item={item} />
           </a>
         </List.Item>
       )}

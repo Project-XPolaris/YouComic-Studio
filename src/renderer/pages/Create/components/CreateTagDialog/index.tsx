@@ -1,23 +1,18 @@
 import React from 'react';
-import { Form, Icon, Input, Modal } from 'antd';
-import { WrappedFormUtils } from 'antd/es/form/Form';
+import { Form, Input, Modal } from 'antd';
 
 interface CreateTagDialogPropsType {
-  isOpen?:boolean
-  onClose?:() => void
-  form?:WrappedFormUtils
-  onCreate:(name:string,type:string) => void
+  isOpen?: boolean;
+  onClose?: () => void;
+  onCreate: (name: string, type: string) => void;
 }
 
-const  CreateTagDialog = ({ isOpen=false,onClose,form,onCreate }: CreateTagDialogPropsType) => {
-  const {getFieldDecorator} = form;
+const CreateTagDialog = ({ isOpen = false, onClose, onCreate }: CreateTagDialogPropsType) => {
+  const [form] = Form.useForm();
   const onDialogOk = () => {
-    form.validateFields((err, values:{name:string,type:string}) => {
-      if (err) {
-        return;
-      }
-      onCreate(values.name,values.type);
+    form.validateFields().then(values => {
       form.resetFields();
+      onCreate(values.name, values.type);
     });
   };
   return (
@@ -28,29 +23,24 @@ const  CreateTagDialog = ({ isOpen=false,onClose,form,onCreate }: CreateTagDialo
       onCancel={onClose}
       onOk={onDialogOk}
     >
-      <Form>
-        <Form.Item>
-          {getFieldDecorator('name', {
-            rules: [{ required: true, message: '请输入标签名称' }],
-          })(
-            <Input
-              prefix={<Icon type="tag" style={{ color: 'rgba(0,0,0,.25)' }} />}
-              placeholder="name"
-            />,
-          )}
+      <Form
+        form={form}
+        layout="vertical"
+        name="form_in_modal"
+        initialValues={{ modifier: 'public' }}
+      >
+        <Form.Item
+          name="title"
+          label="Title"
+          rules={[{ required: true, message: 'Please input the title of collection!' }]}
+        >
+          <Input />
         </Form.Item>
-        <Form.Item>
-          {getFieldDecorator('type', {
-            rules: [{ required: true, message: '请输入标签类型' }],
-          })(
-            <Input
-              prefix={<Icon type="flag" style={{ color: 'rgba(0,0,0,.25)' }} />}
-              placeholder="type"
-            />,
-          )}
+        <Form.Item name="description" label="Description">
+          <Input type="textarea" />
         </Form.Item>
       </Form>
     </Modal>
   );
 };
-export default Form.create({name:"create_tag"})(CreateTagDialog)
+export default CreateTagDialog;

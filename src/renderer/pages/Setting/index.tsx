@@ -1,30 +1,30 @@
 import React, { useState } from 'react';
 import { connect } from 'dva';
 import { Button, Col, Icon, Menu, PageHeader, Row } from 'antd';
-
+import CheckIcon from '@ant-design/icons/CheckOutlined';
 import styles from './style.less';
-import SubMenu from 'antd/es/menu/SubMenu';
 import YouComicPanel from '@/pages/Setting/panels/YouComicPanel';
 import { router } from 'umi';
 
-
 interface SettingPagePropsType {
-  dispatch: any,
+  dispatch: any;
 }
 
 function SettingPage({ dispatch }: SettingPagePropsType) {
-  const [selectKey,setSelectKey] = useState("1")
+  const [selectKey, setSelectKey] = useState('1');
   const onApply = () => {
     dispatch({
-      type:"setting/applyOption"
-    })
-  }
+      type: 'setting/applyOption',
+    });
+  };
   const actions = (
-    <Button type={'primary'} onClick={onApply}><Icon type={"check"} /> 应用</Button>
-  )
+    <Button type={'primary'} onClick={onApply}>
+      <CheckIcon /> 应用
+    </Button>
+  );
   const onBack = () => {
-    router.goBack()
-  }
+    router.goBack();
+  };
   return (
     <div>
       <div className={styles.headerWrap}>
@@ -40,17 +40,16 @@ function SettingPage({ dispatch }: SettingPagePropsType) {
         <div className={styles.content}>
           <Row>
             <Col span={4}>
-              <Menu
-                mode={'inline'}
-                className={styles.nav}
-                selectedKeys={[selectKey,]}
-              >
-                <Menu.Item key={"1"} onClick={() => setSelectKey("1")}><Icon type={"cloud"} />YouComic</Menu.Item>
+              <Menu mode={'inline'} className={styles.nav} selectedKeys={[selectKey]}>
+                <Menu.Item key={'1'} onClick={() => setSelectKey('1')}>
+                  <Icon type={'cloud'} />
+                  YouComic
+                </Menu.Item>
               </Menu>
             </Col>
             <Col span={20} className={styles.settingContent}>
-              <div style={{display:selectKey === "1"?undefined:"none"}}>
-                <YouComicPanel/>
+              <div style={{ display: selectKey === '1' ? undefined : 'none' }}>
+                <YouComicPanel />
               </div>
             </Col>
           </Row>

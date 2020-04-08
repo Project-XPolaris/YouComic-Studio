@@ -1,33 +1,38 @@
 import React from 'react';
-import { Col, Empty, List, Row } from 'antd';
+import { Col, Empty, Row } from 'antd';
 import style from './style.less';
 import { Directory } from '@/pages/Scan/List/model';
 import DirectoryCard from '@/pages/Scan/List/compoennts/DirectoryCard';
+
 interface DirectoryCollectionPropsType {
-  directoryList?: Directory[]
-  onCardClick: (directory: Directory) => void
-  selectedDirectory?: string[]
-  onSelectedDirectoryUpdate: (newSelectedDirectory: string[]) => void
+  directoryList?: Directory[];
+  onCardClick: (directory: Directory) => void;
+  selectedDirectory?: string[];
+  onSelectedDirectoryUpdate: (newSelectedDirectory: string[]) => void;
 }
 
-
-export default function DirectoryCollection({ directoryList, onCardClick, selectedDirectory,onSelectedDirectoryUpdate }: DirectoryCollectionPropsType) {
+export default function DirectoryCollection({
+  directoryList,
+  onCardClick,
+  selectedDirectory,
+  onSelectedDirectoryUpdate,
+}: DirectoryCollectionPropsType) {
   const empty = (
     <div className={style.emptyWrap}>
-      <Empty/>
+      <Empty />
     </div>
   );
   const items = directoryList.map(item => {
-    const isSelected = Boolean(selectedDirectory.find(selectItem => selectItem === item.path))
+    const isSelected = Boolean(selectedDirectory.find(selectItem => selectItem === item.path));
     const onCardSelect = (selectDirectory: Directory) => {
       if (isSelected) {
-        onSelectedDirectoryUpdate(selectedDirectory.filter(path => path !== item.path))
-      }else{
-        onSelectedDirectoryUpdate([...selectedDirectory,item.path])
+        onSelectedDirectoryUpdate(selectedDirectory.filter(path => path !== item.path));
+      } else {
+        onSelectedDirectoryUpdate([...selectedDirectory, item.path]);
       }
     };
     return (
-      <Col key={item.name} span={24}>
+      <Col span={24} key={item.path}>
         <DirectoryCard
           directory={item}
           onClick={onCardClick}
@@ -38,14 +43,6 @@ export default function DirectoryCollection({ directoryList, onCardClick, select
     );
   });
   return (
-    <div className={style.main}>
-      {
-        (directoryList === undefined || directoryList.length === 0) ? empty :
-
-          <Row type="flex">
-            {items}
-          </Row>
-      }
-    </div>
+    <div className={style.main}>{directoryList.length === 0 ? empty : <Row>{items}</Row>}</div>
   );
 }

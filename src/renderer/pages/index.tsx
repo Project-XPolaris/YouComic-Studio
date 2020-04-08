@@ -1,9 +1,7 @@
-function Index() {
-  return (
-    <div style={{ textAlign: 'center' }}>
+import React from 'react';
 
-    </div>
-  );
+function Index() {
+  return <div style={{ textAlign: 'center' }} />;
 }
 
 export default Index;

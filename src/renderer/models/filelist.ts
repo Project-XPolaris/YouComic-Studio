@@ -1,77 +1,72 @@
-import { Effect, Subscription } from 'dva';
+import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { HomeModelStateType } from '@/pages/Home/model';
-import { listDir, readFolders } from '@/services/file';
 import { ChildrenItem } from '@/pages/List/components/SideTree';
 import { directoryTree } from '@/global';
 
 export interface FileListModelStateType {
-  tree?:any
-  directoryMapping:{[key:string]:ChildrenItem}
+  tree?: any;
+  directoryMapping: { [key: string]: ChildrenItem };
 }
 
 export interface FileListModelType {
-  namespace: string,
+  namespace: string;
   reducers: {
-    setFileTree:Reducer<FileListModelStateType>
-    setDirectoryMapping:Reducer<FileListModelStateType>
-  }
-  state: FileListModelStateType
+    setFileTree: Reducer<FileListModelStateType>;
+    setDirectoryMapping: Reducer<FileListModelStateType>;
+  };
+  state: FileListModelStateType;
   effects: {
-    listFolder:Effect
-  }
-  subscriptions: {
-  }
+    listFolder: Effect;
+  };
+  subscriptions: {};
 }
 
 const FileListModel: FileListModelType = {
   namespace: 'fileList',
   state: {
-    directoryMapping:{}
+    directoryMapping: {},
   },
-  subscriptions: {
-
-  },
+  subscriptions: {},
   effects: {
-    *listFolder(_,{call,put,select}){
-      const homeState : HomeModelStateType = yield select(state => (state.home));
+    *listFolder(_, { call, put, select }) {
+      const homeState: HomeModelStateType = yield select(state => state.home);
       const tree = directoryTree(homeState.path);
       yield put({
-        type:"setFileTree",
-        payload:{
-          tree
-        }
+        type: 'setFileTree',
+        payload: {
+          tree,
+        },
       });
       const walkQueue: ChildrenItem[] = tree.children;
-      const dirMapping = {  };
-      while (walkQueue.length !== 0){
+      const dirMapping = {};
+      while (walkQueue.length !== 0) {
         const node = walkQueue.shift();
-        if (node.type === "directory"){
-          dirMapping[node.path] = node
+        if (node.type === 'directory') {
+          dirMapping[node.path] = node;
         }
       }
       yield put({
-        type:"setDirectoryMapping",
-        payload:{
-          mapping:dirMapping
-        }
+        type: 'setDirectoryMapping',
+        payload: {
+          mapping: dirMapping,
+        },
       });
-    }
+    },
   },
   reducers: {
-    setFileTree(state,{payload:{tree}}){
+    setFileTree(state, { payload: { tree } }) {
       return {
         ...state,
-        tree
-      }
+        tree,
+      };
     },
-    setDirectoryMapping(state,{payload:{mapping}}){
+    setDirectoryMapping(state, { payload: { mapping } }) {
       return {
         ...state,
-        directoryMapping:mapping
-      }
-    }
+        directoryMapping: mapping,
+      };
+    },
   },
-
 };
 export default FileListModel;

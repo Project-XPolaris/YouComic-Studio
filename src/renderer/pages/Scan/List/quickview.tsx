@@ -4,19 +4,26 @@ import DirectoryQuickViewDrawer from '@/pages/Scan/List/compoennts/DirectoryQuic
 import { ScanModelStateType } from '@/pages/Scan/List/model';
 import CreateTagDialog from '@/pages/Create/components/CreateTagDialog';
 
-
 interface ScanQuickViewPropsType {
-  dispatch: any,
-  scan: ScanModelStateType
+  dispatch: any;
+  scan: ScanModelStateType;
 }
 
-function ScanQuickView({ dispatch, scan: { quickViewDrawer: { isOpen, directory }, createTagDialog,directoryList } }: ScanQuickViewPropsType) {
+function ScanQuickView({
+  dispatch,
+  scan: {
+    quickViewDrawer: { isOpen, directory },
+    createTagDialog,
+    directoryList,
+  },
+}: ScanQuickViewPropsType) {
   const onDrawerClose = () => dispatch({ type: 'scan/closeQuickViewDirectoryDrawer' });
   const onInfoChange = (key: string, newValue: string) => {
     dispatch({
       type: 'scan/updateItemsValue',
       payload: {
-        key, newValue,
+        key,
+        newValue,
       },
     });
   };
@@ -28,9 +35,9 @@ function ScanQuickView({ dispatch, scan: { quickViewDrawer: { isOpen, directory 
   const openCreateTagDialog = () => {
     dispatch({
       type: 'scan/openCreateTagDialog',
-      payload:{
-        action:"create"
-      }
+      payload: {
+        action: 'create',
+      },
     });
   };
   const closeCreateTagDialog = () => {
@@ -42,11 +49,12 @@ function ScanQuickView({ dispatch, scan: { quickViewDrawer: { isOpen, directory 
     dispatch({
       type: 'scan/createTag',
       payload: {
-        name, type,
+        name,
+        type,
       },
     });
   };
-  const directoryItem = directoryList.find(item => item.path === directory)
+  const directoryItem = directoryList.find(item => item.path === directory);
   return (
     <div>
       <CreateTagDialog
@@ -59,7 +67,7 @@ function ScanQuickView({ dispatch, scan: { quickViewDrawer: { isOpen, directory 
         onClose={onDrawerClose}
         visible={isOpen}
         coverURL={directoryItem?.coverPath}
-        title={directoryItem?.matchInfo?.title}
+        title={directoryItem?.title}
         artist={directoryItem?.matchInfo?.artist}
         theme={directoryItem?.matchInfo?.theme}
         series={directoryItem?.matchInfo?.series}

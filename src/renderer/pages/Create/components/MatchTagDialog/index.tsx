@@ -2,24 +2,28 @@ import React, { useState } from 'react';
 import { Icon, Modal, Tag } from 'antd';
 import style from './style.less';
 import { matchTagInfo } from '@/utils/match';
-import { forIn } from 'lodash';
 
 interface MatchTagDialogPropsType {
-  isOpen: boolean
-  text: string
-  onOk: (tags, title?: string) => void
-  onClose: () => void
+  isOpen: boolean;
+  text: string;
+  onOk: (tags, title?: string) => void;
+  onClose: () => void;
 }
 
 const infoTypeToIcon = {
-  'artist': 'user',
-  'series': 'book',
-  'theme': 'smile',
-  'translator': 'global',
+  artist: 'user',
+  series: 'book',
+  theme: 'smile',
+  translator: 'global',
 };
 const { CheckableTag } = Tag;
 
-export default function MatchTagDialog({ isOpen, text = "", onOk, onClose }: MatchTagDialogPropsType) {
+export default function MatchTagDialog({
+  isOpen,
+  text = '',
+  onOk,
+  onClose,
+}: MatchTagDialogPropsType) {
   const matchResult = matchTagInfo(text);
   const [selectTags, setSelectTags] = useState([]);
   const [selectTitle, setSelectTitle] = useState<string | undefined>(undefined);
@@ -33,10 +37,7 @@ export default function MatchTagDialog({ isOpen, text = "", onOk, onClose }: Mat
       }
       const onSelectChange = (isSelect: boolean) => {
         if (isSelect) {
-          setSelectTags([
-            ...selectTags,
-            { name: matchResult[type], type },
-          ]);
+          setSelectTags([...selectTags, { name: matchResult[type], type }]);
         } else {
           setSelectTags(selectTags.filter(tag => tag.name !== matchResult[type]));
         }
@@ -44,11 +45,11 @@ export default function MatchTagDialog({ isOpen, text = "", onOk, onClose }: Mat
       return (
         <CheckableTag
           onChange={onSelectChange}
-          checked={selectTags.find(tag => tag.name === matchResult[type]) !== undefined} key={type}
-          className={style.infoTag}>
-          <Icon
-            type={infoTypeToIcon[type]}
-            className={style.tagTypeIcon}/>
+          checked={selectTags.find(tag => tag.name === matchResult[type]) !== undefined}
+          key={type}
+          className={style.infoTag}
+        >
+          <Icon type={infoTypeToIcon[type]} className={style.tagTypeIcon} />
           {matchResult[type]}
         </CheckableTag>
       );
@@ -63,9 +64,17 @@ export default function MatchTagDialog({ isOpen, text = "", onOk, onClose }: Mat
     };
     return (
       <div>
-        <div className={style.itemTitle}>标题<Icon type="book"/></div>
-        <CheckableTag onChange={onSelectChange} checked={selectTitle !== undefined}
-                      className={style.infoTag}>{matchResult.title}</CheckableTag>
+        <div className={style.itemTitle}>
+          标题
+          <Icon type="book" />
+        </div>
+        <CheckableTag
+          onChange={onSelectChange}
+          checked={selectTitle !== undefined}
+          className={style.infoTag}
+        >
+          {matchResult.title}
+        </CheckableTag>
       </div>
     );
   };
@@ -83,7 +92,10 @@ export default function MatchTagDialog({ isOpen, text = "", onOk, onClose }: Mat
       <div className={style.itemTitle}>识别字符</div>
       {text}
       {renderMatchTitle()}
-      <div className={style.itemTitle}>标签<Icon type="tags"/></div>
+      <div className={style.itemTitle}>
+        标签
+        <Icon type="tags" />
+      </div>
       {renderMatchTag()}
     </Modal>
   );

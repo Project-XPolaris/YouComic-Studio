@@ -2,26 +2,24 @@ import { Effect, Subscription } from 'dva';
 import { Reducer } from 'redux';
 import { ApplicationSettingOptions, Option } from '@/pages/Setting/settings';
 
-
 export interface SettingModelStateType {
-  options: Option[]
+  options: Option[];
 }
 
 export interface SettingModelType {
-  namespace: string,
+  namespace: string;
   reducers: {
-    changeOption: Reducer<SettingModelStateType>
-  }
-  state: SettingModelStateType
+    changeOption: Reducer<SettingModelStateType>;
+  };
+  state: SettingModelStateType;
   effects: {
-    loadSetting: Effect
-    applyOption: Effect
-  }
+    loadSetting: Effect;
+    applyOption: Effect;
+  };
   subscriptions: {
-    setup: Subscription
-  }
+    setup: Subscription;
+  };
 }
-
 
 const SettingModel: SettingModelType = {
   namespace: 'setting',
@@ -30,7 +28,7 @@ const SettingModel: SettingModelType = {
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen(location => {
         if (location.pathname === '/setting') {
           dispatch({
             type: 'loadSetting',
@@ -40,16 +38,16 @@ const SettingModel: SettingModelType = {
     },
   },
   effects: {
-    * loadSetting(_, { call, put, select }) {
-      const settingState: SettingModelStateType = yield select(state => (state.setting));
-      for (let option of settingState.options) {
+    *loadSetting(_, { call, put, select }) {
+      const settingState: SettingModelStateType = yield select(state => state.setting);
+      for (const option of settingState.options) {
         option.value = option.read();
       }
     },
-    * applyOption(_, { call, put, select }) {
-      const settingState: SettingModelStateType = yield select(state => (state.setting));
-      for (let option of settingState.options) {
-        yield call(option.save,{value:option.value});
+    *applyOption(_, { call, put, select }) {
+      const settingState: SettingModelStateType = yield select(state => state.setting);
+      for (const option of settingState.options) {
+        yield call(option.save, { value: option.value });
       }
     },
   },
@@ -71,6 +69,5 @@ const SettingModel: SettingModelType = {
       };
     },
   },
-
 };
 export default SettingModel;

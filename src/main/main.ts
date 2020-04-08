@@ -84,19 +84,19 @@ const template = [
 ];
 
 if (process.platform === 'darwin') {
-  template.unshift({
-    label: app.getName(),
-    submenu: [
-      {
-        label: `关于 ${app.getName()}`,
-        role: 'about',
-        accelerator: '',
-        // click() {
-        //   dialog.showMessageBox(mainWindow, { message: 'hello world' });
-        // },
-      },
-    ],
-  });
+  // template.unshift({
+  //   label: app.getName(),
+  //   submenu: [
+  //     {
+  //       label: `关于 ${app.getName()}`,
+  //       role: 'about',
+  //       accelerator: '',
+  //       // click() {
+  //       //   dialog.showMessageBox(mainWindow, { message: 'hello world' });
+  //       // },
+  //     },
+  //   ],
+  // });
 }
 
 const isMac = 'darwin' === process.platform;

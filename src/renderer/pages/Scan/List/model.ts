@@ -17,80 +17,83 @@ import {
 import { HomeModelStateType } from '@/pages/Home/model';
 
 export interface Directory {
-  path: string
-  name: string
-  matchInfo: MatchTextInfo,
+  path: string;
+  name: string;
+  matchInfo: MatchTextInfo;
   targetFiles: Array<{
-    path: string
-  }>
-  coverPath?: string
-  extraTags: Array<{ type: string, name: string }>
+    path: string;
+  }>;
+  coverPath?: string;
+  extraTags: Array<{ type: string; name: string }>;
+  title?: string;
 }
 
 export interface ScanModelStateType {
-  path?: string
-  directoryList: Directory[]
+  path?: string;
+  directoryList: Directory[];
   scanningDialog: {
-    isOpen: boolean
-  }
+    isOpen: boolean;
+  };
   quickViewDrawer: {
-    isOpen: boolean
-    directory?: string
-  }
+    isOpen: boolean;
+    directory?: string;
+  };
   scanOption: {
-    isOpen: boolean
-  }
-  selectedDirectory: string[]
+    isOpen: boolean;
+  };
+  selectedDirectory: string[];
   createTagDialog: {
-    isOpen: boolean
-    action: string
-  }
+    isOpen: boolean;
+    action: string;
+  };
   uploadDialog: {
-    current?: Directory
-    currentProgress: number
-    currentInfo: string
-    totalCount: number
-    completeCount: number
-    totalProgress: number
-    isOpen: boolean
-  }
+    current?: Directory;
+    currentProgress: number;
+    currentInfo: string;
+    totalCount: number;
+    completeCount: number;
+    totalProgress: number;
+    isOpen: boolean;
+  };
 }
 
 export interface ScanModelType {
-  namespace: string,
+  namespace: string;
   reducers: {
-    setPath: Reducer<ScanModelStateType>
-    setScanningDialog: Reducer<ScanModelStateType>
-    updateScanningDialog: Reducer<ScanModelStateType>
-    setDirectoryList: Reducer<ScanModelStateType>
-    setState: Reducer<ScanModelStateType>
-    quickViewDirectory: Reducer<ScanModelStateType>
-    closeQuickViewDirectoryDrawer: Reducer<ScanModelStateType>
-    updateItemsValue: Reducer<ScanModelStateType>
-    setCoverPath: Reducer<ScanModelStateType>
-    openScanOptionDrawer: Reducer<ScanModelStateType>
-    closeScanOptionDrawer: Reducer<ScanModelStateType>
-    setSelectedDirectory: Reducer<ScanModelStateType>
-    openCreateTagDialog: Reducer<ScanModelStateType>
-    closeCreateTagDialog: Reducer<ScanModelStateType>
-    createTag: Reducer<ScanModelStateType>
-    removeSelectDirectory: Reducer<ScanModelStateType>
-    setSelectedDirectoryCover: Reducer<ScanModelStateType>
-    updateUploadDialog: Reducer<ScanModelStateType>
-  }
-  state: ScanModelStateType
+    setPath: Reducer<ScanModelStateType>;
+    setScanningDialog: Reducer<ScanModelStateType>;
+    updateScanningDialog: Reducer<ScanModelStateType>;
+    setDirectoryList: Reducer<ScanModelStateType>;
+    setState: Reducer<ScanModelStateType>;
+    quickViewDirectory: Reducer<ScanModelStateType>;
+    closeQuickViewDirectoryDrawer: Reducer<ScanModelStateType>;
+    updateItemsValue: Reducer<ScanModelStateType>;
+    setCoverPath: Reducer<ScanModelStateType>;
+    openScanOptionDrawer: Reducer<ScanModelStateType>;
+    closeScanOptionDrawer: Reducer<ScanModelStateType>;
+    setSelectedDirectory: Reducer<ScanModelStateType>;
+    openCreateTagDialog: Reducer<ScanModelStateType>;
+    closeCreateTagDialog: Reducer<ScanModelStateType>;
+    createTag: Reducer<ScanModelStateType>;
+    removeSelectDirectory: Reducer<ScanModelStateType>;
+    setSelectedDirectoryCover: Reducer<ScanModelStateType>;
+    updateUploadDialog: Reducer<ScanModelStateType>;
+    setSelectTitle: Reducer<ScanModelStateType>;
+  };
+  state: ScanModelStateType;
   effects: {
-    scanBookDirectory: Effect
-    selectItemCover: Effect
-    uploadToYouComic: Effect
-  }
-  subscriptions: {}
+    scanBookDirectory: Effect;
+    selectItemCover: Effect;
+    uploadToYouComic: Effect;
+  };
+  subscriptions: {};
 }
 
 const ScanModel: ScanModelType = {
   namespace: 'scan',
   state: {
-    path: '',
+    path:
+      'C:\\Users\\takayamaaren\\Downloads\\dmzj\\zhuanshengchengweileyinvyouxilimanshisiwanflagdeey 转生成为了乙女游戏里满是死亡flag的恶役千金——走投无路！破灭前夕篇',
     directoryList: [],
     scanningDialog: {
       isOpen: false,
@@ -117,11 +120,10 @@ const ScanModel: ScanModelType = {
   },
   subscriptions: {},
   effects: {
-    * scanBookDirectory(state, { call, put, select }) {
-      const scanState: ScanModelStateType = yield select(state => (state.scan));
-      const homeState: HomeModelStateType = yield select(state => (state.home));
+    *scanBookDirectory(state, { call, put, select }) {
+      const scanState: ScanModelStateType = yield select(state => state.scan);
+      const homeState: HomeModelStateType = yield select(state => state.home);
       const directoryList: Directory[] = yield call(scanBookDirectory, { path: homeState.path });
-
       directoryList.forEach((dir: Directory) => {
         dir.matchInfo = matchTagInfo(dir.name);
         dir.coverPath = dir.targetFiles[0].path;
@@ -134,10 +136,12 @@ const ScanModel: ScanModelType = {
         },
       });
     },
-    * selectItemCover(_, { call, put, select }) {
-      const scanState: ScanModelStateType = yield select(state => (state.scan));
+    *selectItemCover(_, { call, put, select }) {
+      const scanState: ScanModelStateType = yield select(state => state.scan);
 
-      const selectFiles: string[] = yield call(selectImageFile, { path: scanState.quickViewDrawer.directory });
+      const selectFiles: string[] = yield call(selectImageFile, {
+        path: scanState.quickViewDrawer.directory,
+      });
       if (selectFiles === undefined || selectFiles.length < 1) {
         return;
       }
@@ -148,8 +152,8 @@ const ScanModel: ScanModelType = {
         },
       });
     },
-    * uploadToYouComic(_, { call, put, select }) {
-      const scanState: ScanModelStateType = yield select(state => (state.scan));
+    *uploadToYouComic(_, { call, put, select }) {
+      const scanState: ScanModelStateType = yield select(state => state.scan);
       yield put({
         type: 'updateUploadDialog',
         payload: {
@@ -176,7 +180,7 @@ const ScanModel: ScanModelType = {
           },
         });
         // create book
-        const book: Book = yield call(createNewBook, { name: dir.matchInfo.title });
+        const book: Book = yield call(createNewBook, { name: dir.title });
         // create tags
         yield put({
           type: 'updateUploadDialog',
@@ -197,12 +201,16 @@ const ScanModel: ScanModelType = {
         // query exists tag
         const queryExistTagResponse: ListQueryContainer<TagModel> = yield call(queryTags, {
           queryParams: {
-            name: tags.map(tag => (tag.name)),
+            name: tags.map(tag => tag.name),
             page: 1,
             pageSize: tags.length,
           },
         });
-        const tagToCreate = differenceWith(tags, queryExistTagResponse.result, (a, b) => a.name === b.name);
+        const tagToCreate = differenceWith(
+          tags,
+          queryExistTagResponse.result,
+          (a, b) => a.name === b.name
+        );
         const tagToAdd = queryExistTagResponse.result;
         // create tag
         for (const tagToCreateElement of tagToCreate) {
@@ -245,7 +253,6 @@ const ScanModel: ScanModelType = {
           uploadPageForm.append(`page_${idx + 1}`, fs.createReadStream(file.path));
         });
         yield call(uploadBookPage, { bookId: book.id, form: uploadPageForm });
-
       }
       yield put({
         type: 'updateUploadDialog',
@@ -255,7 +262,6 @@ const ScanModel: ScanModelType = {
           },
         },
       });
-
     },
   },
   reducers: {
@@ -300,11 +306,22 @@ const ScanModel: ScanModelType = {
         ...state,
         directoryList: state.directoryList.map(directoryItem => {
           if (directoryItem.path === state.quickViewDrawer.directory) {
-            return {
-              ...directoryItem,
-              [key]: newValue,
-            };
+            if (key === 'title') {
+              return {
+                ...directoryItem,
+                title: newValue,
+              };
+            } else {
+              return {
+                ...directoryItem,
+                matchInfo: {
+                  ...directoryItem.matchInfo,
+                  [key]: newValue,
+                },
+              };
+            }
           }
+          return directoryItem;
         }),
       };
     },
@@ -385,7 +402,19 @@ const ScanModel: ScanModelType = {
             isOpen: false,
           },
           directoryList: state.directoryList.map(item => {
-            if (state.selectedDirectory.find(selectedItem => selectedItem === item.path) !== undefined) {
+            if (
+              state.selectedDirectory.find(selectedItem => selectedItem === item.path) !== undefined
+            ) {
+              // spec tag
+              if (['artist', 'theme', 'series', 'translator'].findIndex(it => type === it) !== -1) {
+                return {
+                  ...item,
+                  matchInfo: {
+                    ...item.matchInfo,
+                    [type]: name,
+                  },
+                };
+              }
               return {
                 ...item,
                 extraTags: [...item.extraTags, { name, type }],
@@ -402,7 +431,11 @@ const ScanModel: ScanModelType = {
     removeSelectDirectory(state, _) {
       return {
         ...state,
-        directoryList: differenceWith(state.directoryList, state.selectedDirectory, (a, b) => a.path === b),
+        directoryList: differenceWith(
+          state.directoryList,
+          state.selectedDirectory,
+          (a, b) => a.path === b
+        ),
         selectedDirectory: [],
       };
     },
@@ -412,7 +445,10 @@ const ScanModel: ScanModelType = {
           return {
             ...state,
             directoryList: state.directoryList.map(dir => {
-              if (dir.targetFiles.length > index && state.selectedDirectory.find(path => path === dir.path) !== undefined) {
+              if (
+                dir.targetFiles.length > index &&
+                state.selectedDirectory.find(path => path === dir.path) !== undefined
+              ) {
                 return {
                   ...dir,
                   coverPath: dir[index],
@@ -425,7 +461,10 @@ const ScanModel: ScanModelType = {
           return {
             ...state,
             directoryList: state.directoryList.map(dir => {
-              if (dir.targetFiles.length - index >= 0 && state.selectedDirectory.find(path => path === dir.path) !== undefined) {
+              if (
+                dir.targetFiles.length - index >= 0 &&
+                state.selectedDirectory.find(path => path === dir.path) !== undefined
+              ) {
                 return {
                   ...dir,
                   coverPath: dir[index],
@@ -459,7 +498,21 @@ const ScanModel: ScanModelType = {
         },
       };
     },
+    setSelectTitle(state, { payload: { title } }) {
+      return {
+        ...state,
+        directoryList: state.directoryList.map((dirItem, idx) => {
+          if (state.selectedDirectory.find(selectDirPath => selectDirPath === dirItem.path)) {
+            let dirTitle: string = title;
+            if (title.includes('%index%')) {
+              dirTitle = dirTitle.replace('%index%', String(idx + 1));
+            }
+            dirItem.title = dirTitle;
+          }
+          return dirItem;
+        }),
+      };
+    },
   },
-
 };
 export default ScanModel;

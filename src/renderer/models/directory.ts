@@ -1,18 +1,17 @@
-import { Effect, Subscription } from 'dva';
 import { Reducer } from 'redux';
 
 export interface DirectoryModelStateType {
-  path?: string
+  path?: string;
 }
 
 export interface DirectoryModelType {
-  namespace: string,
+  namespace: string;
   reducers: {
-    setPath: Reducer<DirectoryModelStateType>
-  }
-  state: DirectoryModelStateType
-  effects: {}
-  subscriptions: {}
+    setPath: Reducer<DirectoryModelStateType>;
+  };
+  state: DirectoryModelStateType;
+  effects: {};
+  subscriptions: {};
 }
 
 const DirectoryModel: DirectoryModelType = {
@@ -28,6 +27,5 @@ const DirectoryModel: DirectoryModelType = {
       };
     },
   },
-
 };
 export default DirectoryModel;

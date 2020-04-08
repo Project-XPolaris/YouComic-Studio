@@ -1,22 +1,23 @@
 import React from 'react';
-import { Avatar, Button, Divider, Dropdown, Icon, Input, Menu, Typography } from 'antd';
+import { Avatar, Button, Divider, Dropdown, Input, Menu, Typography } from 'antd';
 import styles from './style.less';
 import { connect } from 'dva';
 import { HomeModelStateType } from '@/pages/Home/model';
-import LoadingDirectoryDialog from '@/pages/Home/components/LoadingDirectoryDialog';
 import { router } from 'umi';
-import header from '@/pages/Scan/List/header';
 import { UserModelStateType } from '@/models/user';
 import CreateNewProjectDialog from '@/pages/Home/components/CreateNewDialog';
-
 const { Search } = Input;
 const { Title } = Typography;
-
-
+import LogoutIcon from '@ant-design/icons/ExportOutlined';
+import UserIcon from '@ant-design/icons/UserOutlined';
+import SettingIcon from '@ant-design/icons/SettingOutlined';
+import FolderIcon from '@ant-design/icons/FolderFilled';
+import CreateIcon from '@ant-design/icons/PlusOutlined';
+import SearchIcon from '@ant-design/icons/SearchOutlined';
 interface HomePagePropsType {
-  home: HomeModelStateType,
-  dispatch,
-  user: UserModelStateType
+  home: HomeModelStateType;
+  dispatch;
+  user: UserModelStateType;
 }
 
 const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
@@ -34,17 +35,17 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
   const renderUserAccount = () => {
     const onLogout = () => {
       dispatch({
-        type:"user/logout"
-      })
-    }
+        type: 'user/logout',
+      });
+    };
     const accountMenu = (
       <Menu>
         <Menu.Item key="1" onClick={onLogout}>
-          <Icon type="export" />
+          <LogoutIcon />
           登出
         </Menu.Item>
       </Menu>
-    )
+    );
     if (user.current) {
       return (
         <div className={styles.accountIndicate}>
@@ -56,44 +57,50 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
               {user.current.nickname}
             </Button>
           </Dropdown>
-
         </div>
       );
     } else {
       return (
-        <Button type={'ghost'} size={'small'} className={styles.loginButton} onClick={onLoginAccount}><Icon
-          type="user"/>登录至YouComic</Button>
+        <Button
+          type={'ghost'}
+          size={'small'}
+          className={styles.loginButton}
+          onClick={onLoginAccount}
+        >
+          <UserIcon />
+          登录至YouComic
+        </Button>
       );
     }
   };
   const onCreateNewClick = () => {
     dispatch({
-      type:"home/openCreateNewProjectDialog",
-    })
-  }
+      type: 'home/openCreateNewProjectDialog',
+    });
+  };
   const onCreateNewDialogCancel = () => {
     dispatch({
-      type:"home/closeCreateNewProjectDialog",
-    })
-  }
+      type: 'home/closeCreateNewProjectDialog',
+    });
+  };
   const onSelectSavePath = () => {
     dispatch({
-      type:"home/selectNewProjectSaveLocation"
-    })
-  }
+      type: 'home/selectNewProjectSaveLocation',
+    });
+  };
   const onCreateNewDialogOk = () => {
     dispatch({
-      type:"home/createNew"
-    })
-  }
+      type: 'home/createNew',
+    });
+  };
   const onOpenProjectClick = () => {
     dispatch({
-      type:"home/openExistProject"
-    })
-  }
+      type: 'home/openExistProject',
+    });
+  };
   const onSettingButtonClick = () => {
-    router.push("/setting")
-  }
+    router.push('/setting');
+  };
   return (
     <div className={styles.main}>
       <div className={styles.header}>
@@ -108,38 +115,48 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
           <span className={styles.title}>开始</span>
         </div>
         <div className={styles.headerRight}>
-          <span>Project Polaris{`  `}| {`  `}You Comic</span>
+          <span>
+            Project Polaris{`  `}| {`  `}You Comic
+          </span>
           {renderUserAccount()}
         </div>
       </div>
-      <Divider/>
+      <Divider />
       <div className={styles.content}>
         <div className={styles.field}>
-          <div className={styles.fieldTitle}>
-            创建项目
+          <div className={styles.fieldTitle}>创建项目</div>
+          <div>
+            <Button type="primary" onClick={onCreateNewClick} className={styles.actionButton}>
+              <CreateIcon />
+              创建新的项目
+            </Button>
           </div>
           <div>
-            <Button type="primary" onClick={onCreateNewClick} className={styles.actionButton}><Icon type="plus"/>创建新的项目</Button>
-          </div>
-          <div>
-            <Button type="primary" onClick={onOpenProjectClick} className={styles.actionButton}><Icon type="folder"/>打开已有项目</Button>
-
+            <Button type="primary" onClick={onOpenProjectClick} className={styles.actionButton}>
+              <FolderIcon />
+              打开已有项目
+            </Button>
           </div>
         </div>
         <div className={styles.field}>
-          <div className={styles.fieldTitle}>
-            批量编辑
-          </div>
+          <div className={styles.fieldTitle}>批量编辑</div>
           <div>
-            <Button type="primary" onClick={onScan}><Icon type="search"/>扫描文件夹</Button>
+            <Button type="primary" onClick={onScan}>
+              <SearchIcon />
+              扫描文件夹
+            </Button>
           </div>
         </div>
       </div>
       <div className={styles.bottomRight}>
-      <Button onClick={onSettingButtonClick} shape={"circle"}><Icon type={"setting"} /></Button>
+        <Button onClick={onSettingButtonClick} shape={'circle'}>
+          <SettingIcon />
+        </Button>
       </div>
     </div>
   );
 };
 
-export default connect(({ home, fileList, scan, user }) => ({ home, fileList, scan, user }))(HomePage);
+export default connect(({ home, fileList, scan, user }) => ({ home, fileList, scan, user }))(
+  HomePage
+);

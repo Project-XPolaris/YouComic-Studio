@@ -27,109 +27,108 @@ import {
   uploadBookPage,
   uploadCover,
 } from '@/services/youcomic/client';
-import uuid from 'uuid';
 
 export interface ProjectConfig {
   pages: Array<{
-    file: string,
-    thumbnail: string
-  }>
-  cover?: string
-  coverThumbnail?: string
-  title?: string
-  tags?: Tag[]
+    file: string;
+    thumbnail: string;
+  }>;
+  cover?: string;
+  coverThumbnail?: string;
+  title?: string;
+  tags?: Tag[];
 }
 
 export interface Page {
-  name: string
-  path: string
-  thumbnail: string
-  thumbnailName: string
+  name: string;
+  path: string;
+  thumbnail: string;
+  thumbnailName: string;
 }
 
 export interface Tag {
-  name: string,
-  type: string
+  name: string;
+  type: string;
 }
 
 export interface CreateBookModelStateType {
-  title: string
+  title: string;
   importImageDialog: {
-    progress: number
-    isShow: boolean
-    total: number
-    fileName: string
-    current: number
-  },
+    progress: number;
+    isShow: boolean;
+    total: number;
+    fileName: string;
+    current: number;
+  };
   createTagDialog: {
-    isOpen: boolean
-  }
+    isOpen: boolean;
+  };
   loadingDialog: {
-    isOpen: false
-    message: string
-  },
+    isOpen: false;
+    message: string;
+  };
   matchInfoDialog: {
-    isOpen: boolean
-  }
-  pages: Page[]
-  cover?: string
-  coverThumbnail?: string
-  rootDir: string
-  config?: ProjectConfig
+    isOpen: boolean;
+  };
+  pages: Page[];
+  cover?: string;
+  coverThumbnail?: string;
+  rootDir: string;
+  config?: ProjectConfig;
   path: {
-    projectPath?: string
-    projectDirectoryName?: string
-    projectConfig?: string
-    projectPages?: string
-  }
-  selectPages: Page[]
-  tags: Tag[]
+    projectPath?: string;
+    projectDirectoryName?: string;
+    projectConfig?: string;
+    projectPages?: string;
+  };
+  selectPages: Page[];
+  tags: Tag[];
   autoImportDialog: {
-    isOpen: boolean
-    progress: number
-    message: string
-  }
+    isOpen: boolean;
+    progress: number;
+    message: string;
+  };
 }
 
 export interface CreateBookModelType {
-  namespace: string,
+  namespace: string;
   reducers: {
-    setRootPath: Reducer<CreateBookModelStateType>
-    setTitle: Reducer<CreateBookModelStateType>
-    setImportImagesDialog: Reducer<CreateBookModelStateType>
-    setCover: Reducer<CreateBookModelStateType>
-    setLoadingDialog: Reducer<CreateBookModelStateType>
-    addToPage: Reducer<CreateBookModelStateType>
-    setConfig: Reducer<CreateBookModelStateType>
-    updateConfig: Reducer<CreateBookModelStateType>
-    setPath: Reducer<CreateBookModelStateType>
-    setPages: Reducer<CreateBookModelStateType>
-    setSelectPage: Reducer<CreateBookModelStateType>
-    setCreateTagDialog: Reducer<CreateBookModelStateType>
-    addTags: Reducer<CreateBookModelStateType>
-    setTags: Reducer<CreateBookModelStateType>
-    setMatchInfoDialog: Reducer<CreateBookModelStateType>
-    setAutoImportDialog: Reducer<CreateBookModelStateType>
-    clear: Reducer<CreateBookModelStateType>
-  }
-  state: CreateBookModelStateType
+    setRootPath: Reducer<CreateBookModelStateType>;
+    setTitle: Reducer<CreateBookModelStateType>;
+    setImportImagesDialog: Reducer<CreateBookModelStateType>;
+    setCover: Reducer<CreateBookModelStateType>;
+    setLoadingDialog: Reducer<CreateBookModelStateType>;
+    addToPage: Reducer<CreateBookModelStateType>;
+    setConfig: Reducer<CreateBookModelStateType>;
+    updateConfig: Reducer<CreateBookModelStateType>;
+    setPath: Reducer<CreateBookModelStateType>;
+    setPages: Reducer<CreateBookModelStateType>;
+    setSelectPage: Reducer<CreateBookModelStateType>;
+    setCreateTagDialog: Reducer<CreateBookModelStateType>;
+    addTags: Reducer<CreateBookModelStateType>;
+    setTags: Reducer<CreateBookModelStateType>;
+    setMatchInfoDialog: Reducer<CreateBookModelStateType>;
+    setAutoImportDialog: Reducer<CreateBookModelStateType>;
+    clear: Reducer<CreateBookModelStateType>;
+  };
+  state: CreateBookModelStateType;
   effects: {
-    generateThumbnails: Effect
-    selectCover: Effect
-    init: Effect
-    saveConfig: Effect
-    setNewPages: Effect
-    onRemovePages: Effect
-    removeSelectPages: Effect
-    saveProject: Effect
-    createTag: Effect
-    deleteTag: Effect
-    autoImport: Effect
-    uploadYouComic: Effect
-  }
+    generateThumbnails: Effect;
+    selectCover: Effect;
+    init: Effect;
+    saveConfig: Effect;
+    setNewPages: Effect;
+    onRemovePages: Effect;
+    removeSelectPages: Effect;
+    saveProject: Effect;
+    createTag: Effect;
+    deleteTag: Effect;
+    autoImport: Effect;
+    uploadYouComic: Effect;
+  };
   subscriptions: {
-    setup: Subscription
-  }
+    setup: Subscription;
+  };
 }
 
 const CreateBookModel: CreateBookModelType = {
@@ -166,7 +165,7 @@ const CreateBookModel: CreateBookModelType = {
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen(location => {
         if (location.pathname === '/book/create') {
           dispatch({
             type: 'init',
@@ -176,8 +175,8 @@ const CreateBookModel: CreateBookModelType = {
     },
   },
   effects: {
-    * generateThumbnails(_, { call, put, select }) {
-      const { create }: { create: CreateBookModelStateType } = yield select(state => (state));
+    *generateThumbnails(_, { call, put, select }) {
+      const { create }: { create: CreateBookModelStateType } = yield select(state => state);
       const dirPath = create.rootDir;
       if (dirPath === undefined) {
         return;
@@ -201,10 +200,13 @@ const CreateBookModel: CreateBookModelType = {
             },
           },
         });
-        const { imagePath, imageName, thumbnail, thumbnailName } = yield call(generateImageThumbnail, {
-          sourcePath: imageFiles[idx],
-          projectPath: create.path.projectPath,
-        });
+        const { imagePath, imageName, thumbnail, thumbnailName } = yield call(
+          generateImageThumbnail,
+          {
+            sourcePath: imageFiles[idx],
+            projectPath: create.path.projectPath,
+          }
+        );
         pages.push({
           path: imagePath + `?t=${moment().unix()}`,
           name: imageName,
@@ -235,8 +237,8 @@ const CreateBookModel: CreateBookModelType = {
       });
       message.success(`成功导入${progressCount}个图片`);
     },
-    * selectCover(_, { call, put, select }) {
-      const create: CreateBookModelStateType = yield select(state => (state.create));
+    *selectCover(_, { call, put, select }) {
+      const create: CreateBookModelStateType = yield select(state => state.create);
       const dirPath = create.rootDir;
       if (dirPath === undefined) {
         return;
@@ -264,8 +266,8 @@ const CreateBookModel: CreateBookModelType = {
         type: 'saveProject',
       });
     },
-    * init(_, { call, put, select }) {
-      const homeState: HomeModelStateType = yield select(state => (state.home));
+    *init(_, { call, put, select }) {
+      const homeState: HomeModelStateType = yield select(state => state.home);
       const editPath = homeState.editorPath;
       yield put({
         type: 'clear',
@@ -276,7 +278,7 @@ const CreateBookModel: CreateBookModelType = {
           path: editPath,
         },
       });
-      let createState: CreateBookModelStateType = yield select(state => (state.create));
+      let createState: CreateBookModelStateType = yield select(state => state.create);
       // check cache
       try {
         yield call(readFileStat, { filePath: createState.path.projectPath });
@@ -304,11 +306,13 @@ const CreateBookModel: CreateBookModelType = {
           },
         },
       });
-      createState = yield select(state => (state.create));
-
+      createState = yield select(state => state.create);
 
       // loading cover
-      if (createState.config.cover !== undefined && createState.config.coverThumbnail !== undefined) {
+      if (
+        createState.config.cover !== undefined &&
+        createState.config.coverThumbnail !== undefined
+      ) {
         yield put({
           type: 'setCover',
           payload: {
@@ -318,7 +322,6 @@ const CreateBookModel: CreateBookModelType = {
         });
       }
 
-
       // loading pages
       yield put({
         type: 'addToPage',
@@ -326,7 +329,11 @@ const CreateBookModel: CreateBookModelType = {
           pages: createState.config.pages.map(page => ({
             path: path.join(createState.path.projectPages, page.file),
             name: page.file,
-            thumbnail: path.join(createState.path.projectPath, projectPathConfig.projectThumbnailsDirectory, page.thumbnail),
+            thumbnail: path.join(
+              createState.path.projectPath,
+              projectPathConfig.projectThumbnailsDirectory,
+              page.thumbnail
+            ),
             thumbnailName: page.thumbnail,
           })),
         },
@@ -359,13 +366,16 @@ const CreateBookModel: CreateBookModelType = {
       });
       message.success('已加载缓存中的数据');
     },
-    * saveConfig(_, { call, put, select }) {
-      const { create }: { create: CreateBookModelStateType } = yield select(state => (state));
+    *saveConfig(_, { call, put, select }) {
+      const { create }: { create: CreateBookModelStateType } = yield select(state => state);
       if (create.config !== undefined) {
-        yield call(writeFile, { path: create.path.projectConfig, data: JSON.stringify(create.config) });
+        yield call(writeFile, {
+          path: create.path.projectConfig,
+          data: JSON.stringify(create.config),
+        });
       }
     },
-    * setNewPages({ payload: { newPages } }, { call, put, select }) {
+    *setNewPages({ payload: { newPages } }, { call, put, select }) {
       yield put({
         type: 'setPages',
         payload: {
@@ -376,7 +386,10 @@ const CreateBookModel: CreateBookModelType = {
         type: 'setConfig',
         payload: {
           config: {
-            pages: newPages.map((page: Page) => ({ file: page.name, thumbnail: page.thumbnailName })),
+            pages: newPages.map((page: Page) => ({
+              file: page.name,
+              thumbnail: page.thumbnailName,
+            })),
           },
         },
       });
@@ -384,8 +397,8 @@ const CreateBookModel: CreateBookModelType = {
         type: 'saveProject',
       });
     },
-    * removeSelectPages(_, { call, put, select }) {
-      const createState: CreateBookModelStateType = yield select(state => (state.create));
+    *removeSelectPages(_, { call, put, select }) {
+      const createState: CreateBookModelStateType = yield select(state => state.create);
       yield put({
         type: 'onRemovePages',
         payload: {
@@ -399,10 +412,14 @@ const CreateBookModel: CreateBookModelType = {
         },
       });
     },
-    * onRemovePages({ payload: { pagesToRemove } }, { call, put, select }) {
+    *onRemovePages({ payload: { pagesToRemove } }, { call, put, select }) {
       // init
-      const createState: CreateBookModelStateType = yield select(state => (state.create));
-      const remainPages = differenceWith<Page, Page>(createState.pages, pagesToRemove, (a: Page, b: Page) => a.name === b.name);
+      const createState: CreateBookModelStateType = yield select(state => state.create);
+      const remainPages = differenceWith<Page, Page>(
+        createState.pages,
+        pagesToRemove,
+        (a: Page, b: Page) => a.name === b.name
+      );
       // remove from pages
       yield put({
         type: 'setPages',
@@ -422,11 +439,14 @@ const CreateBookModel: CreateBookModelType = {
         type: 'saveProject',
       });
     },
-    * saveProject(_, { call, put, select }) {
-      const createState: CreateBookModelStateType = yield select(state => (state.create));
+    *saveProject(_, { call, put, select }) {
+      const createState: CreateBookModelStateType = yield select(state => state.create);
       const config: ProjectConfig = {
         title: createState.title,
-        pages: createState.pages.map((page: Page) => ({ thumbnail: page.thumbnailName, file: page.name })),
+        pages: createState.pages.map((page: Page) => ({
+          thumbnail: page.thumbnailName,
+          file: page.name,
+        })),
       };
       if (createState.cover !== undefined && createState.coverThumbnail !== undefined) {
         config.cover = path.basename(createState.cover);
@@ -437,24 +457,21 @@ const CreateBookModel: CreateBookModelType = {
       }
       yield call(writeFile, { path: createState.path.projectConfig, data: JSON.stringify(config) });
     },
-    * createTag({ payload: { name, type } }, { call, put, select }) {
-      const createState: CreateBookModelStateType = yield select(state => (state.create));
+    *createTag({ payload: { name, type } }, { call, put, select }) {
+      const createState: CreateBookModelStateType = yield select(state => state.create);
       const { tags = [] } = createState;
       yield put({
         type: 'setTags',
         payload: {
-          tags: [
-            ...tags,
-            { name, type },
-          ],
+          tags: [...tags, { name, type }],
         },
       });
       yield put({
         type: 'saveProject',
       });
     },
-    * deleteTag({ payload: { name } }, { call, put, select }) {
-      const createState: CreateBookModelStateType = yield select(state => (state.create));
+    *deleteTag({ payload: { name } }, { call, put, select }) {
+      const createState: CreateBookModelStateType = yield select(state => state.create);
       yield put({
         type: 'setTags',
         payload: {
@@ -465,8 +482,8 @@ const CreateBookModel: CreateBookModelType = {
         type: 'saveProject',
       });
     },
-    * autoImport(_, { call, put, select }) {
-      const createState: CreateBookModelStateType = yield select(state => (state.create));
+    *autoImport(_, { call, put, select }) {
+      const createState: CreateBookModelStateType = yield select(state => state.create);
       const dirPaths = showSelectFolderDialog();
       if (!Boolean(dirPaths)) {
         return;
@@ -529,10 +546,13 @@ const CreateBookModel: CreateBookModelType = {
           },
         });
         const imageFile = imageFiles[imageIdx];
-        const { imagePath, imageName, thumbnail, thumbnailName } = yield call(generateImageThumbnail, {
-          sourcePath: path.join(scanPath, imageFile),
-          projectPath: createState.path.projectPath,
-        });
+        const { imagePath, imageName, thumbnail, thumbnailName } = yield call(
+          generateImageThumbnail,
+          {
+            sourcePath: path.join(scanPath, imageFile),
+            projectPath: createState.path.projectPath,
+          }
+        );
         pages.push({ name: imageName, path: imagePath, thumbnail, thumbnailName });
       }
       yield put({
@@ -557,10 +577,12 @@ const CreateBookModel: CreateBookModelType = {
         yield put({
           type: 'setTags',
           payload: {
-            tags: Object.getOwnPropertyNames(info).filter(tagType => tagType !== 'title').map(tagType => ({
-              name: info[tagType],
-              type: tagType,
-            })),
+            tags: Object.getOwnPropertyNames(info)
+              .filter(tagType => tagType !== 'title')
+              .map(tagType => ({
+                name: info[tagType],
+                type: tagType,
+              })),
           },
         });
         // title
@@ -589,8 +611,8 @@ const CreateBookModel: CreateBookModelType = {
         },
       });
     },
-    * uploadYouComic(_, { call, put, select }) {
-      const createState: CreateBookModelStateType = yield select(state => (state.create));
+    *uploadYouComic(_, { call, put, select }) {
+      const createState: CreateBookModelStateType = yield select(state => state.create);
       // must have cover
       if (createState.cover === undefined || createState.cover.length === 0) {
         return;
@@ -604,13 +626,22 @@ const CreateBookModel: CreateBookModelType = {
       const createdBook: Book = yield call(createNewBook, { name: createState.title });
       // create tags
       // query existed tags
-      const queryTagsResponse: ListQueryContainer<TagModel> = yield call(queryTags, { name: createState.tags.map(tag => (tag.name)) });
+      const queryTagsResponse: ListQueryContainer<TagModel> = yield call(queryTags, {
+        name: createState.tags.map(tag => tag.name),
+      });
 
       // create tags where is not exist
-      const tagsToCreate = differenceWith<Tag, TagModel>(createState.tags, queryTagsResponse.result, (a, b) => a.name === b.name);
+      const tagsToCreate = differenceWith<Tag, TagModel>(
+        createState.tags,
+        queryTagsResponse.result,
+        (a, b) => a.name === b.name
+      );
       const createdTags: TagModel[] = queryTagsResponse.result;
       for (const tagToCreate of tagsToCreate) {
-        const createdTag: TagModel = yield call(createTag, { name: tagToCreate.name, type: tagToCreate.type });
+        const createdTag: TagModel = yield call(createTag, {
+          name: tagToCreate.name,
+          type: tagToCreate.type,
+        });
         createdTags.push(createdTag);
       }
       // add tag to book
@@ -627,7 +658,7 @@ const CreateBookModel: CreateBookModelType = {
         uploadPageForm.append(`page_${idx + 1}`, fs.createReadStream(page.path));
       });
       yield call(uploadBookPage, { bookId: createdBook.id, form: uploadPageForm });
-      message.success("上传成功")
+      message.success('上传成功');
     },
   },
   reducers: {
@@ -659,10 +690,7 @@ const CreateBookModel: CreateBookModelType = {
     addToPage(state, { payload: { pages } }) {
       return {
         ...state,
-        pages: [
-          ...state.pages,
-          ...pages,
-        ],
+        pages: [...state.pages, ...pages],
       };
     },
     setConfig(state, { payload: { config } }) {
@@ -709,7 +737,8 @@ const CreateBookModel: CreateBookModelType = {
     },
     addTags(state, { payload: { tags } }) {
       return {
-        ...state, tags: [...state.tags, ...tags],
+        ...state,
+        tags: [...state.tags, ...tags],
       };
     },
     setTags(state, { payload: { tags } }) {

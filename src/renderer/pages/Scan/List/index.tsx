@@ -1,33 +1,32 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import style from './style.less';
 import { connect } from 'dva';
 import ScanHeader from '@/pages/Scan/List/header';
 import DirectoryCollection from '@/pages/Scan/List/compoennts/DirectoryCollection';
 import { Directory, ScanModelStateType } from '@/pages/Scan/List/model';
-import ScanningDialog from '@/pages/Scan/List/compoennts/ScanningDialog';
 import ScanQuickView from '@/pages/Scan/List/quickview';
 import DirectoryScanOptionDrawer from '@/pages/Scan/List/scanoption';
 import UploadProgressDialog from '@/pages/Scan/List/compoennts/UploadProgressDialog';
 import { HomeModelStateType } from '@/pages/Home/model';
 
 interface ScanPagePropsType {
-  scan: ScanModelStateType,
-  home:HomeModelStateType
-  dispatch: any
+  scan: ScanModelStateType;
+  home: HomeModelStateType;
+  dispatch: any;
 }
 
-const ScanPage = ({ scan,home, dispatch }: ScanPagePropsType) => {
-
+const ScanPage = ({ scan, home, dispatch }: ScanPagePropsType) => {
   const onDirectoryCardClick = (directory: Directory) => {
     if (scan.selectedDirectory.length > 0) {
-      const isSelected = Boolean(scan.selectedDirectory.find(selectItem => selectItem === directory.path));
+      const isSelected = Boolean(
+        scan.selectedDirectory.find(selectItem => selectItem === directory.path)
+      );
       if (isSelected) {
-        onSelectedDirectoryUpdate(scan.selectedDirectory.filter(selectDirectory => selectDirectory !== directory.path));
+        onSelectedDirectoryUpdate(
+          scan.selectedDirectory.filter(selectDirectory => selectDirectory !== directory.path)
+        );
       } else {
-        onSelectedDirectoryUpdate([
-          ...scan.selectedDirectory,
-          directory.path,
-        ]);
+        onSelectedDirectoryUpdate([...scan.selectedDirectory, directory.path]);
       }
     } else {
       dispatch({
@@ -35,7 +34,6 @@ const ScanPage = ({ scan,home, dispatch }: ScanPagePropsType) => {
         payload: { directory: directory.path },
       });
     }
-
   };
   const onSelectedDirectoryUpdate = (updateSelectDirectory: string[]) => {
     dispatch({
@@ -47,9 +45,9 @@ const ScanPage = ({ scan,home, dispatch }: ScanPagePropsType) => {
   };
   return (
     <div className={style.main}>
-      <ScanQuickView/>
-      <DirectoryScanOptionDrawer/>
-      <ScanHeader/>
+      <ScanQuickView />
+      <DirectoryScanOptionDrawer />
+      <ScanHeader />
       <UploadProgressDialog
         isOpen={scan.uploadDialog.isOpen}
         title={scan.uploadDialog.current?.matchInfo?.title}
@@ -70,4 +68,4 @@ const ScanPage = ({ scan,home, dispatch }: ScanPagePropsType) => {
   );
 };
 
-export default connect(({ scan,home }) => ({ scan,home }))(ScanPage);
+export default connect(({ scan, home }) => ({ scan, home }))(ScanPage);

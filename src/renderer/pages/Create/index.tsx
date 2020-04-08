@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'dva';
-import { Divider, PageHeader, Tag, Typography } from 'antd';
+import { Divider, PageHeader, Typography } from 'antd';
 import styles from './style.less';
 import { CreateBookModelStateType, Page } from '@/pages/Create/model';
 import { router } from 'umi';
 import { DirectoryModelStateType } from '@/models/directory';
 import { FileListModelStateType } from '@/models/filelist';
-import CreateBookHeaderAction, { CreateBookMultipleActionPopsType } from '@/pages/Create/components/CreateBookHeaderAction';
+import CreateBookHeaderAction, {
+  CreateBookMultipleActionPopsType,
+} from '@/pages/Create/components/CreateBookHeaderAction';
 import ImportImageDialog from '@/pages/Create/components/ImportImageDialog';
 import noCoverImage from '@/assets/no-cover.png';
 import { path } from '@/global';
@@ -22,11 +24,11 @@ import { UserModelStateType } from '@/models/user';
 const { Paragraph } = Typography;
 
 interface CreateBookPagePropsType {
-  dispatch: any,
-  create: CreateBookModelStateType
-  directory: DirectoryModelStateType
-  fileList: FileListModelStateType
-  user: UserModelStateType
+  dispatch: any;
+  create: CreateBookModelStateType;
+  directory: DirectoryModelStateType;
+  fileList: FileListModelStateType;
+  user: UserModelStateType;
 }
 
 function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateBookPagePropsType) {
@@ -42,7 +44,6 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
     },
   };
 
-
   const onPagesChange = (newPages: Page[]) => {
     dispatch({
       type: 'create/setNewPages',
@@ -52,15 +53,13 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
     });
   };
   const onPageItemSelect = (page: Page) => {
-    const isExist = create.selectPages.find(selectedPage => selectedPage.name === page.name) !== undefined;
+    const isExist =
+      create.selectPages.find(selectedPage => selectedPage.name === page.name) !== undefined;
     let newSelectedPages = create.selectPages;
     if (isExist) {
       newSelectedPages = newSelectedPages.filter(selectedPages => selectedPages.name !== page.name);
     } else {
-      newSelectedPages = [
-        ...newSelectedPages,
-        page,
-      ];
+      newSelectedPages = [...newSelectedPages, page];
     }
     dispatch({
       type: 'create/setSelectPage',
@@ -69,9 +68,9 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
       },
     });
   };
-  const onPageItemClick = () => {
-
-  };
+  // const onPageItemClick = () => {
+  //
+  // };
 
   const dirName = path.basename(create.rootDir);
   const renderCreateTagDialog = () => {
@@ -89,26 +88,30 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
       dispatch({
         type: 'create/createTag',
         payload: {
-          name, type,
+          name,
+          type,
         },
       });
       onCancel();
     };
     return (
       // @ts-ignore
-      <CreateTagDialog isOpen={create.createTagDialog.isOpen} onCreate={onCreateTag} onClose={onCancel}/>
+      <CreateTagDialog
+        isOpen={create.createTagDialog.isOpen}
+        onCreate={onCreateTag}
+        onClose={onCancel}
+      />
     );
   };
 
-  const onDeleteTag = (tag => {
+  const onDeleteTag = tag => {
     dispatch({
       type: 'create/deleteTag',
       payload: {
         name: tag.name,
       },
     });
-  });
-
+  };
 
   const renderMatchTagDialog = () => {
     const onCloseDialog = () => {
@@ -179,7 +182,11 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
         dispatch({
           type: 'create/setSelectPage',
           payload: {
-            pages: differenceWith<Page, Page>(create.pages, create.selectPages, (a: Page, b: Page) => a.name === b.name),
+            pages: differenceWith<Page, Page>(
+              create.pages,
+              create.selectPages,
+              (a: Page, b: Page) => a.name === b.name
+            ),
           },
         });
       },
@@ -253,7 +260,7 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
   };
   return (
     <div>
-      <LoadingDialog isOpen={create.loadingDialog.isOpen} message={create.loadingDialog.message}/>
+      <LoadingDialog isOpen={create.loadingDialog.isOpen} message={create.loadingDialog.message} />
       <ImportImageDialog
         isOpen={create.importImageDialog.isShow}
         fileName={create.importImageDialog.fileName}
@@ -261,8 +268,11 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
         total={create.importImageDialog.total}
         current={create.importImageDialog.current}
       />
-      <AutoImportProgressDialog isOpen={create.autoImportDialog.isOpen} message={create.autoImportDialog.message}
-                                progress={create.autoImportDialog.progress}/>
+      <AutoImportProgressDialog
+        isOpen={create.autoImportDialog.isOpen}
+        message={create.autoImportDialog.message}
+        progress={create.autoImportDialog.progress}
+      />
       {renderCreateTagDialog()}
       {renderMatchTagDialog()}
       <div className={styles.headerWrap}>
@@ -279,14 +289,19 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
       <div className={styles.main}>
         <div className={styles.header}>
           <div>
-            <img src={create.coverThumbnail ? create.coverThumbnail : noCoverImage} className={styles.cover}/>
+            <img
+              src={create.coverThumbnail ? create.coverThumbnail : noCoverImage}
+              className={styles.cover}
+            />
           </div>
           <div className={styles.info}>
-            <Paragraph className={styles.title} editable={titleEditConfig}>{title}</Paragraph>
-            <Divider className={styles.divider}/>
+            <Paragraph className={styles.title} editable={titleEditConfig}>
+              {title}
+            </Paragraph>
+            <Divider className={styles.divider} />
             <div>
               <span className={styles.fieldTitle}>标签</span>
-              <TagCollection tags={create.tags} onDeleteTag={onDeleteTag}/>
+              <TagCollection tags={create.tags} onDeleteTag={onDeleteTag} />
             </div>
           </div>
         </div>
@@ -300,7 +315,6 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
           />
         </div>
       </div>
-
     </div>
   );
 }

@@ -2,25 +2,31 @@ import React from 'react';
 import { connect } from 'dva';
 import { Directory, ScanModelStateType } from '@/pages/Scan/List/model';
 import { router } from 'umi';
-import { Affix, Button, Dropdown, Icon, Menu, PageHeader } from 'antd';
+import { Affix, Button, Dropdown, Menu, PageHeader } from 'antd';
 import { differenceWith } from 'lodash';
 import styles from './header.less';
-import SubMenu from 'antd/es/menu/SubMenu';
 import AccountButton from '@/components/AccountButton';
 import { UserModelStateType } from '@/models/user';
-
+import SearchIcon from '@ant-design/icons/SearchOutlined';
+import SettingIcon from '@ant-design/icons/SettingOutlined';
+import GlobalIcon from '@ant-design/icons/GlobalOutlined';
+import CheckIcon from '@ant-design/icons/CheckOutlined';
+import ReloadIcon from '@ant-design/icons/ReloadOutlined';
+import TagIcon from '@ant-design/icons/TagFilled';
+import CloseIcon from '@ant-design/icons/CloseOutlined';
+import DeleteIcon from '@ant-design/icons/DeleteFilled';
+import MenuIcon from '@ant-design/icons/MenuOutlined';
+import SetTitleIcon from '@ant-design/icons/EditOutlined';
+import InputTitleDialog from '@/pages/Scan/List/compoennts/InputTitleDialog';
+import { DialogKeys, DialogsModelStateType } from '@/models/dialog';
 interface ScanHeaderPropsType {
-  scan: ScanModelStateType
-  dispatch: any
-  user:UserModelStateType
+  scan: ScanModelStateType;
+  dispatch: any;
+  user: UserModelStateType;
+  dialogs: DialogsModelStateType;
 }
 
-const ScanHeader = (
-  {
-    dispatch,
-    scan,
-    user,
-  }: ScanHeaderPropsType) => {
+const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHeaderPropsType) => {
   const onScanMenuAction = () => {
     dispatch({
       type: 'scan/scanBookDirectory',
@@ -35,7 +41,7 @@ const ScanHeader = (
     dispatch({
       type: 'scan/setSelectedDirectory',
       payload: {
-        directoryList: scan.directoryList.map(item => (item.path)),
+        directoryList: scan.directoryList.map(item => item.path),
       },
     });
   };
@@ -51,7 +57,11 @@ const ScanHeader = (
     dispatch({
       type: 'scan/setSelectedDirectory',
       payload: {
-        directoryList: differenceWith<Directory, string>(scan.directoryList, scan.selectedDirectory, (a: Directory, b: string) => a.path === b).map(it => (it.path)),
+        directoryList: differenceWith<Directory, string>(
+          scan.directoryList,
+          scan.selectedDirectory,
+          (a: Directory, b: string) => a.path === b
+        ).map(it => it.path),
       },
     });
   };
@@ -75,56 +85,123 @@ const ScanHeader = (
   };
   const onLogin = () => {
     dispatch({
-      type:"user/showLoginDialog"
-    })
-  }
+      type: 'user/showLoginDialog',
+    });
+  };
   const onLogout = () => {
     dispatch({
-      type:"user/logout"
-    })
-  }
+      type: 'user/logout',
+    });
+  };
   const menu = (
     <Menu>
-      <Menu.Item onClick={onScanMenuAction}><Icon type="search"/>扫描</Menu.Item>
-      <Menu.Divider/>
-      <Menu.Item onClick={openScanOptionDrawer}><Icon type="setting"/>设置扫描参数</Menu.Item>
-      <Menu.Divider/>
-      <Menu.Item onClick={onUploadToYouComic}><Icon type="global"/>上传至YouComic</Menu.Item>
-
+      <Menu.Item onClick={onScanMenuAction}>
+        <SearchIcon />
+        扫描
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item onClick={openScanOptionDrawer}>
+        <SettingIcon />
+        设置扫描参数
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item onClick={onUploadToYouComic}>
+        <GlobalIcon />
+        上传至YouComic
+      </Menu.Item>
     </Menu>
   );
+  const onOpenInputTitle = () => {
+    dispatch({
+      type: 'dialogs/setDialogActive',
+      payload: {
+        key: DialogKeys.ScanInputMultipleTitle,
+        isActive: true,
+      },
+    });
+  };
+  const renderInputTitleDialog = () => {
+    const onCloseInputTitle = () => {
+      dispatch({
+        type: 'dialogs/setDialogActive',
+        payload: {
+          key: DialogKeys.ScanInputMultipleTitle,
+          isActive: false,
+        },
+      });
+    };
+    const onOk = (title: string) => {
+      dispatch({
+        type: 'scan/setSelectTitle',
+        payload: {
+          title,
+        },
+      });
+      onCloseInputTitle();
+    };
+    return (
+      <InputTitleDialog
+        isOpen={Boolean(activeDialogs[DialogKeys.ScanInputMultipleTitle])}
+        onOK={onOk}
+        onCancel={onCloseInputTitle}
+      />
+    );
+  };
   const multipleActionMenu = (
     <Menu>
-      <Menu.Item onClick={onMenuActionSelectAll}><Icon type="check"/>全选</Menu.Item>
-      <Menu.Item onClick={onMenuActionReverseSelect}><Icon type="reload"/>反选</Menu.Item>
-      <Menu.Item onClick={onMenuActionUnselectAll}><Icon type="close"/>取消选择</Menu.Item>
-      <Menu.Divider/>
-      <Menu.Item onClick={onMenuActionAddTags}><Icon type="tag"/>添加标签</Menu.Item>
-      <Menu.Divider/>
-      <Menu.Item onClick={onMenuActionRemoveSelectedDirectory}><Icon type="delete"/>从列表中移除</Menu.Item>
-
+      <Menu.Item onClick={onMenuActionSelectAll}>
+        <CheckIcon />
+        全选
+      </Menu.Item>
+      <Menu.Item onClick={onMenuActionReverseSelect}>
+        <ReloadIcon />
+        反选
+      </Menu.Item>
+      <Menu.Item onClick={onMenuActionUnselectAll}>
+        <CloseIcon />
+        取消选择
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item onClick={onMenuActionAddTags}>
+        <TagIcon />
+        添加标签
+      </Menu.Item>
+      <Menu.Item onClick={onOpenInputTitle}>
+        <SetTitleIcon />
+        编辑标题
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item onClick={onMenuActionRemoveSelectedDirectory}>
+        <DeleteIcon />
+        从列表中移除
+      </Menu.Item>
     </Menu>
   );
   const headerAction = (
     <div>
-      {
-        scan.selectedDirectory.length !== 0 &&
+      {scan.selectedDirectory.length !== 0 && (
         <Dropdown overlay={multipleActionMenu}>
-          <Button className={styles.headerActionButton}><Icon type="menu"/>{`选中${scan.selectedDirectory.length}项`}
+          <Button className={styles.headerActionButton}>
+            <MenuIcon />
+            {`选中${scan.selectedDirectory.length}项`}
           </Button>
         </Dropdown>
-      }
+      )}
 
       <Dropdown overlay={menu} placement={'bottomLeft'}>
-        <Button type="primary" className={styles.headerActionButton}><Icon type="menu"/>菜单</Button>
+        <Button type="primary" className={styles.headerActionButton}>
+          <MenuIcon />
+          菜单
+        </Button>
       </Dropdown>
       <span className={styles.accountButtonWrap}>
-        <AccountButton user={user.current} onLogin={onLogin} onLogout={onLogout}/>
+        <AccountButton user={user.current} onLogin={onLogin} onLogout={onLogout} />
       </span>
     </div>
   );
   return (
     <div>
+      {renderInputTitleDialog()}
       <Affix>
         <PageHeader
           className={styles.header}
@@ -136,5 +213,4 @@ const ScanHeader = (
     </div>
   );
 };
-export default connect(({ scan,user }) => ({ scan,user }))(ScanHeader);
-
+export default connect(({ scan, user, dialogs }) => ({ scan, user, dialogs }))(ScanHeader);
