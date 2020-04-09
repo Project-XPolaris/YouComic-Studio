@@ -120,7 +120,7 @@ const ScanModel: ScanModelType = {
   },
   subscriptions: {},
   effects: {
-    *scanBookDirectory(state, { call, put, select }) {
+    * scanBookDirectory(state, { call, put, select }) {
       const scanState: ScanModelStateType = yield select(state => state.scan);
       const homeState: HomeModelStateType = yield select(state => state.home);
       const directoryList: Directory[] = yield call(scanBookDirectory, { path: homeState.path });
@@ -136,7 +136,7 @@ const ScanModel: ScanModelType = {
         },
       });
     },
-    *selectItemCover(_, { call, put, select }) {
+    * selectItemCover(_, { call, put, select }) {
       const scanState: ScanModelStateType = yield select(state => state.scan);
 
       const selectFiles: string[] = yield call(selectImageFile, {
@@ -152,7 +152,7 @@ const ScanModel: ScanModelType = {
         },
       });
     },
-    *uploadToYouComic(_, { call, put, select }) {
+    * uploadToYouComic(_, { call, put, select }) {
       const scanState: ScanModelStateType = yield select(state => state.scan);
       yield put({
         type: 'updateUploadDialog',
@@ -200,16 +200,15 @@ const ScanModel: ScanModelType = {
         });
         // query exists tag
         const queryExistTagResponse: ListQueryContainer<TagModel> = yield call(queryTags, {
-          queryParams: {
-            name: tags.map(tag => tag.name),
-            page: 1,
-            pageSize: tags.length,
-          },
+          name: tags.map(tag => tag.name),
+          page: 1,
+          pageSize: tags.length,
         });
+
         const tagToCreate = differenceWith(
           tags,
           queryExistTagResponse.result,
-          (a, b) => a.name === b.name
+          (a, b) => a.name === b.name,
         );
         const tagToAdd = queryExistTagResponse.result;
         // create tag
@@ -434,7 +433,7 @@ const ScanModel: ScanModelType = {
         directoryList: differenceWith(
           state.directoryList,
           state.selectedDirectory,
-          (a, b) => a.path === b
+          (a, b) => a.path === b,
         ),
         selectedDirectory: [],
       };

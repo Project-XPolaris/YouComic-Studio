@@ -30,14 +30,18 @@ const CreateTagDialog = ({ isOpen = false, onClose, onCreate }: CreateTagDialogP
         initialValues={{ modifier: 'public' }}
       >
         <Form.Item
-          name="title"
-          label="Title"
-          rules={[{ required: true, message: 'Please input the title of collection!' }]}
+          name="name"
+          label="名称"
+          rules={[{ required: true, message: '请输入名称' }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item name="description" label="Description">
-          <Input type="textarea" />
+        <Form.Item
+          name="type"
+          label="类型"
+          rules={[{ required: true, message: '请输入类型' }]}
+        >
+          <Input />
         </Form.Item>
       </Form>
     </Modal>
