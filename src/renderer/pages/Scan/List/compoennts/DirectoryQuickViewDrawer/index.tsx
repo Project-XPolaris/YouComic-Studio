@@ -18,6 +18,7 @@ interface DirectoryQuickViewDrawerPropsType {
   title?: string;
   artist?: string;
   theme?: string;
+  dirname?:string;
   series?: string;
   translator?: string;
   pages: PageItem[];
@@ -40,6 +41,7 @@ export default function DirectoryQuickViewDrawer({
   onInfoChange,
   onSelectCoverAction,
   onAddTag,
+  dirname,
   extraTags = [],
 }: DirectoryQuickViewDrawerPropsType) {
   const PageCollection = () => {
@@ -79,6 +81,13 @@ export default function DirectoryQuickViewDrawer({
           {coverURL && <img src={coverURL} className={styles.cover} />}
         </div>
         <Descriptions bordered={true} className={styles.infoWrap} column={1}>
+          <Descriptions.Item label={'文件夹名称'}>
+            <Text
+              className={styles.editableText}
+            >
+              {dirname}
+            </Text>
+          </Descriptions.Item>
           <Descriptions.Item label={'标题'}>
             <Text
               editable={{

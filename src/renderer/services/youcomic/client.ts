@@ -78,3 +78,9 @@ export const queryTags = ({ ...queryParams }) => {
     params: queryParams,
   });
 }
+
+export const queryBooks = ({ ...queryParams }) => {
+  return request.get(`/books`, {
+    params: queryParams,
+  });
+}

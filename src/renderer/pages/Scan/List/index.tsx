@@ -9,6 +9,7 @@ import DirectoryScanOptionDrawer from '@/pages/Scan/List/scanoption';
 import UploadProgressDialog from '@/pages/Scan/List/compoennts/UploadProgressDialog';
 import { HomeModelStateType } from '@/pages/Home/model';
 import ScanningDialog from '@/pages/Scan/List/compoennts/ScanningDialog';
+import { Book } from '@/services/youcomic/model';
 
 interface ScanPagePropsType {
   scan: ScanModelStateType;
@@ -64,6 +65,7 @@ const ScanPage = ({ scan, home, dispatch }: ScanPagePropsType) => {
           onCardClick={onDirectoryCardClick}
           selectedDirectory={scan.selectedDirectory}
           onSelectedDirectoryUpdate={onSelectedDirectoryUpdate}
+          existBookNames={scan.existBook.map((book:Book) => book.name)}
         />
       </div>
     </div>

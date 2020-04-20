@@ -14,14 +14,16 @@ interface DirectoryCardPropsType {
   onClick: (directory) => void;
   isSelected?: boolean;
   onCardSelect: (directory: Directory) => void;
+  isExist: boolean
 }
 
 export default function DirectoryCard({
-  directory,
-  isSelected = false,
-  onCardSelect,
-  ...props
-}: DirectoryCardPropsType) {
+                                        directory,
+                                        isSelected = false,
+                                        onCardSelect,
+                                        isExist = false,
+                                        ...props
+                                      }: DirectoryCardPropsType) {
   const onCardClick = () => {
     props.onClick(directory);
   };
@@ -31,56 +33,67 @@ export default function DirectoryCard({
   const menu = (
     <Menu>
       <Menu.Item key="1" onClick={onContextMenuActionSelect}>
-        <SelectIcon /> 选择
+        <SelectIcon/> 选择
       </Menu.Item>
     </Menu>
   );
   const { title = '未知' } = directory;
   return (
     <Dropdown overlay={menu} trigger={['contextMenu']}>
-      <Card className={style.main} hoverable onClick={onCardClick}>
-        <div className={style.left}>
-          {directory.targetFiles.length > 0 && (
-            <img src={directory.coverPath} className={style.cover} />
-          )}
-          <div className={style.infoWrap}>
-            <div className={isSelected ? style.titleSelected : style.title}>{title}</div>
-            {directory.matchInfo && directory.matchInfo.artist && (
-              <Tag color="#108ee9" className={style.tag}>
-                <UserIcon />
-                {directory.matchInfo.artist}
-              </Tag>
+      <Card hoverable onClick={onCardClick}>
+        <div className={style.main}>
+          <div className={style.left}>
+            {directory.targetFiles.length > 0 && (
+              <img src={directory.coverPath} className={style.cover}/>
             )}
-            <div>
-              {directory.matchInfo && directory.matchInfo.theme && (
+            <div className={style.infoWrap}>
+              <div className={isSelected ? style.titleSelected : style.title}>{title}</div>
+              {directory.matchInfo && directory.matchInfo.artist && (
                 <Tag color="#108ee9" className={style.tag}>
-                  {' '}
-                  <SmileIcon />
-                  {directory.matchInfo.theme}
+                  <UserIcon/>
+                  {directory.matchInfo.artist}
                 </Tag>
               )}
-              {directory.matchInfo && directory.matchInfo.series && (
-                <Tag color="#108ee9" className={style.tag}>
-                  <BookIcon />
-                  {directory.matchInfo.series}
-                </Tag>
-              )}
-              {directory.matchInfo && directory.matchInfo.translator && (
-                <Tag color="#108ee9" className={style.tag}>
-                  <GlobalIcon />
-                  {directory.matchInfo.translator}
-                </Tag>
-              )}
-              {directory?.extraTags?.map(extraTag => {
-                return (
-                  <Tag key={extraTag.name} className={style.tag}>
-                    <TagIcon />
-                    {extraTag.name}
+              <div>
+                {directory.matchInfo && directory.matchInfo.theme && (
+                  <Tag color="#108ee9" className={style.tag}>
+                    {' '}
+                    <SmileIcon/>
+                    {directory.matchInfo.theme}
                   </Tag>
-                );
-              })}
+                )}
+                {directory.matchInfo && directory.matchInfo.series && (
+                  <Tag color="#108ee9" className={style.tag}>
+                    <BookIcon/>
+                    {directory.matchInfo.series}
+                  </Tag>
+                )}
+                {directory.matchInfo && directory.matchInfo.translator && (
+                  <Tag color="#108ee9" className={style.tag}>
+                    <GlobalIcon/>
+                    {directory.matchInfo.translator}
+                  </Tag>
+                )}
+                {directory?.extraTags?.map(extraTag => {
+                  return (
+                    <Tag key={extraTag.name} className={style.tag}>
+                      <TagIcon/>
+                      {extraTag.name}
+                    </Tag>
+                  );
+                })}
+              </div>
+              <div className={style.directoryName}>{directory.name}</div>
             </div>
-            <div className={style.directoryName}>{directory.name}</div>
+          </div>
+
+          <div style={{ display: 'flex' }}>
+            <div>
+              {isExist && <Tag color="warning">
+                已存在
+              </Tag>}
+            </div>
+
           </div>
         </div>
       </Card>

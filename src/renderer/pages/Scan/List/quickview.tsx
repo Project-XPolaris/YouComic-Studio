@@ -76,6 +76,7 @@ function ScanQuickView({
         onInfoChange={onInfoChange}
         onSelectCoverAction={onSelectCoverFile}
         onAddTag={openCreateTagDialog}
+        dirname={directoryItem?.name}
         extraTags={directoryItem?.extraTags}
       />
     </div>

@@ -10,6 +10,7 @@ interface DirectoryCollectionPropsType {
   onCardClick: (directory: Directory) => void;
   selectedDirectory?: string[];
   onSelectedDirectoryUpdate: (newSelectedDirectory: string[]) => void;
+  existBookNames:string[]
 }
 
 export default function DirectoryCollection({
@@ -17,6 +18,7 @@ export default function DirectoryCollection({
   onCardClick,
   selectedDirectory,
   onSelectedDirectoryUpdate,
+  existBookNames
 }: DirectoryCollectionPropsType) {
   const empty = (
     <div className={style.emptyWrap}>
@@ -32,6 +34,8 @@ export default function DirectoryCollection({
         onSelectedDirectoryUpdate([...selectedDirectory, item.path]);
       }
     };
+    const isExist = Boolean(existBookNames.find(name => name === item.title));
+
     return (
       <Col span={24} key={item.path}>
         <DirectoryCard
@@ -39,6 +43,7 @@ export default function DirectoryCollection({
           onClick={onCardClick}
           isSelected={isSelected}
           onCardSelect={onCardSelect}
+          isExist={isExist}
         />
       </Col>
     );

@@ -57,6 +57,7 @@ export interface ScanModelStateType {
     totalProgress: number;
     isOpen: boolean;
   };
+  existBook: Book[];
 }
 
 export interface ScanModelType {
@@ -81,6 +82,7 @@ export interface ScanModelType {
     setSelectedDirectoryCover: Reducer<ScanModelStateType>;
     updateUploadDialog: Reducer<ScanModelStateType>;
     setSelectTitle: Reducer<ScanModelStateType>;
+    setExistBook:Reducer
   };
   state: ScanModelStateType;
   effects: {
@@ -118,6 +120,7 @@ const ScanModel: ScanModelType = {
       totalProgress: 0,
       isOpen: false,
     },
+    existBook: []
   },
   subscriptions: {},
   effects: {
