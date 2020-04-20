@@ -2492,10 +2492,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-virtualized@^9.21.8":
-  version "9.21.8"
-  resolved "https://registry.npm.taobao.org/@types/react-virtualized/download/@types/react-virtualized-9.21.8.tgz#dc0150a75fd6e42f33729886463ece04d03367ea"
-  integrity sha1-3AFQp1/W5C8zcpiGRj7OBNAzZ+o=
+"@types/react-virtualized@^9.21.9":
+  version "9.21.9"
+  resolved "https://registry.npm.taobao.org/@types/react-virtualized/download/@types/react-virtualized-9.21.9.tgz#10b57fa5979d008bd38633ad62a7461e14327cc0"
+  integrity sha1-ELV/pZedAIvThjOtYqdGHhQyfMA=
   dependencies:
     "@types/prop-types" "*"
     "@types/react" "*"

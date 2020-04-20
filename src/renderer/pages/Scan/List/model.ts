@@ -15,6 +15,8 @@ import {
   uploadCover,
 } from '@/services/youcomic/client';
 import { HomeModelStateType } from '@/pages/Home/model';
+import scan from '@/pages/Scan/List/compoennts/modules/scan';
+import upload from '@/pages/Scan/List/compoennts/modules/upload';
 
 export interface Directory {
   path: string;
@@ -92,8 +94,7 @@ export interface ScanModelType {
 const ScanModel: ScanModelType = {
   namespace: 'scan',
   state: {
-    path:
-      'C:\\Users\\takayamaaren\\Downloads\\dmzj\\zhuanshengchengweileyinvyouxilimanshisiwanflagdeey 转生成为了乙女游戏里满是死亡flag的恶役千金——走投无路！破灭前夕篇',
+    path: '',
     directoryList: [],
     scanningDialog: {
       isOpen: false,
@@ -120,22 +121,8 @@ const ScanModel: ScanModelType = {
   },
   subscriptions: {},
   effects: {
-    * scanBookDirectory(state, { call, put, select }) {
-      const scanState: ScanModelStateType = yield select(state => state.scan);
-      const homeState: HomeModelStateType = yield select(state => state.home);
-      const directoryList: Directory[] = yield call(scanBookDirectory, { path: homeState.path });
-      directoryList.forEach((dir: Directory) => {
-        dir.matchInfo = matchTagInfo(dir.name);
-        dir.coverPath = dir.targetFiles[0].path;
-        dir.extraTags = [];
-      });
-      yield put({
-        type: 'setDirectoryList',
-        payload: {
-          directoryList,
-        },
-      });
-    },
+    ...scan.effects,
+    ...upload.effects,
     * selectItemCover(_, { call, put, select }) {
       const scanState: ScanModelStateType = yield select(state => state.scan);
 
@@ -152,118 +139,11 @@ const ScanModel: ScanModelType = {
         },
       });
     },
-    * uploadToYouComic(_, { call, put, select }) {
-      const scanState: ScanModelStateType = yield select(state => state.scan);
-      yield put({
-        type: 'updateUploadDialog',
-        payload: {
-          dialog: {
-            totalCount: scanState.directoryList.length,
-            totalProgress: 0,
-          },
-        },
-      });
-      for (let idx = 0; idx < scanState.directoryList.length; idx++) {
-        const dir = scanState.directoryList[idx];
-        const progressTotal = 4;
-        yield put({
-          type: 'updateUploadDialog',
-          payload: {
-            dialog: {
-              isOpen: true,
-              current: dir,
-              currentProgress: 0,
-              currentInfo: '创建书籍',
-              completeCount: idx,
-              totalProgress: Math.ceil((idx / scanState.directoryList.length) * 100),
-            },
-          },
-        });
-        // create book
-        const book: Book = yield call(createNewBook, { name: dir.title });
-        // create tags
-        yield put({
-          type: 'updateUploadDialog',
-          payload: {
-            dialog: {
-              currentProgress: Math.ceil((1 / progressTotal) * 100),
-              currentInfo: '添加标签',
-            },
-          },
-        });
-        const tags = [];
-        forOwn(dir.matchInfo, (value, key) => {
-          if (key === 'title') {
-            return;
-          }
-          tags.push({ name: value, type: key });
-        });
-        // query exists tag
-        const queryExistTagResponse: ListQueryContainer<TagModel> = yield call(queryTags, {
-          name: tags.map(tag => tag.name),
-          page: 1,
-          pageSize: tags.length,
-        });
 
-        const tagToCreate = differenceWith(
-          tags,
-          queryExistTagResponse.result,
-          (a, b) => a.name === b.name,
-        );
-        const tagToAdd = queryExistTagResponse.result;
-        // create tag
-        for (const tagToCreateElement of tagToCreate) {
-          const createTagResponse: TagModel = yield call(createTag, {
-            name: tagToCreateElement.name,
-            type: tagToCreateElement.type,
-          });
-          tagToAdd.push(createTagResponse);
-        }
-
-        const tagIds = tagToAdd.map(tag => tag.id);
-        yield call(addTagToBook, { bookId: book.id, tags: tagIds });
-
-        // upload cover
-        yield put({
-          type: 'updateUploadDialog',
-          payload: {
-            dialog: {
-              currentProgress: Math.ceil((2 / progressTotal) * 100),
-              currentInfo: '上传封面',
-            },
-          },
-        });
-        const uploadCoverForm = new nodeFormData();
-        uploadCoverForm.append('image', fs.createReadStream(dir.coverPath));
-        yield call(uploadCover, { form: uploadCoverForm, bookId: book.id });
-
-        // upload page
-        yield put({
-          type: 'updateUploadDialog',
-          payload: {
-            dialog: {
-              currentProgress: Math.ceil((3 / progressTotal) * 100),
-              currentInfo: '上传页面',
-            },
-          },
-        });
-        const uploadPageForm = new nodeFormData();
-        dir.targetFiles.forEach((file, idx) => {
-          uploadPageForm.append(`page_${idx + 1}`, fs.createReadStream(file.path));
-        });
-        yield call(uploadBookPage, { bookId: book.id, form: uploadPageForm });
-      }
-      yield put({
-        type: 'updateUploadDialog',
-        payload: {
-          dialog: {
-            isOpen: false,
-          },
-        },
-      });
-    },
   },
   reducers: {
+    ...scan.reducers,
+    ...upload.reducers,
     setState(state, { payload: { newState } }) {
       return {
         ...state,
@@ -276,12 +156,7 @@ const ScanModel: ScanModelType = {
         scanningDialog: dialog,
       };
     },
-    setDirectoryList(state, { payload: { directoryList } }) {
-      return {
-        ...state,
-        directoryList,
-      };
-    },
+
     quickViewDirectory(state, { payload: { directory } }) {
       return {
         ...state,
@@ -473,15 +348,7 @@ const ScanModel: ScanModelType = {
           };
       }
     },
-    updateUploadDialog(state, { payload: { dialog } }) {
-      return {
-        ...state,
-        uploadDialog: {
-          ...state.uploadDialog,
-          ...dialog,
-        },
-      };
-    },
+
     setPath(state, { payload: { path } }) {
       return {
         ...state,

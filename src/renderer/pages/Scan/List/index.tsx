@@ -8,6 +8,7 @@ import ScanQuickView from '@/pages/Scan/List/quickview';
 import DirectoryScanOptionDrawer from '@/pages/Scan/List/scanoption';
 import UploadProgressDialog from '@/pages/Scan/List/compoennts/UploadProgressDialog';
 import { HomeModelStateType } from '@/pages/Home/model';
+import ScanningDialog from '@/pages/Scan/List/compoennts/ScanningDialog';
 
 interface ScanPagePropsType {
   scan: ScanModelStateType;
@@ -47,6 +48,7 @@ const ScanPage = ({ scan, home, dispatch }: ScanPagePropsType) => {
     <div className={style.main}>
       <ScanQuickView />
       <DirectoryScanOptionDrawer />
+      <ScanningDialog isOpen={scan.scanningDialog.isOpen} />
       <ScanHeader />
       <UploadProgressDialog
         isOpen={scan.uploadDialog.isOpen}

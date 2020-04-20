@@ -1,6 +1,7 @@
 import { nodeHttp, nodeURL } from '@/global';
 import  request  from '@/services/youcomic/request';
 import { baseUrl } from '@/services/youcomic/config';
+import { ApplicationConfig } from '@/config';
 
 export const createNewBook = ({ name }) => {
   return request.post(`/books`, {
@@ -29,12 +30,16 @@ export const queryUser = ({id} : {id:number}) => {
 }
 export const uploadCover = ({ form, bookId })=>{
   return new Promise((resolve, reject) => {
+    const token = localStorage.getItem(ApplicationConfig.AUTH_USER_TOKEN_KEY);
     const request = nodeHttp.request({
       method: 'put',
       host: nodeURL.parse(baseUrl).host.replace(`:${nodeURL.parse(baseUrl).port}`,""),
       port: nodeURL.parse(baseUrl).port,
       path: `/book/${bookId}/cover`,
-      headers: form.getHeaders(),
+      headers: {
+        ...form.getHeaders(),
+        'Authorization': token,
+      },
     });
     form.pipe(request);
     request.on('response', (res) => {
@@ -44,12 +49,16 @@ export const uploadCover = ({ form, bookId })=>{
 }
 export const uploadBookPage = ({ form, bookId }) =>{
   return new Promise((resolve, reject) => {
+    const token = localStorage.getItem(ApplicationConfig.AUTH_USER_TOKEN_KEY);
     const request = nodeHttp.request({
       method: 'put',
       host: nodeURL.parse(baseUrl).host.replace(`:${nodeURL.parse(baseUrl).port}`,""),
       port: nodeURL.parse(baseUrl).port,
       path: `/book/${bookId}/pages`,
-      headers: form.getHeaders(),
+      headers: {
+        ...form.getHeaders(),
+        'Authorization': token,
+      },
     });
     form.pipe(request);
     request.on('response', (res) => {

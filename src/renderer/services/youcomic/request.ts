@@ -43,4 +43,18 @@ const request = extend({
   errorHandler,
 });
 request.interceptors.request.use(interceptor);
+request.interceptors.request.use((url, options) => {
+  const token = localStorage.getItem(ApplicationConfig.AUTH_USER_TOKEN_KEY);
+  return (
+    {
+      options: {
+        ...options,
+        headers: {
+          ...options.headers,
+          'Authorization': token,
+        },
+      },
+    }
+  );
+});
 export default request;

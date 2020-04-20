@@ -19,6 +19,7 @@ import MenuIcon from '@ant-design/icons/MenuOutlined';
 import SetTitleIcon from '@ant-design/icons/EditOutlined';
 import InputTitleDialog from '@/pages/Scan/List/compoennts/InputTitleDialog';
 import { DialogKeys, DialogsModelStateType } from '@/models/dialog';
+import { ClickParam } from 'antd/es/menu';
 interface ScanHeaderPropsType {
   scan: ScanModelStateType;
   dispatch: any;
@@ -27,7 +28,8 @@ interface ScanHeaderPropsType {
 }
 
 const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHeaderPropsType) => {
-  const onScanMenuAction = () => {
+  const onScanMenuAction = (e : ClickParam) => {
+    e.domEvent.preventDefault()
     dispatch({
       type: 'scan/scanBookDirectory',
     });
