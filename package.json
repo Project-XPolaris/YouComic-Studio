@@ -101,6 +101,7 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
+    "@ant-design/dark-theme": "^2.0.1",
     "@ant-design/icons": "^4.0.5",
     "@ant-design/pro-layout": "^5.0.9",
     "@types/form-data": "^2.5.0",

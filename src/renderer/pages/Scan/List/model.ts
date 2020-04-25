@@ -1,22 +1,12 @@
 import { Effect } from 'dva';
-import { scanBookDirectory } from '@/services/scan';
 import { Reducer } from 'redux';
-import { matchTagInfo, MatchTextInfo } from '@/utils/match';
+import { MatchTextInfo } from '@/utils/match';
 import { selectImageFile } from '@/services/file';
-import { differenceWith, forOwn } from 'lodash';
-import { fs, nodeFormData } from '@/global';
-import { Book, ListQueryContainer, Tag as TagModel } from '@/services/youcomic/model';
-import {
-  addTagToBook,
-  createNewBook,
-  createTag,
-  queryTags,
-  uploadBookPage,
-  uploadCover,
-} from '@/services/youcomic/client';
-import { HomeModelStateType } from '@/pages/Home/model';
+import { differenceWith } from 'lodash';
+import { Book } from '@/services/youcomic/model';
 import scan from '@/pages/Scan/List/compoennts/modules/scan';
 import upload from '@/pages/Scan/List/compoennts/modules/upload';
+import filter from '@/pages/Scan/List/compoennts/modules/filter';
 
 export interface Directory {
   path: string;
@@ -28,6 +18,10 @@ export interface Directory {
   coverPath?: string;
   extraTags: Array<{ type: string; name: string }>;
   title?: string;
+}
+
+export interface DirFilter {
+  onFilter(directory: Directory): Boolean
 }
 
 export interface ScanModelStateType {
@@ -57,7 +51,12 @@ export interface ScanModelStateType {
     totalProgress: number;
     isOpen: boolean;
   };
-  existBook: Book[];
+  filterDrawer: {
+    isShow: boolean
+  }
+  existBook: Book[]
+  filter: string[]
+  displayList: string[]
 }
 
 export interface ScanModelType {
@@ -82,7 +81,10 @@ export interface ScanModelType {
     setSelectedDirectoryCover: Reducer<ScanModelStateType>;
     updateUploadDialog: Reducer<ScanModelStateType>;
     setSelectTitle: Reducer<ScanModelStateType>;
-    setExistBook:Reducer
+    setExistBook: Reducer
+    setFilterDrawerVisible: Reducer
+    setDirFilter: Reducer
+    setDisplayDirPath: Reducer
   };
   state: ScanModelStateType;
   effects: {
@@ -120,7 +122,12 @@ const ScanModel: ScanModelType = {
       totalProgress: 0,
       isOpen: false,
     },
-    existBook: []
+    existBook: [],
+    filterDrawer: {
+      isShow: false,
+    },
+    filter: [],
+    displayList: [],
   },
   subscriptions: {},
   effects: {
@@ -147,6 +154,7 @@ const ScanModel: ScanModelType = {
   reducers: {
     ...scan.reducers,
     ...upload.reducers,
+    ...filter.reducers,
     setState(state, { payload: { newState } }) {
       return {
         ...state,
@@ -380,6 +388,21 @@ const ScanModel: ScanModelType = {
           }
           return dirItem;
         }),
+      };
+    },
+    setFilterDrawerVisible(state, { payload: { isShow } }) {
+      return {
+        ...state,
+        filterDrawer: {
+          ...state.filterDrawer,
+          isShow,
+        },
+      };
+    },
+    setDisplayDirPath(state, { payload: { list } }) {
+      return {
+        ...state,
+        displayList: list,
       };
     },
   },

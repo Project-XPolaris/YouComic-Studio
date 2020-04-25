@@ -10,6 +10,7 @@ import UploadProgressDialog from '@/pages/Scan/List/compoennts/UploadProgressDia
 import { HomeModelStateType } from '@/pages/Home/model';
 import ScanningDialog from '@/pages/Scan/List/compoennts/ScanningDialog';
 import { Book } from '@/services/youcomic/model';
+import DirFilterDrawer from '@/pages/Scan/List/filterdrawer';
 
 interface ScanPagePropsType {
   scan: ScanModelStateType;
@@ -49,6 +50,7 @@ const ScanPage = ({ scan, home, dispatch }: ScanPagePropsType) => {
     <div className={style.main}>
       <ScanQuickView />
       <DirectoryScanOptionDrawer />
+      <DirFilterDrawer />
       <ScanningDialog isOpen={scan.scanningDialog.isOpen} />
       <ScanHeader />
       <UploadProgressDialog
@@ -66,6 +68,7 @@ const ScanPage = ({ scan, home, dispatch }: ScanPagePropsType) => {
           selectedDirectory={scan.selectedDirectory}
           onSelectedDirectoryUpdate={onSelectedDirectoryUpdate}
           existBookNames={scan.existBook.map((book:Book) => book.name)}
+          displayDirPath={scan.displayList}
         />
       </div>
     </div>

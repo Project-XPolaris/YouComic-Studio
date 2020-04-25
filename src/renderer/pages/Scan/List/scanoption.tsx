@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect, Dispatch } from 'dva';
+import { connect } from 'dva';
 import ScanOptionDrawer from '@/pages/Scan/List/compoennts/ScanOptionDrawer';
 import { ScanModelStateType } from '@/pages/Scan/List/model';
 
@@ -7,7 +7,7 @@ import { ScanModelStateType } from '@/pages/Scan/List/model';
 
 
 interface DirectoryScanOptionDrawerPropsType {
-  dispatch: Dispatch,
+  dispatch: any,
   scan:ScanModelStateType
 }
 

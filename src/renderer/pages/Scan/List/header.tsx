@@ -17,6 +17,7 @@ import CloseIcon from '@ant-design/icons/CloseOutlined';
 import DeleteIcon from '@ant-design/icons/DeleteFilled';
 import MenuIcon from '@ant-design/icons/MenuOutlined';
 import SetTitleIcon from '@ant-design/icons/EditOutlined';
+import FilterIcon from '@ant-design/icons/FilterFilled';
 import InputTitleDialog from '@/pages/Scan/List/compoennts/InputTitleDialog';
 import { DialogKeys, DialogsModelStateType } from '@/models/dialog';
 import { ClickParam } from 'antd/es/menu';
@@ -179,6 +180,14 @@ const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHe
       </Menu.Item>
     </Menu>
   );
+  const openFilterDrawer = () => {
+    dispatch({
+      type:"scan/setFilterDrawerVisible",
+      payload:{
+        isShow:true
+      }
+    })
+  }
   const headerAction = (
     <div>
       {scan.selectedDirectory.length !== 0 && (
@@ -196,6 +205,12 @@ const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHe
           菜单
         </Button>
       </Dropdown>
+
+        <Button type="primary" className={styles.headerActionButton} onClick={openFilterDrawer}>
+          <FilterIcon />
+          过滤器
+        </Button>
+
       <span className={styles.accountButtonWrap}>
         <AccountButton user={user.current} onLogin={onLogin} onLogout={onLogout} />
       </span>

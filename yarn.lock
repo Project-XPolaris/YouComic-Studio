@@ -35,6 +35,13 @@
     gud "^1.0.0"
     warning "^4.0.3"
 
+"@ant-design/dark-theme@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.npm.taobao.org/@ant-design/dark-theme/download/@ant-design/dark-theme-2.0.1.tgz#10e367764a58b460b739225a4b65592be6804a42"
+  integrity sha1-EONndkpYtGC3OSJaS2VZK+aASkI=
+  dependencies:
+    "@types/node" "^13.7.7"
+
 "@ant-design/icons-react@~2.0.1":
   version "2.0.1"
   resolved "https://registry.npm.taobao.org/@ant-design/icons-react/download/@ant-design/icons-react-2.0.1.tgz#17a2513571ab317aca2927e58cea25dd31e536fb"
@@ -2404,6 +2411,11 @@
   version "12.12.28"
   resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-12.12.28.tgz#3a2b5f8d21f96ace690a8832ae9779114612575f"
   integrity sha1-OitfjSH5as5pCogyrpd5EUYSV18=
+
+"@types/node@^13.7.7":
+  version "13.13.0"
+  resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-13.13.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-13.13.0.tgz#30d2d09f623fe32cde9cb582c7a6eda2788ce4a8"
+  integrity sha1-MNLQn2I/4yzenLWCx6btoniM5Kg=
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"

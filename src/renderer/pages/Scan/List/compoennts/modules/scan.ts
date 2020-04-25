@@ -38,7 +38,7 @@ export default {
         })
       }
       yield put({
-        type: 'setDirectoryList',
+        type: 'onScanComplete',
         payload: {
           directoryList,
         },
@@ -72,6 +72,13 @@ export default {
         ...state,
         directoryList,
       };
+    },
+    onScanComplete(state, { payload: { directoryList } }):ScanModelStateType {
+      return {
+        ...state,
+        directoryList,
+        displayList:directoryList.map((item) => item.path)
+      }
     },
     setExistBook(state : ScanModelStateType,{payload:{list}}):ScanModelStateType{
       return{

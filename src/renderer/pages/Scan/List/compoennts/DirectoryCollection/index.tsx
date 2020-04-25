@@ -10,22 +10,27 @@ interface DirectoryCollectionPropsType {
   onCardClick: (directory: Directory) => void;
   selectedDirectory?: string[];
   onSelectedDirectoryUpdate: (newSelectedDirectory: string[]) => void;
-  existBookNames:string[]
+  existBookNames:string[],
+  displayDirPath:string[]
 }
 
 export default function DirectoryCollection({
-  directoryList,
+  directoryList = [],
   onCardClick,
   selectedDirectory,
   onSelectedDirectoryUpdate,
-  existBookNames
+  existBookNames,
+  displayDirPath
 }: DirectoryCollectionPropsType) {
+  const displayItem = directoryList.filter((dirItem) => displayDirPath.find(path => path === dirItem.path) !== undefined)
+  console.log(displayItem)
   const empty = (
     <div className={style.emptyWrap}>
       <Empty />
     </div>
   );
   const renderCard =  (item:Directory) => {
+    console.log(item)
     const isSelected = Boolean(selectedDirectory.find(selectItem => selectItem === item.path));
     const onCardSelect = (selectDirectory: Directory) => {
       if (isSelected) {
@@ -34,10 +39,10 @@ export default function DirectoryCollection({
         onSelectedDirectoryUpdate([...selectedDirectory, item.path]);
       }
     };
-    const isExist = Boolean(existBookNames.find(name => name === item.title));
+    const isExist = item.title !== undefined && Boolean(existBookNames.find(name => name === item.title));
 
     return (
-      <Col span={24} key={item.path}>
+      <Col span={24} key={item.title}>
         <DirectoryCard
           directory={item}
           onClick={onCardClick}
@@ -55,9 +60,12 @@ export default function DirectoryCollection({
                          isVisible, // This row is visible within the List (eg it is not an overscanned row)
                          style, // Style object to be applied to row (to position it)
                        }) {
+    if(index > displayItem.length - 1){
+      return undefined;
+    }
     return (
       <div key={key} style={style}>
-        {renderCard(directoryList[index])}
+        {renderCard(displayItem[index])}
       </div>
     );
   }
