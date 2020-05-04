@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import DirectoryQuickViewDrawer from '@/pages/Scan/List/compoennts/DirectoryQuickViewDrawer';
 import { ScanModelStateType } from '@/pages/Scan/List/model';
 import CreateTagDialog from '@/pages/Create/components/CreateTagDialog';
@@ -83,4 +83,4 @@ function ScanQuickView({
   );
 }
 
-export default connect(({ scan }) => ({ scan }))(ScanQuickView);
+export default connect(({ scan }:any) => ({ scan }))(ScanQuickView);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Directory, ScanModelStateType } from '@/pages/Scan/List/model';
-import { router } from 'umi';
+import { history } from 'umi';
 import { Affix, Button, Dropdown, Menu, PageHeader } from 'antd';
 import { differenceWith } from 'lodash';
 import styles from './header.less';
@@ -21,6 +21,7 @@ import FilterIcon from '@ant-design/icons/FilterFilled';
 import InputTitleDialog from '@/pages/Scan/List/compoennts/InputTitleDialog';
 import { DialogKeys, DialogsModelStateType } from '@/models/dialog';
 import { ClickParam } from 'antd/es/menu';
+
 interface ScanHeaderPropsType {
   scan: ScanModelStateType;
   dispatch: any;
@@ -29,8 +30,8 @@ interface ScanHeaderPropsType {
 }
 
 const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHeaderPropsType) => {
-  const onScanMenuAction = (e : ClickParam) => {
-    e.domEvent.preventDefault()
+  const onScanMenuAction = (e: ClickParam) => {
+    e.domEvent.preventDefault();
     dispatch({
       type: 'scan/scanBookDirectory',
     });
@@ -63,7 +64,7 @@ const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHe
         directoryList: differenceWith<Directory, string>(
           scan.directoryList,
           scan.selectedDirectory,
-          (a: Directory, b: string) => a.path === b
+          (a: Directory, b: string) => a.path === b,
         ).map(it => it.path),
       },
     });
@@ -99,17 +100,17 @@ const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHe
   const menu = (
     <Menu>
       <Menu.Item onClick={onScanMenuAction}>
-        <SearchIcon />
+        <SearchIcon/>
         扫描
       </Menu.Item>
-      <Menu.Divider />
+      <Menu.Divider/>
       <Menu.Item onClick={openScanOptionDrawer}>
-        <SettingIcon />
+        <SettingIcon/>
         设置扫描参数
       </Menu.Item>
-      <Menu.Divider />
+      <Menu.Divider/>
       <Menu.Item onClick={onUploadToYouComic}>
-        <GlobalIcon />
+        <GlobalIcon/>
         上传至YouComic
       </Menu.Item>
     </Menu>
@@ -153,47 +154,47 @@ const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHe
   const multipleActionMenu = (
     <Menu>
       <Menu.Item onClick={onMenuActionSelectAll}>
-        <CheckIcon />
+        <CheckIcon/>
         全选
       </Menu.Item>
       <Menu.Item onClick={onMenuActionReverseSelect}>
-        <ReloadIcon />
+        <ReloadIcon/>
         反选
       </Menu.Item>
       <Menu.Item onClick={onMenuActionUnselectAll}>
-        <CloseIcon />
+        <CloseIcon/>
         取消选择
       </Menu.Item>
-      <Menu.Divider />
+      <Menu.Divider/>
       <Menu.Item onClick={onMenuActionAddTags}>
-        <TagIcon />
+        <TagIcon/>
         添加标签
       </Menu.Item>
       <Menu.Item onClick={onOpenInputTitle}>
-        <SetTitleIcon />
+        <SetTitleIcon/>
         编辑标题
       </Menu.Item>
-      <Menu.Divider />
+      <Menu.Divider/>
       <Menu.Item onClick={onMenuActionRemoveSelectedDirectory}>
-        <DeleteIcon />
+        <DeleteIcon/>
         从列表中移除
       </Menu.Item>
     </Menu>
   );
   const openFilterDrawer = () => {
     dispatch({
-      type:"scan/setFilterDrawerVisible",
-      payload:{
-        isShow:true
-      }
-    })
-  }
+      type: 'scan/setFilterDrawerVisible',
+      payload: {
+        isShow: true,
+      },
+    });
+  };
   const headerAction = (
     <div>
       {scan.selectedDirectory.length !== 0 && (
         <Dropdown overlay={multipleActionMenu}>
           <Button className={styles.headerActionButton}>
-            <MenuIcon />
+            <MenuIcon/>
             {`选中${scan.selectedDirectory.length}项`}
           </Button>
         </Dropdown>
@@ -201,18 +202,18 @@ const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHe
 
       <Dropdown overlay={menu} placement={'bottomLeft'}>
         <Button type="primary" className={styles.headerActionButton}>
-          <MenuIcon />
+          <MenuIcon/>
           菜单
         </Button>
       </Dropdown>
 
-        <Button type="primary" className={styles.headerActionButton} onClick={openFilterDrawer}>
-          <FilterIcon />
-          过滤器
-        </Button>
+      <Button type="primary" className={styles.headerActionButton} onClick={openFilterDrawer}>
+        <FilterIcon/>
+        过滤器
+      </Button>
 
       <span className={styles.accountButtonWrap}>
-        <AccountButton user={user.current} onLogin={onLogin} onLogout={onLogout} />
+        <AccountButton user={user.current} onLogin={onLogin} onLogout={onLogout}/>
       </span>
     </div>
   );
@@ -222,7 +223,7 @@ const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHe
       <Affix>
         <PageHeader
           className={styles.header}
-          onBack={() => router.goBack()}
+          onBack={() => history.goBack()}
           title="扫描"
           extra={headerAction}
         />
@@ -230,4 +231,4 @@ const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHe
     </div>
   );
 };
-export default connect(({ scan, user, dialogs }) => ({ scan, user, dialogs }))(ScanHeader);
+export default connect(({ scan, user, dialogs }: any) => ({ scan, user, dialogs }))(ScanHeader);

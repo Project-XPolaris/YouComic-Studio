@@ -1,19 +1,20 @@
 import React from 'react';
-import { Avatar, Button, Divider, Dropdown, Input, Menu, Typography } from 'antd';
+import { Avatar, Button, Divider, Dropdown, Menu, Typography } from 'antd';
 import styles from './style.less';
-import { connect } from 'dva';
 import { HomeModelStateType } from '@/pages/Home/model';
-import { router } from 'umi';
+import { connect, history } from 'umi';
 import { UserModelStateType } from '@/models/user';
 import CreateNewProjectDialog from '@/pages/Home/components/CreateNewDialog';
-const { Search } = Input;
-const { Title } = Typography;
 import LogoutIcon from '@ant-design/icons/ExportOutlined';
 import UserIcon from '@ant-design/icons/UserOutlined';
 import SettingIcon from '@ant-design/icons/SettingOutlined';
 import FolderIcon from '@ant-design/icons/FolderFilled';
 import CreateIcon from '@ant-design/icons/PlusOutlined';
 import SearchIcon from '@ant-design/icons/SearchOutlined';
+import 'antd/dist/antd.css';
+
+const { Title } = Typography;
+
 interface HomePagePropsType {
   home: HomeModelStateType;
   dispatch;
@@ -41,7 +42,7 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
     const accountMenu = (
       <Menu>
         <Menu.Item key="1" onClick={onLogout}>
-          <LogoutIcon />
+          <LogoutIcon/>
           登出
         </Menu.Item>
       </Menu>
@@ -67,7 +68,7 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
           className={styles.loginButton}
           onClick={onLoginAccount}
         >
-          <UserIcon />
+          <UserIcon/>
           登录至YouComic
         </Button>
       );
@@ -99,7 +100,7 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
     });
   };
   const onSettingButtonClick = () => {
-    router.push('/setting');
+    history.push('/setting');
   };
   return (
     <div className={styles.main}>
@@ -112,7 +113,9 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
           onSelectSaveFolder={onSelectSavePath}
         />
         <div>
-          <span className={styles.title}>开始</span>
+          <Title>
+            开始
+          </Title>
         </div>
         <div className={styles.headerRight}>
           <span>
@@ -121,19 +124,19 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
           {renderUserAccount()}
         </div>
       </div>
-      <Divider />
+      <Divider/>
       <div className={styles.content}>
         <div className={styles.field}>
           <div className={styles.fieldTitle}>创建项目</div>
           <div>
             <Button type="primary" onClick={onCreateNewClick} className={styles.actionButton}>
-              <CreateIcon />
+              <CreateIcon/>
               创建新的项目
             </Button>
           </div>
           <div>
             <Button type="primary" onClick={onOpenProjectClick} className={styles.actionButton}>
-              <FolderIcon />
+              <FolderIcon/>
               打开已有项目
             </Button>
           </div>
@@ -142,7 +145,7 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
           <div className={styles.fieldTitle}>批量编辑</div>
           <div>
             <Button type="primary" onClick={onScan}>
-              <SearchIcon />
+              <SearchIcon/>
               扫描文件夹
             </Button>
           </div>
@@ -150,13 +153,13 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
       </div>
       <div className={styles.bottomRight}>
         <Button onClick={onSettingButtonClick} shape={'circle'}>
-          <SettingIcon />
+          <SettingIcon/>
         </Button>
       </div>
     </div>
   );
 };
 
-export default connect(({ home, fileList, scan, user }) => ({ home, fileList, scan, user }))(
-  HomePage
+export default connect(({ home, fileList, scan, user }: any) => ({ home, fileList, scan, user }))(
+  HomePage,
 );

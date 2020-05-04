@@ -9,8 +9,15 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "~antd/*":["./node_modules/antd/"]
+      "@/*": [
+        "./*"
+      ],
+      "~antd/*": [
+        "./node_modules/antd/"
+      ],
+      "@@/*": [
+        ".umi/*"
+      ]
     },
     "allowSyntheticDefaultImports": true
   }

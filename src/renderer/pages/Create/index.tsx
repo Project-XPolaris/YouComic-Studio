@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { Divider, PageHeader, Typography } from 'antd';
 import styles from './style.less';
 import { CreateBookModelStateType, Page } from '@/pages/Create/model';
-import { router } from 'umi';
+import { history } from 'umi';
 import { DirectoryModelStateType } from '@/models/directory';
 import { FileListModelStateType } from '@/models/filelist';
 import CreateBookHeaderAction, {
@@ -280,7 +280,7 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
           style={{
             border: '1px solid rgb(235, 237, 240)',
           }}
-          onBack={() => router.goBack()}
+          onBack={() => history.goBack()}
           title="创建书籍"
           subTitle={dirName}
           extra={renderHeaderAction()}
@@ -310,7 +310,7 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
             pages={create.pages}
             onPagesChange={onPagesChange}
             onItemSelect={onPageItemSelect}
-            onItemClick={onPageItemClick}
+            onItemClick={() => {}}
             selectedPages={create.selectPages}
           />
         </div>
@@ -319,7 +319,7 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
   );
 }
 
-export default connect(({ directory, create, fileList, user }) => ({
+export default connect(({ directory, create, fileList, user }:any) => ({
   directory,
   create,
   fileList,

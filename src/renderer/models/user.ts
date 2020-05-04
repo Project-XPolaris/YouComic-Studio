@@ -61,13 +61,18 @@ const UserModel: UserModelType = {
       if (userId == null) {
         return;
       }
-      const user: User = yield call(queryUser, { id: userId });
-      yield put({
-        type:"setUser",
-        payload:{
-          user
-        }
-      })
+      try{
+        const user: User = yield call(queryUser, { id: userId });
+        yield put({
+          type:"setUser",
+          payload:{
+            user
+          }
+        })
+      }catch (e) {
+        console.log("fetch user error")
+      }
+
     },
     *logout({},{call,put,select}){
       localStorage.removeItem(ApplicationConfig.AUTH_USER_ID_KEY)

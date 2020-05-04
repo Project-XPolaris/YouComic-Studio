@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import FilterDrawer from '@/pages/Scan/List/compoennts/Filter';
-import { Directory, ScanModelStateType } from '@/pages/Scan/List/model';
+import { ScanModelStateType } from '@/pages/Scan/List/model';
 import { FilterItem } from '@/pages/Scan/List/compoennts/Filter/item';
 
 
@@ -82,4 +82,4 @@ function DirFilterDrawer({ dispatch, scan: { filterDrawer: { isShow },filter } }
   );
 }
 
-export default connect(({ scan }) => ({ scan }))(DirFilterDrawer);
+export default connect(({ scan }:any) => ({ scan }))(DirFilterDrawer);

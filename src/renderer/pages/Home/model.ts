@@ -2,7 +2,7 @@ import { Effect } from 'dva';
 import { Reducer } from 'redux';
 
 import { listDirectoryFiles, showSelectFolderDialog, writeFile } from '@/services/file';
-import { router } from 'umi';
+import { history } from 'umi';
 import { path } from '@/global';
 import { ProjectConfig } from '@/pages/Create/model';
 import { message } from 'antd';
@@ -22,7 +22,7 @@ export interface HomeModelStateType {
 export interface HomeModelType {
   namespace: string;
   reducers: {
-    setPath: Reducer<any>;
+    setPath: Reducer<HomeModelStateType>;
     setLoadingDirectoryDialog: Reducer<HomeModelStateType>;
     setCreateNewDialog: Reducer<HomeModelStateType>;
     setCreateNewPath: Reducer<HomeModelStateType>;
@@ -57,7 +57,7 @@ const HomeModel: HomeModelType = {
   },
   subscriptions: {},
   effects: {
-    *selectFolder(_, { call, put, select }) {
+    * selectFolder(_, { put }) {
       const path = showSelectFolderDialog()[0];
       yield put({
         type: 'setPath',
@@ -66,7 +66,7 @@ const HomeModel: HomeModelType = {
         },
       });
     },
-    *toNext(_, { call, put, select }) {
+    * toNext(_, { put }) {
       yield put({
         type: 'setLoadingDirectoryDialog',
         payload: {
@@ -86,9 +86,9 @@ const HomeModel: HomeModelType = {
           },
         },
       });
-      router.push('/file/directory/home');
+      history.push('/file/directory/home');
     },
-    *onScanFolder(_, { call, put, select }) {
+    * onScanFolder(_, { put }) {
       const dirPaths = showSelectFolderDialog();
       if (!Boolean(dirPaths)) {
         return;
@@ -99,9 +99,9 @@ const HomeModel: HomeModelType = {
           path: dirPaths[0],
         },
       });
-      router.push('/scan/list');
+      history.push('/scan/list');
     },
-    *createNew(_, { call, put, select }) {
+    * createNew(_, { call, put, select }) {
       const homeState: HomeModelStateType = yield select(state => state.home);
       const projectPath = homeState.createDialog.path;
       if (projectPath.length === 0) {
@@ -121,9 +121,9 @@ const HomeModel: HomeModelType = {
       yield call(writeFile, { data: JSON.stringify(projectConfig), path: configFilePath });
       yield put({ type: 'setEditPath', payload: { path: projectPath } });
       yield put({ type: 'closeCreateNewProjectDialog' });
-      router.push('/book/create');
+      history.push('/book/create');
     },
-    *selectNewProjectSaveLocation({}, { call, put, cancel }) {
+    * selectNewProjectSaveLocation({}, { put }) {
       const dirPaths = showSelectFolderDialog();
       if (!Boolean(dirPaths)) {
         return;
@@ -135,7 +135,7 @@ const HomeModel: HomeModelType = {
         },
       });
     },
-    *openExistProject({}, { call, put, select }) {
+    * openExistProject({}, { call, put }) {
       const dirPaths = showSelectFolderDialog();
       if (!Boolean(dirPaths)) {
         return;
@@ -149,7 +149,7 @@ const HomeModel: HomeModelType = {
             path,
           },
         });
-        router.push('/book/create');
+        history.push('/book/create');
       } else {
         message.error('当前目录不是有效的项目目录');
       }

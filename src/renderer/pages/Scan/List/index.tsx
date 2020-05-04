@@ -1,6 +1,6 @@
 import React from 'react';
 import style from './style.less';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import ScanHeader from '@/pages/Scan/List/header';
 import DirectoryCollection from '@/pages/Scan/List/compoennts/DirectoryCollection';
 import { Directory, ScanModelStateType } from '@/pages/Scan/List/model';
@@ -18,15 +18,15 @@ interface ScanPagePropsType {
   dispatch: any;
 }
 
-const ScanPage = ({ scan, home, dispatch }: ScanPagePropsType) => {
+const ScanPage = ({ scan, dispatch }: ScanPagePropsType) => {
   const onDirectoryCardClick = (directory: Directory) => {
     if (scan.selectedDirectory.length > 0) {
       const isSelected = Boolean(
-        scan.selectedDirectory.find(selectItem => selectItem === directory.path)
+        scan.selectedDirectory.find(selectItem => selectItem === directory.path),
       );
       if (isSelected) {
         onSelectedDirectoryUpdate(
-          scan.selectedDirectory.filter(selectDirectory => selectDirectory !== directory.path)
+          scan.selectedDirectory.filter(selectDirectory => selectDirectory !== directory.path),
         );
       } else {
         onSelectedDirectoryUpdate([...scan.selectedDirectory, directory.path]);
@@ -48,11 +48,11 @@ const ScanPage = ({ scan, home, dispatch }: ScanPagePropsType) => {
   };
   return (
     <div className={style.main}>
-      <ScanQuickView />
-      <DirectoryScanOptionDrawer />
-      <DirFilterDrawer />
-      <ScanningDialog isOpen={scan.scanningDialog.isOpen} />
-      <ScanHeader />
+      <ScanQuickView/>
+      <DirectoryScanOptionDrawer/>
+      <DirFilterDrawer/>
+      <ScanningDialog isOpen={scan.scanningDialog.isOpen}/>
+      <ScanHeader/>
       <UploadProgressDialog
         isOpen={scan.uploadDialog.isOpen}
         title={scan.uploadDialog.current?.matchInfo?.title}
@@ -67,7 +67,7 @@ const ScanPage = ({ scan, home, dispatch }: ScanPagePropsType) => {
           onCardClick={onDirectoryCardClick}
           selectedDirectory={scan.selectedDirectory}
           onSelectedDirectoryUpdate={onSelectedDirectoryUpdate}
-          existBookNames={scan.existBook.map((book:Book) => book.name)}
+          existBookNames={scan.existBook.map((book: Book) => book.name)}
           displayDirPath={scan.displayList}
         />
       </div>
@@ -75,4 +75,4 @@ const ScanPage = ({ scan, home, dispatch }: ScanPagePropsType) => {
   );
 };
 
-export default connect(({ scan, home }) => ({ scan, home }))(ScanPage);
+export default connect(({ scan, home }: any) => ({ scan, home }))(ScanPage);

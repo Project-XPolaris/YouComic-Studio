@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { connect } from 'dva';
-import { Button, Col, Icon, Menu, PageHeader, Row } from 'antd';
+import { Button, Col, Menu, PageHeader, Row } from 'antd';
 import CheckIcon from '@ant-design/icons/CheckOutlined';
 import styles from './style.less';
 import YouComicPanel from '@/pages/Setting/panels/YouComicPanel';
-import { router } from 'umi';
+import { history } from 'umi';
 
 interface SettingPagePropsType {
   dispatch: any;
@@ -23,7 +23,7 @@ function SettingPage({ dispatch }: SettingPagePropsType) {
     </Button>
   );
   const onBack = () => {
-    router.goBack();
+    history.goBack();
   };
   return (
     <div>
@@ -42,7 +42,6 @@ function SettingPage({ dispatch }: SettingPagePropsType) {
             <Col span={4}>
               <Menu mode={'inline'} className={styles.nav} selectedKeys={[selectKey]}>
                 <Menu.Item key={'1'} onClick={() => setSelectKey('1')}>
-                  <Icon type={'cloud'} />
                   YouComic
                 </Menu.Item>
               </Menu>

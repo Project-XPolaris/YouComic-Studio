@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'dva';
 import { Tree } from 'antd';
 import { FileListModelStateType } from '@/models/filelist';
-import AllElectron = Electron.AllElectron;
 import { HomeModelStateType } from '@/pages/Home/model';
 import { DirectoryModelStateType } from '@/models/directory';
 // @ts-ignore

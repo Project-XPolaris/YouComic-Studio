@@ -27,6 +27,7 @@
     "strictNullChecks": true,
     "moduleResolution": "node"
   },
+
   "include": ["src/renderer/*"],
   "extends": "./node_modules/electron-webpack/tsconfig-base.json"
 }

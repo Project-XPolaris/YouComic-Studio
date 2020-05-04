@@ -1,23 +1,21 @@
-export default {
-  history: 'hash',
+import { defineConfig } from 'umi';
+
+export default defineConfig({
   outputPath: `../../dist/renderer`,
   publicPath: './',
-  plugins: [
-    [
-      'umi-plugin-react',
-      {
-        antd: true,
-        dva: true,
-        dynamicImport: true,
-        title: 'YouComic Studio',
-        dll: true,
-        hardSource: false,
-        routes: {
-          exclude: [/components/],
-        },
-      },
-    ],
-  ],
+  title: 'YouComic Studio',
+  history: { type: 'hash' },
+  antd: {},
+  dva: {
+    hmr: true,
+  },
+  locale: {
+    default: 'zh-CN',
+    baseNavigator: true,
+  },
+  // routes: {
+  //   exclude: [/components/],
+  // },
   routes: [
     {
       path: '/',
@@ -54,4 +52,4 @@ export default {
       ],
     },
   ],
-};
+});

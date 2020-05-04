@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 import styles from './style.less';
 import { Button, PageHeader, Tabs } from 'antd';
-import { router } from 'umi';
+import { history } from 'umi'
 import SideTree from '@/pages/List/components/SideTree';
 const { TabPane } = Tabs;
 
@@ -13,10 +13,10 @@ interface ListPagePropsType {
 
 function ListPage({ dispatch,children }: ListPagePropsType) {
   const onBack = () => {
-    router.goBack();
+    history.goBack();
   };
   const  onCreateClick = () => {
-    router.push("/book/create")
+    history.push("/book/create")
   };
   const actions = (
     <Button type="primary" onClick={onCreateClick}>创建</Button>
@@ -43,4 +43,4 @@ function ListPage({ dispatch,children }: ListPagePropsType) {
   );
 }
 
-export default connect(({ fileList }) => ({ fileList }))(ListPage);
+export default connect(({ fileList }:any) => ({ fileList }))(ListPage);
