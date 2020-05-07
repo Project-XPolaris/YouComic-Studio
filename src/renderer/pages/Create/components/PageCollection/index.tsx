@@ -10,6 +10,7 @@ interface PageCollectionPropsType {
   onItemClick: (page: Page) => void
   onItemSelect: (page: Page) => void
   selectedPages: Page[]
+  onCrop:(page:Page) => void
 }
 
 function useWindowSize() {
@@ -40,7 +41,7 @@ function useWindowSize() {
   return windowSize;
 }
 
-export default function PageCollection({ pages, onPagesChange, onItemClick, onItemSelect, selectedPages }: PageCollectionPropsType) {
+export default function PageCollection({ pages, onPagesChange, onItemClick, onItemSelect, selectedPages,onCrop }: PageCollectionPropsType) {
   const size = useWindowSize();
 
   // target id will only be set if dragging from one dropzone to another.
@@ -66,6 +67,7 @@ export default function PageCollection({ pages, onPagesChange, onItemClick, onIt
                 onClick={onItemClick}
                 onSelect={onItemSelect}
                 isSelected={selectedPages.find(selectedPage => selectedPage.name === item.name) !== undefined}
+                onCrop={onCrop}
               />
             </GridItem>
           </div>

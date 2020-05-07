@@ -1,13 +1,13 @@
 import { Effect, Subscription } from 'dva';
 import { Reducer } from 'redux';
-import { generateImageThumbnail } from '@/services/image';
+import { cropImage, generateImageThumbnail } from '@/services/image';
 import { message } from 'antd';
 import {
   deleteBookPagesFile,
   getFilesWithExtension,
   loadCoverFile,
   readFileStat,
-  readProjectConfig,
+  readProjectConfig, removeFiles,
   selectImageFile,
   selectImageFiles,
   showSelectFolderDialog,
@@ -70,6 +70,11 @@ export interface CreateBookModelStateType {
   matchInfoDialog: {
     isOpen: boolean;
   };
+  cropImageDialog: {
+    isOpen: boolean
+    mode: 'cover' | 'page'
+    src: string
+  }
   pages: Page[];
   cover?: string;
   coverThumbnail?: string;
@@ -110,6 +115,10 @@ export interface CreateBookModelType {
     setMatchInfoDialog: Reducer<CreateBookModelStateType>;
     setAutoImportDialog: Reducer<CreateBookModelStateType>;
     clear: Reducer<CreateBookModelStateType>;
+    openImageCropDialog: Reducer<CreateBookModelStateType>
+    closeImageCropDialog: Reducer<CreateBookModelStateType>
+    updatePage: Reducer<CreateBookModelStateType>
+    updateConfigPage:Reducer<CreateBookModelStateType>
   };
   state: CreateBookModelStateType;
   effects: {
@@ -125,6 +134,8 @@ export interface CreateBookModelType {
     deleteTag: Effect;
     autoImport: Effect;
     uploadYouComic: Effect;
+    cropCover: Effect
+    cropPage: Effect
   };
   subscriptions: {
     setup: Subscription;
@@ -162,6 +173,11 @@ const CreateBookModel: CreateBookModelType = {
       progress: 0,
       message: '',
     },
+    cropImageDialog: {
+      isOpen: false,
+      src: '',
+      mode: 'cover',
+    },
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -175,7 +191,7 @@ const CreateBookModel: CreateBookModelType = {
     },
   },
   effects: {
-    *generateThumbnails(_, { call, put, select }) {
+    * generateThumbnails(_, { call, put, select }) {
       const { create }: { create: CreateBookModelStateType } = yield select(state => state);
       const dirPath = create.rootDir;
       if (dirPath === undefined) {
@@ -205,7 +221,7 @@ const CreateBookModel: CreateBookModelType = {
           {
             sourcePath: imageFiles[idx],
             projectPath: create.path.projectPath,
-          }
+          },
         );
         pages.push({
           path: imagePath + `?t=${moment().unix()}`,
@@ -237,7 +253,7 @@ const CreateBookModel: CreateBookModelType = {
       });
       message.success(`成功导入${progressCount}个图片`);
     },
-    *selectCover(_, { call, put, select }) {
+    * selectCover(_, { call, put, select }) {
       const create: CreateBookModelStateType = yield select(state => state.create);
       const dirPath = create.rootDir;
       if (dirPath === undefined) {
@@ -266,7 +282,7 @@ const CreateBookModel: CreateBookModelType = {
         type: 'saveProject',
       });
     },
-    *init(_, { call, put, select }) {
+    * init(_, { call, put, select }) {
       const homeState: HomeModelStateType = yield select(state => state.home);
       const editPath = homeState.editorPath;
       yield put({
@@ -332,7 +348,7 @@ const CreateBookModel: CreateBookModelType = {
             thumbnail: path.join(
               createState.path.projectPath,
               projectPathConfig.projectThumbnailsDirectory,
-              page.thumbnail
+              page.thumbnail,
             ),
             thumbnailName: page.thumbnail,
           })),
@@ -366,7 +382,7 @@ const CreateBookModel: CreateBookModelType = {
       });
       message.success('已加载缓存中的数据');
     },
-    *saveConfig(_, { call, put, select }) {
+    * saveConfig(_, { call, put, select }) {
       const { create }: { create: CreateBookModelStateType } = yield select(state => state);
       if (create.config !== undefined) {
         yield call(writeFile, {
@@ -375,7 +391,7 @@ const CreateBookModel: CreateBookModelType = {
         });
       }
     },
-    *setNewPages({ payload: { newPages } }, { call, put, select }) {
+    * setNewPages({ payload: { newPages } }, { call, put, select }) {
       yield put({
         type: 'setPages',
         payload: {
@@ -397,7 +413,7 @@ const CreateBookModel: CreateBookModelType = {
         type: 'saveProject',
       });
     },
-    *removeSelectPages(_, { call, put, select }) {
+    * removeSelectPages(_, { call, put, select }) {
       const createState: CreateBookModelStateType = yield select(state => state.create);
       yield put({
         type: 'onRemovePages',
@@ -412,13 +428,13 @@ const CreateBookModel: CreateBookModelType = {
         },
       });
     },
-    *onRemovePages({ payload: { pagesToRemove } }, { call, put, select }) {
+    * onRemovePages({ payload: { pagesToRemove } }, { call, put, select }) {
       // init
       const createState: CreateBookModelStateType = yield select(state => state.create);
       const remainPages = differenceWith<Page, Page>(
         createState.pages,
         pagesToRemove,
-        (a: Page, b: Page) => a.name === b.name
+        (a: Page, b: Page) => a.name === b.name,
       );
       // remove from pages
       yield put({
@@ -439,7 +455,7 @@ const CreateBookModel: CreateBookModelType = {
         type: 'saveProject',
       });
     },
-    *saveProject(_, { call, put, select }) {
+    * saveProject(_, { call, put, select }) {
       const createState: CreateBookModelStateType = yield select(state => state.create);
       const config: ProjectConfig = {
         title: createState.title,
@@ -457,7 +473,7 @@ const CreateBookModel: CreateBookModelType = {
       }
       yield call(writeFile, { path: createState.path.projectConfig, data: JSON.stringify(config) });
     },
-    *createTag({ payload: { name, type } }, { call, put, select }) {
+    * createTag({ payload: { name, type } }, { call, put, select }) {
       const createState: CreateBookModelStateType = yield select(state => state.create);
       const { tags = [] } = createState;
       yield put({
@@ -470,7 +486,7 @@ const CreateBookModel: CreateBookModelType = {
         type: 'saveProject',
       });
     },
-    *deleteTag({ payload: { name } }, { call, put, select }) {
+    * deleteTag({ payload: { name } }, { call, put, select }) {
       const createState: CreateBookModelStateType = yield select(state => state.create);
       yield put({
         type: 'setTags',
@@ -482,7 +498,7 @@ const CreateBookModel: CreateBookModelType = {
         type: 'saveProject',
       });
     },
-    *autoImport(_, { call, put, select }) {
+    * autoImport(_, { call, put, select }) {
       const createState: CreateBookModelStateType = yield select(state => state.create);
       const dirPaths = showSelectFolderDialog();
       if (!Boolean(dirPaths)) {
@@ -551,7 +567,7 @@ const CreateBookModel: CreateBookModelType = {
           {
             sourcePath: path.join(scanPath, imageFile),
             projectPath: createState.path.projectPath,
-          }
+          },
         );
         pages.push({ name: imageName, path: imagePath, thumbnail, thumbnailName });
       }
@@ -611,7 +627,7 @@ const CreateBookModel: CreateBookModelType = {
         },
       });
     },
-    *uploadYouComic(_, { call, put, select }) {
+    * uploadYouComic(_, { call, put, select }) {
       const createState: CreateBookModelStateType = yield select(state => state.create);
       // must have cover
       if (createState.cover === undefined || createState.cover.length === 0) {
@@ -634,7 +650,7 @@ const CreateBookModel: CreateBookModelType = {
       const tagsToCreate = differenceWith<Tag, TagModel>(
         createState.tags,
         queryTagsResponse.result,
-        (a, b) => a.name === b.name
+        (a, b) => a.name === b.name,
       );
       const createdTags: TagModel[] = queryTagsResponse.result;
       for (const tagToCreate of tagsToCreate) {
@@ -659,6 +675,75 @@ const CreateBookModel: CreateBookModelType = {
       });
       yield call(uploadBookPage, { bookId: createdBook.id, form: uploadPageForm });
       message.success('上传成功');
+    },
+    * cropCover({ payload: { x, y, width, height, cropWidth, cropHeight } }, { call, put, select }) {
+      const createState: CreateBookModelStateType = yield select(state => state.create);
+      const { filePath, thumbnailPath } = yield call(cropImage, {
+        filePath: createState.cover,
+        outputDir: createState.path.projectPath,
+        x, y, width, height, cropWidth, cropHeight,
+      });
+      yield put({
+        type: 'setCover',
+        payload: {
+          cover: filePath,
+          thumbnail: thumbnailPath,
+        },
+      });
+      yield put({
+        type: 'saveProject',
+      });
+      // clear up
+      yield call(removeFiles, { paths: [createState.cover, createState.coverThumbnail] });
+      yield put({
+        type:"closeImageCropDialog"
+      })
+      message.success('编辑封面成功');
+    },
+    * cropPage({ payload: { x, y, width, height, cropWidth, cropHeight } }, { call, put, select }) {
+      const createState: CreateBookModelStateType = yield select(state => state.create);
+      const targetPage = createState.pages.find((page: Page) => page.path === createState.cropImageDialog.src);
+      if (targetPage === undefined) {
+        return;
+      }
+      const { filePath, thumbnailPath } = yield call(cropImage, {
+        filePath: createState.cropImageDialog.src,
+        outputDir: createState.path.projectPages,
+        outputThumbnailDir:path.join(createState.path.projectPath,"thumbnails"),
+        x, y, width, height, cropWidth, cropHeight,
+      });
+      yield put({
+        type: 'updatePage',
+        payload: {
+          path: targetPage.path,
+          updatePage: {
+            name: path.basename(filePath),
+            path: filePath,
+            thumbnail: thumbnailPath,
+            thumbnailName: path.basename(thumbnailPath),
+          },
+        },
+      });
+      yield put({
+        type: 'updateConfigPage',
+        payload: {
+          filename: targetPage.name,
+          updatePage: {
+            file: path.basename(filePath),
+            thumbnail: path.basename(thumbnailPath),
+          },
+        },
+      });
+      yield put({
+        type: 'saveProject',
+      });
+      // clear up
+      yield call(removeFiles, { paths: [targetPage.path, targetPage.thumbnail] });
+      yield put({
+        type:"closeImageCropDialog"
+      })
+      message.success('编辑页面成功');
+
     },
   },
   reducers: {
@@ -765,7 +850,7 @@ const CreateBookModel: CreateBookModelType = {
         rootDir: path,
       };
     },
-    clear(state, {}) {
+    clear(state, _) {
       return {
         title: '点击输入标题',
         importImageDialog: {
@@ -797,6 +882,60 @@ const CreateBookModel: CreateBookModelType = {
         },
       };
     },
+    openImageCropDialog(state, { payload: { mode, path } }): CreateBookModelStateType {
+      return {
+        ...state,
+        cropImageDialog: {
+          ...state.cropImageDialog,
+          mode, src: path, isOpen: true,
+        },
+      };
+    },
+    closeImageCropDialog(state, _) {
+      return {
+        ...state,
+        cropImageDialog: {
+          ...state.cropImageDialog,
+          isOpen: false,
+        },
+      };
+    },
+    updatePage(state, { payload: { path, updatePage } }) {
+      return {
+        ...state,
+        pages: state.pages.map((page: Page) => {
+          if (page.path === path) {
+            console.log("find target !!!!!!!!!!!!!!!")
+            return {
+              ...page,
+              ...updatePage,
+            };
+          }
+          return {
+            ...page,
+          };
+        }),
+      };
+    },
+    updateConfigPage(state,{payload:{filename,updatePage}}){
+      return {
+        ...state,
+        config:{
+          ...state.config,
+          pages:state.config.pages.map(item => {
+            if (item.file === filename){
+              return {
+                ...item,
+                ...updatePage
+              }
+            }
+            return {
+              ...item
+            }
+          })
+        }
+      }
+    }
   },
 };
 export default CreateBookModel;

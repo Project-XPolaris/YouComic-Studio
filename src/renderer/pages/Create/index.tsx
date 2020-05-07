@@ -6,9 +6,7 @@ import { CreateBookModelStateType, Page } from '@/pages/Create/model';
 import { history } from 'umi';
 import { DirectoryModelStateType } from '@/models/directory';
 import { FileListModelStateType } from '@/models/filelist';
-import CreateBookHeaderAction, {
-  CreateBookMultipleActionPopsType,
-} from '@/pages/Create/components/CreateBookHeaderAction';
+import CreateBookHeaderAction, { CreateBookMultipleActionPopsType } from '@/pages/Create/components/CreateBookHeaderAction';
 import ImportImageDialog from '@/pages/Create/components/ImportImageDialog';
 import noCoverImage from '@/assets/no-cover.png';
 import { path } from '@/global';
@@ -20,6 +18,7 @@ import TagCollection from '@/pages/Create/components/TagCollection';
 import MatchTagDialog from '@/pages/Create/components/MatchTagDialog';
 import AutoImportProgressDialog from '@/pages/Create/components/AutoImportProgressDialog';
 import { UserModelStateType } from '@/models/user';
+import CreateBookCoverCrop from '@/pages/Create/crop';
 
 const { Paragraph } = Typography;
 
@@ -241,6 +240,15 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
         type: 'create/uploadYouComic',
       });
     };
+    const  onEditCover = () => {
+      dispatch({
+        type:"create/openImageCropDialog",
+        payload:{
+          mode:"cover",
+          path:create.cover
+        }
+      })
+    }
     return (
       <CreateBookHeaderAction
         onImportImages={onImportImages}
@@ -255,11 +263,23 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
         onLogout={onLogout}
         user={user.current}
         onUploadYouComic={onUploadYouComic}
+        onEditCover={onEditCover}
       />
     );
   };
+  const onCropPage = (page:Page) => {
+    console.log(page)
+    dispatch({
+      type:"create/openImageCropDialog",
+      payload:{
+        mode:"page",
+        path:page.path
+      }
+    })
+  }
   return (
     <div>
+      <CreateBookCoverCrop />
       <LoadingDialog isOpen={create.loadingDialog.isOpen} message={create.loadingDialog.message} />
       <ImportImageDialog
         isOpen={create.importImageDialog.isShow}
@@ -312,6 +332,7 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
             onItemSelect={onPageItemSelect}
             onItemClick={() => {}}
             selectedPages={create.selectPages}
+            onCrop={onCropPage}
           />
         </div>
       </div>

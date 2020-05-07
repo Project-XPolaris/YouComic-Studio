@@ -5545,7 +5545,7 @@ clone@^2.1.1, clone@^2.1.2:
   resolved "https://registry.npm.taobao.org/clone/download/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
   integrity sha1-G39Ln1kfHo+DZwQBYANFoCiHQ18=
 
-clsx@^1.0.1:
+clsx@^1.0.1, clsx@^1.0.4:
   version "1.1.0"
   resolved "https://registry.npm.taobao.org/clsx/download/clsx-1.1.0.tgz#62937c6adfea771247c34b54d320fb99624f5702"
   integrity sha1-YpN8at/qdxJHw0tU0yD7mWJPVwI=
@@ -5923,7 +5923,7 @@ core-js-compat@^3.6.2:
     browserslist "^4.8.3"
     semver "7.0.0"
 
-core-js@3.6.5:
+core-js@3.6.5, core-js@^3.4.2:
   version "3.6.5"
   resolved "https://registry.npm.taobao.org/core-js/download/core-js-3.6.5.tgz#7395dc273af37fb2e50e9bd3d9fe841285231d1a"
   integrity sha1-c5XcJzrzf7LlDpvT2f6EEoUjHRo=
@@ -14154,6 +14154,15 @@ react-grid-dnd@^2.1.2:
     react-spring "9.0.0-beta.8"
     resize-observer-polyfill "^1.5.1"
     tslib "^1.9.3"
+
+react-image-crop@^8.6.2:
+  version "8.6.2"
+  resolved "https://registry.npm.taobao.org/react-image-crop/download/react-image-crop-8.6.2.tgz#bac0963ab517cdfba42b3a091774de4c3f4f3ece"
+  integrity sha1-usCWOrUXzfukKzoJF3TeTD9PPs4=
+  dependencies:
+    clsx "^1.0.4"
+    core-js "^3.4.2"
+    prop-types "^15.7.2"
 
 react-intl@3.12.0:
   version "3.12.0"

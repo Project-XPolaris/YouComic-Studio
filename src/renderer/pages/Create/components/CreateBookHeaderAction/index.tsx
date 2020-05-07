@@ -35,6 +35,7 @@ interface CreateBookHeaderActionPropsType {
   onLogin: () => void;
   onLogout: () => void;
   onUploadYouComic: () => void;
+  onEditCover: () => void
 }
 
 export default function CreateBookHeaderAction({
@@ -50,6 +51,7 @@ export default function CreateBookHeaderAction({
   onLogout,
   user,
   onUploadYouComic,
+  onEditCover
 }: CreateBookHeaderActionPropsType) {
   const menu = (
     <Menu>
@@ -60,6 +62,10 @@ export default function CreateBookHeaderAction({
       <Menu.Item key="2" onClick={onSelectCover}>
         <FileImageIcon />
         设置封面
+      </Menu.Item>
+      <Menu.Item key="9" onClick={onEditCover}>
+        <FileImageIcon />
+        编辑封面
       </Menu.Item>
       <Menu.Item key="3" onClick={onCreateTag}>
         <TagsIcon />

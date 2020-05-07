@@ -1,8 +1,7 @@
-import { jimp, path, remote } from '@/global';
+import { jimp, path, remote,fs } from '@/global';
 import directoryTree from 'directory-tree';
 import uuid from 'uuid';
 // @ts-ignore
-const fs = remote.require('fs');
 
 export function showSelectFolderDialog() {
   const dialog = remote.dialog;
@@ -139,4 +138,10 @@ export function getFilesWithExtension({ sourceDirectoryPath, extensions }) {
       resolve(imageFiles);
     });
   });
+}
+
+export async function removeFiles({paths}) {
+  for (const path of paths) {
+    await fs.promises.unlink(path)
+  }
 }

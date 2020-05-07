@@ -14,7 +14,7 @@ export async function generateImageThumbnail({ sourcePath, projectPath }) {
   const thumbnailPath = nodePath.join(
     projectPath,
     projectPathConfig.projectThumbnailsDirectory,
-    thumbnailFileName
+    thumbnailFileName,
   );
 
   fs.copyFileSync(sourcePath, filePath);
@@ -26,4 +26,19 @@ export async function generateImageThumbnail({ sourcePath, projectPath }) {
     thumbnail: thumbnailPath,
     thumbnailName: thumbnailFileName,
   };
+}
+
+export async function cropImage({ filePath, outputDir,outputThumbnailDir = outputDir, x, y, height, width, cropWidth, cropHeight }) {
+  const image = await jimp.read(filePath);
+  const xScale =  image.bitmap.width / cropWidth;
+  const yScale = image.bitmap.height/ cropHeight ;
+  image.crop(x * xScale, y * yScale, width * xScale, height * yScale);
+  const fileExt = nodePath.extname(filePath);
+  const outputFilePath = path.join(outputDir,`${v4()}${fileExt}`)
+  await image.writeAsync(outputFilePath);
+  // update thumbnail
+  await image.resize(150,jimp.AUTO)
+  const outputThumbnailPath = path.join(outputThumbnailDir,`${v4()}${fileExt}`)
+  await image.writeAsync(outputThumbnailPath)
+  return {filePath:outputFilePath,thumbnailPath:outputThumbnailPath}
 }
