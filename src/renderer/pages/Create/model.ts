@@ -93,6 +93,7 @@ export interface CreateBookModelStateType {
     progress: number;
     message: string;
   };
+  displaySrc?: string
 }
 
 export interface CreateBookModelType {
@@ -118,7 +119,8 @@ export interface CreateBookModelType {
     openImageCropDialog: Reducer<CreateBookModelStateType>
     closeImageCropDialog: Reducer<CreateBookModelStateType>
     updatePage: Reducer<CreateBookModelStateType>
-    updateConfigPage:Reducer<CreateBookModelStateType>
+    updateConfigPage: Reducer<CreateBookModelStateType>
+    setDisplaySrc: Reducer<CreateBookModelStateType>
   };
   state: CreateBookModelStateType;
   effects: {
@@ -191,7 +193,7 @@ const CreateBookModel: CreateBookModelType = {
     },
   },
   effects: {
-    * generateThumbnails(_, { call, put, select }) {
+    * generateThumbnails({ payload: { index = 0 } }, { call, put, select }) {
       const { create }: { create: CreateBookModelStateType } = yield select(state => state);
       const dirPath = create.rootDir;
       if (dirPath === undefined) {
@@ -235,6 +237,7 @@ const CreateBookModel: CreateBookModelType = {
         type: 'addToPage',
         payload: {
           pages,
+          index,
         },
       });
       yield put({
@@ -284,7 +287,8 @@ const CreateBookModel: CreateBookModelType = {
     },
     * init(_, { call, put, select }) {
       const homeState: HomeModelStateType = yield select(state => state.home);
-      const editPath = homeState.editorPath;
+      // const editPath = homeState.editorPath;
+      const editPath = 'C:\\Users\\takayamaaren\\Desktop\\yc\\projects\\p4';
       yield put({
         type: 'clear',
       });
@@ -370,6 +374,15 @@ const CreateBookModel: CreateBookModelType = {
             title: createState.config.title,
           },
         });
+      }
+      createState = yield select(state => state.create);
+      if (createState.pages.length > 0){
+        yield put({
+          type:"setDisplaySrc",
+          payload:{
+            src: createState.pages[0].path
+          }
+        })
       }
       yield put({
         type: 'setLoadingDialog',
@@ -696,20 +709,20 @@ const CreateBookModel: CreateBookModelType = {
       // clear up
       yield call(removeFiles, { paths: [createState.cover, createState.coverThumbnail] });
       yield put({
-        type:"closeImageCropDialog"
-      })
+        type: 'closeImageCropDialog',
+      });
       message.success('编辑封面成功');
     },
     * cropPage({ payload: { x, y, width, height, cropWidth, cropHeight } }, { call, put, select }) {
       const createState: CreateBookModelStateType = yield select(state => state.create);
-      const targetPage = createState.pages.find((page: Page) => page.path === createState.cropImageDialog.src);
+      const targetPage = createState.pages.find((page: Page) => page.path === createState.displaySrc);
       if (targetPage === undefined) {
         return;
       }
       const { filePath, thumbnailPath } = yield call(cropImage, {
-        filePath: createState.cropImageDialog.src,
+        filePath: createState.displaySrc,
         outputDir: createState.path.projectPages,
-        outputThumbnailDir:path.join(createState.path.projectPath,"thumbnails"),
+        outputThumbnailDir: path.join(createState.path.projectPath, 'thumbnails'),
         x, y, width, height, cropWidth, cropHeight,
       });
       yield put({
@@ -740,7 +753,14 @@ const CreateBookModel: CreateBookModelType = {
       // clear up
       yield call(removeFiles, { paths: [targetPage.path, targetPage.thumbnail] });
       yield put({
-        type:"closeImageCropDialog"
+        type: 'closeImageCropDialog',
+      });
+      // set display
+      yield put({
+        type:"create/setDisplaySrc",
+        payload:{
+          src:filePath
+        }
       })
       message.success('编辑页面成功');
 
@@ -772,10 +792,12 @@ const CreateBookModel: CreateBookModelType = {
         loadingDialog: dialog,
       };
     },
-    addToPage(state, { payload: { pages } }) {
+    addToPage(state, { payload: { pages, index = state.pages.length } }) {
+      const newPages = [...state.pages];
+      newPages.splice(index, 0, ...pages);
       return {
         ...state,
-        pages: [...state.pages, ...pages],
+        pages: [...newPages],
       };
     },
     setConfig(state, { payload: { config } }) {
@@ -905,7 +927,7 @@ const CreateBookModel: CreateBookModelType = {
         ...state,
         pages: state.pages.map((page: Page) => {
           if (page.path === path) {
-            console.log("find target !!!!!!!!!!!!!!!")
+            console.log('find target !!!!!!!!!!!!!!!');
             return {
               ...page,
               ...updatePage,
@@ -917,25 +939,31 @@ const CreateBookModel: CreateBookModelType = {
         }),
       };
     },
-    updateConfigPage(state,{payload:{filename,updatePage}}){
+    updateConfigPage(state, { payload: { filename, updatePage } }) {
       return {
         ...state,
-        config:{
+        config: {
           ...state.config,
-          pages:state.config.pages.map(item => {
-            if (item.file === filename){
+          pages: state.config.pages.map(item => {
+            if (item.file === filename) {
               return {
                 ...item,
-                ...updatePage
-              }
+                ...updatePage,
+              };
             }
             return {
-              ...item
-            }
-          })
-        }
-      }
-    }
+              ...item,
+            };
+          }),
+        },
+      };
+    },
+    setDisplaySrc(state, { payload: { src } }) {
+      return {
+        ...state,
+        displaySrc: src,
+      };
+    },
   },
 };
 export default CreateBookModel;

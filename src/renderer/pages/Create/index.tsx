@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { connect } from 'dva';
-import { Divider, PageHeader, Typography } from 'antd';
+import { PageHeader, Typography } from 'antd';
 import styles from './style.less';
 import { CreateBookModelStateType, Page } from '@/pages/Create/model';
 import { history } from 'umi';
@@ -8,17 +8,20 @@ import { DirectoryModelStateType } from '@/models/directory';
 import { FileListModelStateType } from '@/models/filelist';
 import CreateBookHeaderAction, { CreateBookMultipleActionPopsType } from '@/pages/Create/components/CreateBookHeaderAction';
 import ImportImageDialog from '@/pages/Create/components/ImportImageDialog';
-import noCoverImage from '@/assets/no-cover.png';
 import { path } from '@/global';
 import LoadingDialog from '@/pages/Create/components/LoadingDialog';
-import PageCollection from '@/pages/Create/components/PageCollection';
 import { differenceWith } from 'lodash';
 import CreateTagDialog from '@/pages/Create/components/CreateTagDialog';
-import TagCollection from '@/pages/Create/components/TagCollection';
 import MatchTagDialog from '@/pages/Create/components/MatchTagDialog';
 import AutoImportProgressDialog from '@/pages/Create/components/AutoImportProgressDialog';
 import { UserModelStateType } from '@/models/user';
 import CreateBookCoverCrop from '@/pages/Create/crop';
+import CreateBookPagesSide from '@/pages/Create/side';
+import ToolBox from '@/pages/Create/components/ToolBox';
+import ReactCrop from 'react-image-crop';
+
+import CropDialog from '@/pages/Create/components/CropDialog';
+import CropView from '@/pages/Create/view/Crop';
 
 const { Paragraph } = Typography;
 
@@ -32,6 +35,9 @@ interface CreateBookPagePropsType {
 
 function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateBookPagePropsType) {
   const { title } = create;
+  const [editMode,setEditMode] = useState("normal")
+  const imageRef = useRef<HTMLImageElement>();
+  const [scalingRatio, setScalingRatio] = useState(undefined);
   const titleEditConfig = {
     onChange: text => {
       dispatch({
@@ -184,7 +190,7 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
             pages: differenceWith<Page, Page>(
               create.pages,
               create.selectPages,
-              (a: Page, b: Page) => a.name === b.name
+              (a: Page, b: Page) => a.name === b.name,
             ),
           },
         });
@@ -240,15 +246,15 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
         type: 'create/uploadYouComic',
       });
     };
-    const  onEditCover = () => {
+    const onEditCover = () => {
       dispatch({
-        type:"create/openImageCropDialog",
-        payload:{
-          mode:"cover",
-          path:create.cover
-        }
-      })
-    }
+        type: 'create/openImageCropDialog',
+        payload: {
+          mode: 'cover',
+          path: create.cover,
+        },
+      });
+    };
     return (
       <CreateBookHeaderAction
         onImportImages={onImportImages}
@@ -267,20 +273,29 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
       />
     );
   };
-  const onCropPage = (page:Page) => {
-    console.log(page)
+  const onCropPage = (page: Page) => {
+    console.log(page);
     dispatch({
-      type:"create/openImageCropDialog",
-      payload:{
-        mode:"page",
-        path:page.path
-      }
-    })
+      type: 'create/openImageCropDialog',
+      payload: {
+        mode: 'page',
+        path: page.path,
+      },
+    });
+  };
+  const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+
+  };
+  const renderEditMode = () => {
+    return {
+      "normal":<img src={create.displaySrc} style={{}} ref={imageRef}/>,
+      "crop":<CropView onExitMode={() => setEditMode("normal")}/>
+    }[editMode]
   }
   return (
     <div>
-      <CreateBookCoverCrop />
-      <LoadingDialog isOpen={create.loadingDialog.isOpen} message={create.loadingDialog.message} />
+      <CreateBookCoverCrop/>
+      <LoadingDialog isOpen={create.loadingDialog.isOpen} message={create.loadingDialog.message}/>
       <ImportImageDialog
         isOpen={create.importImageDialog.isShow}
         fileName={create.importImageDialog.fileName}
@@ -295,52 +310,47 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
       />
       {renderCreateTagDialog()}
       {renderMatchTagDialog()}
-      <div className={styles.headerWrap}>
-        <PageHeader
-          style={{
-            border: '1px solid rgb(235, 237, 240)',
-          }}
-          onBack={() => history.goBack()}
-          title="创建书籍"
-          subTitle={dirName}
-          extra={renderHeaderAction()}
-        />
-      </div>
-      <div className={styles.main}>
-        <div className={styles.header}>
-          <div>
-            <img
-              src={create.coverThumbnail ? create.coverThumbnail : noCoverImage}
-              className={styles.cover}
-            />
-          </div>
-          <div className={styles.info}>
-            <Paragraph className={styles.title} editable={titleEditConfig}>
-              {title}
-            </Paragraph>
-            <Divider className={styles.divider} />
-            <div>
-              <span className={styles.fieldTitle}>标签</span>
-              <TagCollection tags={create.tags} onDeleteTag={onDeleteTag} />
-            </div>
-          </div>
-        </div>
-        <div className={styles.pageCollectionWrap}>
-          <PageCollection
-            pages={create.pages}
-            onPagesChange={onPagesChange}
-            onItemSelect={onPageItemSelect}
-            onItemClick={() => {}}
-            selectedPages={create.selectPages}
-            onCrop={onCropPage}
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <div style={{
+          backgroundColor: '#535353',
+          position: 'fixed',
+          padding: 16,
+          top: 45,
+          height: '100%',
+          left: 0,
+          border: '#262626 1px solid',
+          zIndex: 999,
+        }}>
+          <ToolBox
+            enterCropMode={() => setEditMode("crop")}
           />
+        </div>
+        <div style={{ position: 'fixed', width: '100%' }}>
+          <PageHeader
+            style={{
+              backgroundColor: '#535353',
+            }}
+            onBack={() => history.goBack()}
+            title="创建书籍"
+            subTitle={dirName}
+            extra={renderHeaderAction()}
+          />
+        </div>
+        <div className={styles.main}>
+
+          <div className={styles.leftContent} onWheel={onWheel}>
+            {renderEditMode()}
+          </div>
+          <div className={styles.right}>
+            <CreateBookPagesSide/>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-export default connect(({ directory, create, fileList, user }:any) => ({
+export default connect(({ directory, create, fileList, user }: any) => ({
   directory,
   create,
   fileList,

@@ -5,7 +5,10 @@ export default defineConfig({
   publicPath: './',
   title: 'YouComic Studio',
   history: { type: 'hash' },
-  antd: {},
+  antd: {
+    dark: true, // active dark theme
+    compact: true, // active compact theme
+  },
   dva: {
     hmr: true,
   },

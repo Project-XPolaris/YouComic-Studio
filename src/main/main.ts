@@ -117,6 +117,7 @@ function createWindow() {
     webPreferences: {
       webSecurity: false,
     },
+    darkTheme:true
   });
 
   mainWindow.webContents.setUserAgent(USER_AGENT);
