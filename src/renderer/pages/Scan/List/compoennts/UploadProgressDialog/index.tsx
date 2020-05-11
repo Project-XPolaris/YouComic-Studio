@@ -29,7 +29,10 @@ export default function UploadProgressDialog(
       maskClosable={false}
       closable={false}
       footer={null}
+      className={styles.root}
+      bodyStyle={{backgroundColor:"#535353"}}
     >
+      <div>
       <div className={styles.bookWrap}>
         <div className={styles.coverWrap}>
           <img src={cover} className={styles.cover}/>
@@ -41,7 +44,7 @@ export default function UploadProgressDialog(
           <div>
             <Progress percent={currentPercent} className={styles.progress} />
           </div>
-          <div>
+          <div className={styles.current}>
             {currentInfo}
           </div>
         </div>
@@ -50,7 +53,8 @@ export default function UploadProgressDialog(
         <div>
         Total:
         </div>
-        <Progress percent={totalPercent} className={styles.totalProgress}/>
+        <Progress percent={totalPercent} className={styles.totalProgress} />
+      </div>
       </div>
     </Modal>
   );

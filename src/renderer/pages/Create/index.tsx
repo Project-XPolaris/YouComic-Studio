@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'dva';
 import { PageHeader, Typography } from 'antd';
 import styles from './style.less';
@@ -18,10 +18,9 @@ import { UserModelStateType } from '@/models/user';
 import CreateBookCoverCrop from '@/pages/Create/crop';
 import CreateBookPagesSide from '@/pages/Create/side';
 import ToolBox from '@/pages/Create/components/ToolBox';
-import ReactCrop from 'react-image-crop';
-
-import CropDialog from '@/pages/Create/components/CropDialog';
 import CropView from '@/pages/Create/view/Crop';
+import { Application, Sprite, Texture, filters, Filter, Graphics } from 'pixi.js';
+import MaskManager from '@/pages/Create/components/MaskManager';
 
 const { Paragraph } = Typography;
 
@@ -35,9 +34,9 @@ interface CreateBookPagePropsType {
 
 function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateBookPagePropsType) {
   const { title } = create;
-  const [editMode,setEditMode] = useState("normal")
+  const [editMode, setEditMode] = useState('normal');
+  const [pixiApp, setPixiApp] = useState<Application>();
   const imageRef = useRef<HTMLImageElement>();
-  const [scalingRatio, setScalingRatio] = useState(undefined);
   const titleEditConfig = {
     onChange: text => {
       dispatch({
@@ -288,9 +287,93 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
   };
   const renderEditMode = () => {
     return {
-      "normal":<img src={create.displaySrc} style={{}} ref={imageRef}/>,
-      "crop":<CropView onExitMode={() => setEditMode("normal")}/>
-    }[editMode]
+      'normal': <img src={create.displaySrc} style={{}} ref={imageRef}/>,
+      'crop': <CropView onExitMode={() => setEditMode('normal')}/>,
+    }[editMode];
+  };
+
+
+  const pixiContainer = useRef<HTMLDivElement>();
+  useEffect(() => {
+    let app = pixiApp;
+    if (pixiApp === undefined) {
+      app = new Application({
+        transparent: true,
+        antialias: true,
+        resolution: 3,
+      });
+      setPixiApp(app);
+    }
+    app.renderer.view.style.position = 'absolute';
+    app.renderer.view.style.top = '0px';
+    app.renderer.view.style.left = '0px';
+    app.renderer.view.style.width = '100%';
+    app.renderer.view.style.height = '100%';
+    app.resizeTo = pixiContainer.current;
+    pixiContainer.current.appendChild(app.view);
+  }, []);
+  const [imageSprite, setImageSprite] = useState<Sprite>();
+  const [lastSrc, setLastSrc] = useState<string>();
+  // if (imageSprite !== undefined){
+  //   pixiApp.stage.removeChild(imageSprite)
+  // }
+  if (create.displaySrc && pixiApp && create.displaySrc !== lastSrc) {
+    setLastSrc(create.displaySrc);
+    const bunny = Sprite.from(
+      create.displaySrc,
+    );
+    bunny.anchor.set(0.5, 0.5);
+    bunny.scale.set(0.5, 0.5);
+    bunny.position.set(pixiApp.screen.width / 2, pixiApp.screen.height / 2);
+    setImageSprite(bunny);
+    // bunny.mask = mask;
+    pixiApp.stage.addChild(bunny);
+    // thing.beginFill(0x8bc5ff, 0.4);
+    const graphics = new Graphics();
+
+    let rectWidth = 100
+    let rectHeight = 100
+    graphics.beginFill(0xffffff,0.00001);
+    graphics.lineStyle(3, 0xFEEB77, 1);
+    graphics.drawRect(pixiApp.screen.width / 2, pixiApp.screen.height / 2, rectWidth, rectHeight);
+    graphics.interactive = true
+    // draw handler
+    let data,dragging;
+    function onDragStart(event) {
+      // store a reference to the data
+      // the reason for this is because of multitouch
+      // we want to track the movement of this particular touch
+      console.log("dragStart")
+      data = event.data;
+      dragging = true;
+    }
+    function onDragEnd() {
+      dragging = false;
+      // set the interaction data to null
+      data = null;
+      console.log("dragEnd")
+    }
+    function onDragMove(e) {
+      console.log("dragMove")
+      if (dragging) {
+        graphics.x += e.data.originalEvent.movementX;
+        graphics.y += e.data.originalEvent.movementY;
+      }
+    }
+
+    graphics.endFill();
+    graphics.on('pointerdown', onDragStart)
+      .on('pointerup', onDragEnd)
+      .on('pointerupoutside', onDragEnd)
+      .on('pointermove', onDragMove);
+    pixiApp.stage.addChild(graphics);
+
+    window.addEventListener('resize', () => {
+      bunny.anchor.set(0.5, 0.5);
+      bunny.scale.set(0.5, 0.5);
+      bunny.position.set(pixiApp.screen.width / 2, pixiApp.screen.height / 2);
+    });
+
   }
   return (
     <div>
@@ -311,20 +394,20 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
       {renderCreateTagDialog()}
       {renderMatchTagDialog()}
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-        <div style={{
-          backgroundColor: '#535353',
-          position: 'fixed',
-          padding: 16,
-          top: 45,
-          height: '100%',
-          left: 0,
-          border: '#262626 1px solid',
-          zIndex: 999,
-        }}>
-          <ToolBox
-            enterCropMode={() => setEditMode("crop")}
-          />
-        </div>
+        {/*<div style={{*/}
+        {/*  backgroundColor: '#535353',*/}
+        {/*  position: 'fixed',*/}
+        {/*  padding: 16,*/}
+        {/*  top: 45,*/}
+        {/*  height: '100%',*/}
+        {/*  left: 0,*/}
+        {/*  border: '#262626 1px solid',*/}
+        {/*  zIndex: 999,*/}
+        {/*}}>*/}
+        {/*  <ToolBox*/}
+        {/*    enterCropMode={() => setEditMode('crop')}*/}
+        {/*  />*/}
+        {/*</div>*/}
         <div style={{ position: 'fixed', width: '100%' }}>
           <PageHeader
             style={{
@@ -338,8 +421,10 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
         </div>
         <div className={styles.main}>
 
-          <div className={styles.leftContent} onWheel={onWheel}>
-            {renderEditMode()}
+          <div className={styles.leftContent} onWheel={onWheel} ref={pixiContainer}>
+            <div style={{position:"absolute",right:0,top:0}}>
+              <MaskManager/>
+            </div>
           </div>
           <div className={styles.right}>
             <CreateBookPagesSide/>

@@ -17,7 +17,7 @@ export default function FilterSection({ items, onClick,title,activeFilters }: Fi
   return (
     <div>
       <div className={styles.title}>
-      <Text>{title}</Text>
+      <Text className={styles.title}>{title}</Text>
       </div>
       <div>
         {items.map((item: FilterItem) => {
