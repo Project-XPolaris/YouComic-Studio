@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { connect } from 'dva';
-import { PageHeader, Typography } from 'antd';
+import { Card, PageHeader, Typography } from 'antd';
 import styles from './style.less';
 import { CreateBookModelStateType, Page } from '@/pages/Create/model';
 import { history } from 'umi';
@@ -35,7 +35,7 @@ interface CreateBookPagePropsType {
 
 function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateBookPagePropsType) {
   const { title } = create;
-  const [editMode,setEditMode] = useState("normal")
+  const [editMode, setEditMode] = useState('normal');
   const imageRef = useRef<HTMLImageElement>();
   const [scalingRatio, setScalingRatio] = useState(undefined);
   const titleEditConfig = {
@@ -288,10 +288,10 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
   };
   const renderEditMode = () => {
     return {
-      "normal":<img src={create.displaySrc} style={{}} ref={imageRef}/>,
-      "crop":<CropView onExitMode={() => setEditMode("normal")}/>
-    }[editMode]
-  }
+      'normal': <img src={create.displaySrc} style={{}} ref={imageRef}/>,
+      'crop': <CropView onExitMode={() => setEditMode('normal')}/>,
+    }[editMode];
+  };
   return (
     <div>
       <CreateBookCoverCrop/>
@@ -311,25 +311,26 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
       {renderCreateTagDialog()}
       {renderMatchTagDialog()}
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-        <div style={{
-          backgroundColor: '#535353',
+        <Card style={{
           position: 'fixed',
           padding: 16,
-          top: 45,
+          top: 75,
           height: '100%',
           left: 0,
           border: '#262626 1px solid',
           zIndex: 999,
-        }}>
+        }}
+              bodyStyle={{
+                padding: 16,
+              }}
+        >
           <ToolBox
-            enterCropMode={() => setEditMode("crop")}
+            enterCropMode={() => setEditMode('crop')}
           />
-        </div>
+        </Card>
         <div style={{ position: 'fixed', width: '100%' }}>
           <PageHeader
-            style={{
-              backgroundColor: '#535353',
-            }}
+            style={{}}
             onBack={() => history.goBack()}
             title="创建书籍"
             subTitle={dirName}

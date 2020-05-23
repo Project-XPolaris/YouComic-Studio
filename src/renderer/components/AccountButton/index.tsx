@@ -30,7 +30,7 @@ export default function AccountButton({ user, onLogin, onLogout }: AccountButton
     );
   } else {
     return (
-      <Button onClick={onLogin}  style={{backgroundColor:'transparent',color:"#FFF"}}>
+      <Button onClick={onLogin} >
         <UserIcon />
         登录至YouComic
       </Button>
