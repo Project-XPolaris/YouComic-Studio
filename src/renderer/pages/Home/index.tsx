@@ -67,8 +67,9 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
           size={'small'}
           className={styles.loginButton}
           onClick={onLoginAccount}
+          icon={ <UserIcon/>}
         >
-          <UserIcon/>
+
           登录至YouComic
         </Button>
       );
@@ -112,19 +113,16 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
           path={home.createDialog.path}
           onSelectSaveFolder={onSelectSavePath}
         />
-        <div>
-          <Title>
-            开始
-          </Title>
+        <div className={styles.title}>
+          开始
         </div>
         <div className={styles.headerRight}>
-          <span>
-            Project Polaris{`  `}| {`  `}You Comic
+          <span className={styles.appInfo}>
+            Project XPolaris{`  `}| {`  `}You Comic
           </span>
           {renderUserAccount()}
         </div>
       </div>
-      <Divider/>
       <div className={styles.content}>
         <div className={styles.field}>
           <div className={styles.fieldTitle}>创建项目</div>
@@ -152,7 +150,7 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
         </div>
       </div>
       <div className={styles.bottomRight}>
-        <Button onClick={onSettingButtonClick} shape={'circle'}>
+        <Button onClick={onSettingButtonClick} shape={'circle'} type={'primary'} className={styles.settingIcon}>
           <SettingIcon/>
         </Button>
       </div>
