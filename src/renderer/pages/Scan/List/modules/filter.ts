@@ -1,65 +1,124 @@
 import { Directory, Effect, Page, Reducer, ScanModelStateType } from '@@/plugin-dva/connect';
 import { Book } from '@/services/youcomic/model';
 
-const filterActionMapping : {[key:string] : (state:ScanModelStateType,item : Directory) => boolean} = {
-  "title":(state,item) => {
-    return item.title !== undefined && item.title.length !== 0
+const filterActionMapping: { [key: string]: { [key: string]: (state: ScanModelStateType, item: Directory) => boolean } } = {
+  'title': {
+    'exist': (state, item) => {
+      return item.title !== undefined && item.title.length !== 0;
+    },
+    'notExist': (state, item) => {
+      return item.title === undefined || item.title.length === 0;
+    },
+    'notSet': () => {
+      return true;
+    },
   },
-  "noTitle":(state,item) => {
-    return item.title === undefined || item.title.length === 0
+  'artist': {
+    'exist': (state, item) => {
+      return item.matchInfo.artist !== undefined;
+    },
+    'notExist': (state, item) => {
+      return item.matchInfo.artist === undefined;
+    },
+    'notSet': () => {
+      return true;
+    },
   },
-  "artist":(state,item) => {
-    return item.matchInfo.artist !== undefined
+  'series': {
+    'exist': (state, item) => {
+      return item.matchInfo.series !== undefined;
+    },
+    'notExist': (state, item) => {
+      return item.matchInfo.series === undefined;
+    },
+    'notSet': () => {
+      return true;
+    },
   },
-  "noArtist":(state,item) => {
-    return item.matchInfo.artist === undefined
+  'theme': {
+    'exist': (state, item) => {
+      return item.matchInfo.theme !== undefined;
+    },
+    'notExist': (state, item) => {
+      return item.matchInfo.theme === undefined;
+    },
+    'notSet': () => {
+      return true;
+    },
   },
-  "series":(state,item) => {
-    return item.matchInfo.series !== undefined
+  'inLibrary': {
+    'exist': (state, item) => {
+      return state.existBook.find((book: Book) => book.name === item.title) !== undefined;
+    },
+    'notExist': (state, item) => {
+      return state.existBook.find((book: Book) => book.name === item.title) === undefined;
+    },
+    'notSet': () => {
+      return true;
+    },
   },
-  "noSeries":(state,item) => {
-    return item.matchInfo.series === undefined
-  },
-  "theme":(state,item) => {
-    return item.matchInfo.theme !== undefined
-  },
-  "noTheme":(state,item) => {
-    return item.matchInfo.theme === undefined
-  },
-  "exist":(state,item) => {
-    return state.existBook.find((book:Book) => book.name === item.title) !== undefined
-  },
-  "notexist":(state,item) => {
-    return state.existBook.find((book:Book) => book.name === item.title) === undefined
-  }
-}
+};
 
 export interface BookFilterModuleStateTypes {
-
+  filterDrawer: {
+    isShow: boolean
+  }
+  filter: { [key: string]: string }
 }
+
 export interface BookFilterModuleTypes {
   state: BookFilterModuleStateTypes,
   effects: {}
   reducers: {
-    setDirFilter:Reducer<ScanModelStateType>
+    setDirFilter: Reducer<ScanModelStateType>
+    setFilterDrawerVisible: Reducer<ScanModelStateType>
   }
 }
 
 export const BookFilterModule: BookFilterModuleTypes = {
-  state: {},
+  state: {
+    filterDrawer: {
+      isShow: false,
+    },
+    filter: {},
+  },
   effects: {},
   reducers: {
-    setDirFilter(state:ScanModelStateType,{payload:{filter}}):ScanModelStateType{
-      let dirs = [...state.directoryList];
-      filter.forEach((filterKey:string) => {
-        dirs = dirs.filter((dir:Directory) => !filterActionMapping[filterKey](state,dir))
-      })
-      return{
+    setDirFilter(state: ScanModelStateType, { payload: { filter } }): ScanModelStateType {
+      return {
         ...state,
         filter,
-        displayList:dirs.map((item) => item.path)
-      }
-    }
+        directoryList: state.directoryList.map(item => {
+          for (const filterField of Object.getOwnPropertyNames(filter)) {
+            if (!filterActionMapping[filterField][filter[filterField]](state, item)) {
+              return {
+                ...item,
+                item: {
+                  ...item.item,
+                  visible: false,
+                },
+              };
+            }
+          }
+          return {
+            ...item,
+            item: {
+              ...item.item,
+              visible: true,
+            },
+          };
+        }),
+      };
+    },
+    setFilterDrawerVisible(state, { payload: { isShow } }) {
+      return {
+        ...state,
+        filterDrawer: {
+          ...state.filterDrawer,
+          isShow,
+        },
+      };
+    },
   },
 };
 

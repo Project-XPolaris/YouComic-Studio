@@ -52,9 +52,9 @@ export const ScanModule: ScanModuleTypes = {
         },
       });
       const homeState: HomeModelStateType = yield select(state => state.home);
-      let scanPath = homeState.path
-      if (devVars.enable && devVars["scanPath"] !== undefined) {
-        scanPath = devVars["scanPath"];
+      let scanPath = homeState.path;
+      if (devVars.enable && devVars['scanPath'] !== undefined) {
+        scanPath = devVars['scanPath'];
       }
       const directoryList: Directory[] = yield call(scanBookDirectory, { path: scanPath });
       directoryList.forEach((dir: Directory) => {
@@ -63,6 +63,9 @@ export const ScanModule: ScanModuleTypes = {
         dir.coverPath = dir.targetFiles[0].path;
         dir.extraTags = [];
         dir.title = matchResult.title;
+        dir.item = {
+          visible: true,
+        };
       });
       const currentUser = yield select(state => (state.user.current));
       if (currentUser) {

@@ -22,7 +22,7 @@ export default function DirectoryCollection({
   existBookNames,
   displayDirPath
 }: DirectoryCollectionPropsType) {
-  const displayItem = directoryList.filter((dirItem) => displayDirPath.find(path => path === dirItem.path) !== undefined)
+  const displayItem = directoryList.filter((dirItem) => dirItem.item.visible)
   const empty = (
     <div className={style.emptyWrap}>
       <Empty />
@@ -74,7 +74,7 @@ export default function DirectoryCollection({
           {({height, width}) => (
             <List
               style={{outline: 'none'}}
-              rowCount={directoryList.length}
+              rowCount={displayItem.length}
               rowHeight={150}
               rowRenderer={rowRenderer}
               height={height}

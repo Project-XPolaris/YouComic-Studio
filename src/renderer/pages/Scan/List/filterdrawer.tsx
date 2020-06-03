@@ -11,48 +11,106 @@ interface DirFilterDrawerPropsType {
 }
 export const InfoFilter : FilterItem[] =[
   {
-    name:"无标题",
-    key:"noTitle",
-  },
-  {
-    name:"有标题",
+    name:"标题",
     key:"title",
+    value:"notSet",
+    options:[
+      {
+        name:"未设置",
+        key:"notSet"
+      },
+      {
+        name:"存在",
+        key:"exist"
+      },
+      {
+        name:"不存在",
+        key:"notExist"
+      }
+    ],
   },
+
   {
-    name:"无作者",
-    key:"noArtist",
-  },
-  {
-    name:"有作者",
+    name:"作者",
     key:"artist",
+    value:"notSet",
+    options:[
+      {
+        name:"未设置",
+        key:"notSet"
+      },
+      {
+        name:"存在",
+        key:"exist"
+      },
+      {
+        name:"不存在",
+        key:"notExist"
+      }
+    ],
   },
   {
-    name:"无系列",
-    key:"noSeries",
-  },
-  {
-    name:"有系列",
+    name:"系列",
     key:"series",
+    value:"notSet",
+    options:[
+      {
+        name:"未设置",
+        key:"notSet"
+      },
+      {
+        name:"存在",
+        key:"exist"
+      },
+      {
+        name:"不存在",
+        key:"notExist"
+      }
+    ],
   },
+
   {
-    name:"无主题",
-    key:"noTheme",
-  },
-  {
-    name:"有主题",
+    name:"主题",
     key:"theme",
+    value:"notSet",
+    options:[
+      {
+        name:"未设置",
+        key:"notSet"
+      },
+      {
+        name:"存在",
+        key:"exist"
+      },
+      {
+        name:"不存在",
+        key:"notExist"
+      }
+    ],
   },
 ]
 export const YouComicFilter : FilterItem[] =[
   {
-    name:"已存在",
-    key:"exist",
-  },
-  {
-    name:"不存在",
-    key:"notexist",
+    name:"在库",
+    key:"inLibrary",
+    value:"notSet",
+    options:[
+      {
+        name:"未设置",
+        key:"notSet"
+      },
+      {
+        name:"存在",
+        key:"exist"
+      },
+      {
+        name:"不存在",
+        key:"notExist"
+      }
+    ],
   },
 ]
+
 function DirFilterDrawer({ dispatch, scan: { filterDrawer: { isShow },filter } }: DirFilterDrawerPropsType) {
   const onClose = () => {
     dispatch({
@@ -62,7 +120,7 @@ function DirFilterDrawer({ dispatch, scan: { filterDrawer: { isShow },filter } }
       }
     })
   }
-  const onFilterUpdate = (filter:string[]) => {
+  const onFilterUpdate = (filter:{ [key: string]: string }) => {
     dispatch({
       type:"scan/setDirFilter",
       payload:{

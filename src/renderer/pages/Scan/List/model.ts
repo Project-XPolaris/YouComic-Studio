@@ -18,6 +18,9 @@ export interface Directory {
   coverPath?: string;
   extraTags: Array<{ type: string; name: string }>;
   title?: string;
+  item:{
+    visible:boolean
+  }
 }
 
 export interface DirFilter {
@@ -52,11 +55,7 @@ interface BaseScanModelStateType {
     totalProgress: number;
     isOpen: boolean;
   };
-  filterDrawer: {
-    isShow: boolean
-  }
 
-  filter: string[]
   displayList: string[]
 }
 
@@ -79,10 +78,10 @@ export interface BaseScanModelType {
     removeSelectDirectory: Reducer<ScanModelStateType>;
     setSelectedDirectoryCover: Reducer<ScanModelStateType>;
     setSelectTitle: Reducer<ScanModelStateType>;
+    setDisplayDirPath: Reducer<ScanModelStateType>;
     setExistBook: Reducer
     setFilterDrawerVisible: Reducer
-    setDirFilter: Reducer
-    setDisplayDirPath: Reducer
+
   };
   state: ScanModelStateType;
   effects: {
@@ -117,10 +116,6 @@ const ScanModel: ScanModelType = {
       totalProgress: 0,
       isOpen: false,
     },
-    filterDrawer: {
-      isShow: false,
-    },
-    filter: [],
     displayList: [],
   },
   subscriptions: {},
@@ -354,15 +349,7 @@ const ScanModel: ScanModelType = {
         }),
       };
     },
-    setFilterDrawerVisible(state, { payload: { isShow } }) {
-      return {
-        ...state,
-        filterDrawer: {
-          ...state.filterDrawer,
-          isShow,
-        },
-      };
-    },
+
     setDisplayDirPath(state, { payload: { list } }) {
       return {
         ...state,

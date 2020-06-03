@@ -1,33 +1,56 @@
 import React from 'react';
-import { Tag, Typography } from 'antd';
+import { Divider, Tag, Typography, Radio } from 'antd';
 import styles from './style.less';
 import { FilterItem } from '@/pages/Scan/List/compoennts/Filter/item';
+import { RadioChangeEvent } from 'antd/es/radio';
 
 const { Text } = Typography;
 
 interface FilterSectionPropsType {
   items: FilterItem[]
-  onClick: (key: String) => void
   title: string
-  activeFilters:string[]
+  activeFilters: { [key: string]: string }
+  onFilterChange:(filter : { [key: string]: string }) => void
 }
 
 
-export default function FilterSection({ items, onClick,title,activeFilters }: FilterSectionPropsType) {
+export default function FilterSection({ items = [],title, activeFilters,onFilterChange }: FilterSectionPropsType) {
+
   return (
     <div>
       <div className={styles.title}>
-      <Text>{title}</Text>
+        <Text>{title}</Text>
       </div>
       <div>
-        {items.map((item: FilterItem) => {
-          const isActive =  activeFilters.find(active => active === item.key) === undefined
-          return (
-            <Tag key={item.key} onClick={() => onClick(item.key)} className={styles.tag} color={isActive?"blue":undefined}>
-              {item.name}
-            </Tag>
-          )
-        })}
+        {
+          items.map(item => {
+            let value = item.value;
+            if (activeFilters[item.key]) {
+              value = activeFilters[item.key];
+            }
+
+            const onChange = (e: RadioChangeEvent) => {
+              onFilterChange({
+                ...activeFilters,
+                [item.key]:e.target.value
+              })
+            };
+            return (
+              <div className={styles.item} key={item.key}>
+                <div className={styles.itemTitle}>
+                  {item.name}
+                </div>
+                <div>
+                  <Radio.Group value={value} size="small" style={{ marginTop: 8 }} onChange={onChange}>
+                    {item.options.map(option => (
+                      <Radio.Button value={option.key} key={option.key}>{option.name}</Radio.Button>
+                    ))}
+                  </Radio.Group>
+                </div>
+              </div>
+            );
+          })
+        }
       </div>
     </div>
   );
