@@ -2,8 +2,29 @@
   position: absolute;
   width: 100%;
   height: 100%;
-}
 
+
+}
+div{
+  &::-webkit-scrollbar {
+    width: 12px;
+    background-color: #4a4a4a;
+    height: 12px;
+  }
+  &::-webkit-scrollbar-track {
+
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #696969;
+    &:hover{
+      width: 12px;
+    }
+  }
+  &::-webkit-scrollbar-corner{
+    background-color: #535353;
+  }
+}
 .emptyWrap{
   display: flex;
   justify-content: center;

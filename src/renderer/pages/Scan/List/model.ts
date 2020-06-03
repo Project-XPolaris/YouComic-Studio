@@ -3,10 +3,10 @@ import { Reducer } from 'redux';
 import { MatchTextInfo } from '@/utils/match';
 import { selectImageFile } from '@/services/file';
 import { differenceWith } from 'lodash';
-import { Book } from '@/services/youcomic/model';
-import scan from '@/pages/Scan/List/compoennts/modules/scan';
-import upload from '@/pages/Scan/List/compoennts/modules/upload';
-import filter from '@/pages/Scan/List/compoennts/modules/filter';
+import { BookFilterModule, BookFilterModuleStateTypes, BookFilterModuleTypes } from '@/pages/Scan/List/modules/filter';
+import { ScanModule, ScanModuleStateTypes, ScanModuleTypes } from '@/pages/Scan/List/modules/scanner';
+import { UploadModule, UploadModuleStateTypes, UploadModuleTypes } from '@/pages/Scan/List/modules/upload';
+import { ListModule, ListModuleStateTypes, ListModuleTypes } from '@/pages/Scan/List/modules/list';
 
 export interface Directory {
   path: string;
@@ -24,18 +24,19 @@ export interface DirFilter {
   onFilter(directory: Directory): Boolean
 }
 
-export interface ScanModelStateType {
+export type ScanModelStateType =
+  BaseScanModelStateType
+  & ScanModuleStateTypes
+  & BookFilterModuleStateTypes
+  & UploadModuleStateTypes
+  & ListModuleStateTypes
+
+interface BaseScanModelStateType {
   path?: string;
-  directoryList: Directory[];
-  scanningDialog: {
-    isOpen: boolean;
-  };
+
   quickViewDrawer: {
     isOpen: boolean;
     directory?: string;
-  };
-  scanOption: {
-    isOpen: boolean;
   };
   selectedDirectory: string[];
   createTagDialog: {
@@ -54,32 +55,29 @@ export interface ScanModelStateType {
   filterDrawer: {
     isShow: boolean
   }
-  existBook: Book[]
+
   filter: string[]
   displayList: string[]
 }
 
-export interface ScanModelType {
+type ScanModelType = BaseScanModelType & ScanModuleTypes & BookFilterModuleTypes & UploadModuleTypes & ListModuleTypes
+
+export interface BaseScanModelType {
   namespace: string;
   reducers: {
     setPath: Reducer<ScanModelStateType>;
-    setScanningDialog: Reducer<ScanModelStateType>;
-    updateScanningDialog: Reducer<ScanModelStateType>;
     setDirectoryList: Reducer<ScanModelStateType>;
     setState: Reducer<ScanModelStateType>;
     quickViewDirectory: Reducer<ScanModelStateType>;
     closeQuickViewDirectoryDrawer: Reducer<ScanModelStateType>;
     updateItemsValue: Reducer<ScanModelStateType>;
     setCoverPath: Reducer<ScanModelStateType>;
-    openScanOptionDrawer: Reducer<ScanModelStateType>;
-    closeScanOptionDrawer: Reducer<ScanModelStateType>;
     setSelectedDirectory: Reducer<ScanModelStateType>;
     openCreateTagDialog: Reducer<ScanModelStateType>;
     closeCreateTagDialog: Reducer<ScanModelStateType>;
     createTag: Reducer<ScanModelStateType>;
     removeSelectDirectory: Reducer<ScanModelStateType>;
     setSelectedDirectoryCover: Reducer<ScanModelStateType>;
-    updateUploadDialog: Reducer<ScanModelStateType>;
     setSelectTitle: Reducer<ScanModelStateType>;
     setExistBook: Reducer
     setFilterDrawerVisible: Reducer
@@ -88,9 +86,7 @@ export interface ScanModelType {
   };
   state: ScanModelStateType;
   effects: {
-    scanBookDirectory: Effect;
     selectItemCover: Effect;
-    uploadToYouComic: Effect;
   };
   subscriptions: {};
 }
@@ -98,17 +94,16 @@ export interface ScanModelType {
 const ScanModel: ScanModelType = {
   namespace: 'scan',
   state: {
+    ...ScanModule.state,
+    ...BookFilterModule.state,
+    ...UploadModule.state,
+    ...ListModule.state,
     path: '',
-    directoryList: [],
-    scanningDialog: {
-      isOpen: false,
-    },
+
     quickViewDrawer: {
       isOpen: false,
     },
-    scanOption: {
-      isOpen: false,
-    },
+
     selectedDirectory: [],
     createTagDialog: {
       isOpen: false,
@@ -122,7 +117,6 @@ const ScanModel: ScanModelType = {
       totalProgress: 0,
       isOpen: false,
     },
-    existBook: [],
     filterDrawer: {
       isShow: false,
     },
@@ -131,8 +125,10 @@ const ScanModel: ScanModelType = {
   },
   subscriptions: {},
   effects: {
-    ...scan.effects,
-    ...upload.effects,
+    ...ScanModule.effects,
+    ...BookFilterModule.effects,
+    ...UploadModule.effects,
+    ...ListModule.effects,
     * selectItemCover(_, { call, put, select }) {
       const scanState: ScanModelStateType = yield select(state => state.scan);
 
@@ -149,22 +145,16 @@ const ScanModel: ScanModelType = {
         },
       });
     },
-
   },
   reducers: {
-    ...scan.reducers,
-    ...upload.reducers,
-    ...filter.reducers,
+    ...ScanModule.reducers,
+    ...BookFilterModule.reducers,
+    ...UploadModule.reducers,
+    ...ListModule.reducers,
     setState(state, { payload: { newState } }) {
       return {
         ...state,
         ...newState,
-      };
-    },
-    setScanningDialog(state, { payload: { dialog } }) {
-      return {
-        ...state,
-        scanningDialog: dialog,
       };
     },
 
@@ -221,24 +211,7 @@ const ScanModel: ScanModelType = {
         }),
       };
     },
-    openScanOptionDrawer(state, {}) {
-      return {
-        ...state,
-        scanOption: {
-          ...state.scanOption,
-          isOpen: true,
-        },
-      };
-    },
-    closeScanOptionDrawer(state, {}) {
-      return {
-        ...state,
-        scanOption: {
-          ...state.scanOption,
-          isOpen: false,
-        },
-      };
-    },
+
     setSelectedDirectory(state, { payload: { directoryList } }) {
       return {
         ...state,
@@ -364,15 +337,6 @@ const ScanModel: ScanModelType = {
       return {
         ...state,
         path,
-      };
-    },
-    updateScanningDialog(state, { payload: { dialog } }) {
-      return {
-        ...state,
-        scanningDialog: {
-          ...state.scanningDialog,
-          ...dialog,
-        },
       };
     },
     setSelectTitle(state, { payload: { title } }) {

@@ -4,3 +4,5 @@ src/renderer/pages/.umi
 release
 .vscode
 .idea
+
+src/renderer/development.ts

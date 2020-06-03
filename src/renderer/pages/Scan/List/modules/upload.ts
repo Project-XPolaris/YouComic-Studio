@@ -1,7 +1,4 @@
-import { HomeModelStateType } from '@/pages/Home/model';
-import { scanBookDirectory } from '@/services/scan';
-import { matchTagInfo } from '@/utils/match';
-import { Directory, ScanModelStateType } from '@/pages/Scan/List/model';
+import { Effect, Page, Reducer, ScanModelStateType } from '@@/plugin-dva/connect';
 import { Book, ListQueryContainer, Tag as TagModel } from '@/services/youcomic/model';
 import {
   addTagToBook,
@@ -14,8 +11,23 @@ import {
 import { differenceWith, forOwn } from 'lodash';
 import { fs, nodeFormData } from '@/global';
 
-export default {
-  effects:{
+export interface UploadModuleStateTypes {
+
+}
+
+export interface UploadModuleTypes {
+  state: UploadModuleStateTypes,
+  effects: {
+    uploadToYouComic:Effect
+  }
+  reducers: {
+    updateUploadDialog:Reducer<ScanModelStateType>
+  }
+}
+
+export const UploadModule: UploadModuleTypes = {
+  state: {},
+  effects: {
     * uploadToYouComic(_, { call, put, select }) {
       const scanState: ScanModelStateType = yield select(state => state.scan);
       yield put({
@@ -126,7 +138,7 @@ export default {
       });
     },
   },
-  reducers:{
+  reducers: {
     updateUploadDialog(state, { payload: { dialog } }) {
       return {
         ...state,
@@ -136,5 +148,5 @@ export default {
         },
       };
     },
-  }
-}
+  },
+};

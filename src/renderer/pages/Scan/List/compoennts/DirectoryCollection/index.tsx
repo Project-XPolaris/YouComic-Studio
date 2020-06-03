@@ -23,14 +23,12 @@ export default function DirectoryCollection({
   displayDirPath
 }: DirectoryCollectionPropsType) {
   const displayItem = directoryList.filter((dirItem) => displayDirPath.find(path => path === dirItem.path) !== undefined)
-  console.log(displayItem)
   const empty = (
     <div className={style.emptyWrap}>
       <Empty />
     </div>
   );
   const renderCard =  (item:Directory) => {
-    console.log(item)
     const isSelected = Boolean(selectedDirectory.find(selectItem => selectItem === item.path));
     const onCardSelect = (selectDirectory: Directory) => {
       if (isSelected) {

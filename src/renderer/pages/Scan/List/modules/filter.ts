@@ -1,5 +1,6 @@
-import { Directory, ScanModelStateType } from '@/pages/Scan/List/model';
+import { Directory, Effect, Page, Reducer, ScanModelStateType } from '@@/plugin-dva/connect';
 import { Book } from '@/services/youcomic/model';
+
 const filterActionMapping : {[key:string] : (state:ScanModelStateType,item : Directory) => boolean} = {
   "title":(state,item) => {
     return item.title !== undefined && item.title.length !== 0
@@ -32,16 +33,25 @@ const filterActionMapping : {[key:string] : (state:ScanModelStateType,item : Dir
     return state.existBook.find((book:Book) => book.name === item.title) === undefined
   }
 }
-export default {
-  effects:{
 
-  },
-  reducers:{
+export interface BookFilterModuleStateTypes {
+
+}
+export interface BookFilterModuleTypes {
+  state: BookFilterModuleStateTypes,
+  effects: {}
+  reducers: {
+    setDirFilter:Reducer<ScanModelStateType>
+  }
+}
+
+export const BookFilterModule: BookFilterModuleTypes = {
+  state: {},
+  effects: {},
+  reducers: {
     setDirFilter(state:ScanModelStateType,{payload:{filter}}):ScanModelStateType{
-      console.log(filter)
       let dirs = [...state.directoryList];
       filter.forEach((filterKey:string) => {
-        console.log(filterKey)
         dirs = dirs.filter((dir:Directory) => !filterActionMapping[filterKey](state,dir))
       })
       return{
@@ -50,5 +60,6 @@ export default {
         displayList:dirs.map((item) => item.path)
       }
     }
-  }
-}
+  },
+};
+
