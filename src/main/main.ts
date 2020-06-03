@@ -137,6 +137,7 @@ function createWindow() {
     );
   }
 
+  mainWindow.webContents.openDevTools();
   if (isMac) {
     setTimeout(() => systemPreferences.isTrustedAccessibilityClient(true), 1000);
   }

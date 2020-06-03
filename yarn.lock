@@ -3213,7 +3213,7 @@
   resolved "https://registry.npm.taobao.org/@umijs/plugin-analytics/download/@umijs/plugin-analytics-0.2.2.tgz#575fd231d4327ea13413217aa1b5fc6bdd89465e"
   integrity sha1-V1/SMdQyfqE0EyF6obX8a92JRl4=
 
-"@umijs/plugin-antd@0.5.1", "@umijs/plugin-antd@^0.5.1":
+"@umijs/plugin-antd@0.5.1":
   version "0.5.1"
   resolved "https://registry.npm.taobao.org/@umijs/plugin-antd/download/@umijs/plugin-antd-0.5.1.tgz#b540d4be29b346e648342891d398f723427137cd"
   integrity sha1-tUDUvimzRuZINCiR05j3I0JxN80=

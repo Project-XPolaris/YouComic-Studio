@@ -18,10 +18,10 @@ import { UserModelStateType } from '@/models/user';
 import CreateBookCoverCrop from '@/pages/Create/crop';
 import CreateBookPagesSide from '@/pages/Create/side';
 import ToolBox from '@/pages/Create/components/ToolBox';
-import ReactCrop from 'react-image-crop';
-
-import CropDialog from '@/pages/Create/components/CropDialog';
 import CropView from '@/pages/Create/view/Crop';
+import BottomBar from '@/pages/Create/components/BottomBar';
+import CreateBookBottomBar from '@/pages/Create/bottombar';
+import { getCurrentDisplayPageSrc, getImageWidth } from '@/pages/Create/helpers';
 
 const { Paragraph } = Typography;
 
@@ -274,7 +274,6 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
     );
   };
   const onCropPage = (page: Page) => {
-    console.log(page);
     dispatch({
       type: 'create/openImageCropDialog',
       payload: {
@@ -286,10 +285,12 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
   const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
 
   };
+
+
   const renderEditMode = () => {
     return {
-      'normal': <img src={create.displaySrc} style={{}} ref={imageRef}/>,
-      'crop': <CropView onExitMode={() => setEditMode('normal')}/>,
+      'normal': <div className={styles.normanCanvas}><img src={getCurrentDisplayPageSrc(create)} style={{width:getImageWidth(create)}} ref={imageRef}/></div>,
+      'crop': <CropView  onExitMode={() => setEditMode('normal')}/>,
     }[editMode];
   };
   return (
@@ -314,21 +315,21 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
         <Card style={{
           position: 'fixed',
           padding: 16,
-          top: 75,
+          top: 64,
           height: '100%',
           left: 0,
           border: '#262626 1px solid',
           zIndex: 999,
         }}
               bodyStyle={{
-                padding: 16,
+                padding: 8,
               }}
         >
           <ToolBox
             enterCropMode={() => setEditMode('crop')}
           />
         </Card>
-        <div style={{ position: 'fixed', width: '100%' }}>
+        <div style={{ position: 'fixed', width: '100%', backgroundColor: '#141414' }}>
           <PageHeader
             style={{}}
             onBack={() => history.goBack()}
@@ -345,6 +346,11 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
           <div className={styles.right}>
             <CreateBookPagesSide/>
           </div>
+        </div>
+      </div>
+      <div className={styles.bottomBarWrap}>
+        <div className={styles.bottomBar}>
+          <CreateBookBottomBar/>
         </div>
       </div>
     </div>

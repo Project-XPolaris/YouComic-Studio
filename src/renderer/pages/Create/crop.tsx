@@ -33,7 +33,7 @@ function CreateBookCoverCrop({ dispatch, create }: CreateBookCoverCropPropsType)
     })
   }
   return (
-    <div>
+    <div >
       <CropDialog onOk={onOk} src={create?.cropImageDialog?.src} isOpen={create?.cropImageDialog?.isOpen} onCancel={onClose}/>
     </div>
   );

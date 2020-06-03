@@ -28,17 +28,28 @@ export async function generateImageThumbnail({ sourcePath, projectPath }) {
   };
 }
 
-export async function cropImage({ filePath, outputDir,outputThumbnailDir = outputDir, x, y, height, width, cropWidth, cropHeight }) {
+export async function cropImage({ filePath, outputDir, outputThumbnailDir = outputDir, x, y, height, width, cropWidth, cropHeight }) {
+  console.log(filePath)
   const image = await jimp.read(filePath);
-  const xScale =  image.bitmap.width / cropWidth;
-  const yScale = image.bitmap.height/ cropHeight ;
+  console.log("image read")
+  // get crop parameters
+  const xScale = image.bitmap.width / cropWidth;
+  const yScale = image.bitmap.height / cropHeight;
   image.crop(x * xScale, y * yScale, width * xScale, height * yScale);
+
+  // write crop image
   const fileExt = nodePath.extname(filePath);
-  const outputFilePath = path.join(outputDir,`${v4()}${fileExt}`)
+  const outputFilePath = path.join(outputDir, `${v4()}${fileExt}`);
   await image.writeAsync(outputFilePath);
   // update thumbnail
-  await image.resize(150,jimp.AUTO)
-  const outputThumbnailPath = path.join(outputThumbnailDir,`${v4()}${fileExt}`)
-  await image.writeAsync(outputThumbnailPath)
-  return {filePath:outputFilePath,thumbnailPath:outputThumbnailPath}
+  await image.resize(150, jimp.AUTO);
+  const outputThumbnailPath = path.join(outputThumbnailDir, `${v4()}${fileExt}`);
+  await image.writeAsync(outputThumbnailPath);
+  return { filePath: outputFilePath, thumbnailPath: outputThumbnailPath };
 }
+
+export const readImageInfo = async ({ imagePath }: { imagePath: string }) => {
+  const image = await jimp.read(imagePath);
+  const { width, height } = image.bitmap;
+  return { width, height };
+};

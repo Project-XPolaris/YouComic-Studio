@@ -6,7 +6,7 @@ export default defineConfig({
   title: 'YouComic Studio',
   history: { type: 'hash' },
   antd: {
-
+    dark:true,
   },
   dva: {
     hmr: true,

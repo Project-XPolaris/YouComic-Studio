@@ -11,7 +11,6 @@ import SettingIcon from '@ant-design/icons/SettingOutlined';
 import FolderIcon from '@ant-design/icons/FolderFilled';
 import CreateIcon from '@ant-design/icons/PlusOutlined';
 import SearchIcon from '@ant-design/icons/SearchOutlined';
-import 'antd/dist/antd.css';
 
 const { Title } = Typography;
 

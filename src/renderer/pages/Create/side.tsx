@@ -12,11 +12,11 @@ interface CreateBookPagesSidePropsType {
 function CreateBookPagesSide({ create, dispatch }: CreateBookPagesSidePropsType) {
   const onPageClick = (page: Page) => {
     dispatch({
-      type: 'create/setDisplaySrc',
-      payload: {
-        src: page.path,
-      },
-    });
+      type:"create/changeDisplayPage",
+      payload:{
+        page
+      }
+    })
     if (create.selectPages.length !== 0){
       onSelectItem(page)
     }

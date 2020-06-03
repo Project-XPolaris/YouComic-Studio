@@ -29,9 +29,6 @@ function SettingPage({ dispatch }: SettingPagePropsType) {
     <div>
       <div className={styles.headerWrap}>
         <PageHeader
-          style={{
-            border: '1px solid rgb(235, 237, 240)',
-          }}
           onBack={onBack}
           title="设置"
           extra={actions}

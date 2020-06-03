@@ -27,6 +27,11 @@ import {
   uploadBookPage,
   uploadCover,
 } from '@/services/youcomic/client';
+import { ImagesModule, ImagesModuleStateType, ImagesModuleTypes } from '@/pages/Create/modules/images';
+import { PagesModule, PagesModuleStateTypes, PagesModuleTypes } from '@/pages/Create/modules/pages';
+import { ViewModule, ViewModuleStateTypes, ViewModuleTypes } from '@/pages/Create/modules/view';
+import { devVars } from '@/development';
+import { isNullOrUndefined } from 'util';
 
 export interface ProjectConfig {
   pages: Array<{
@@ -44,6 +49,10 @@ export interface Page {
   path: string;
   thumbnail: string;
   thumbnailName: string;
+  meta?: {
+    width?: number
+    height?: number
+  }
 }
 
 export interface Tag {
@@ -51,7 +60,9 @@ export interface Tag {
   type: string;
 }
 
-export interface CreateBookModelStateType {
+export type CreateBookModelStateType = BaseCreateBookModelStateType & PagesModuleStateTypes & ViewModuleStateTypes
+
+interface BaseCreateBookModelStateType {
   title: string;
   importImageDialog: {
     progress: number;
@@ -75,7 +86,6 @@ export interface CreateBookModelStateType {
     mode: 'cover' | 'page'
     src: string
   }
-  pages: Page[];
   cover?: string;
   coverThumbnail?: string;
   rootDir: string;
@@ -96,7 +106,7 @@ export interface CreateBookModelStateType {
   displaySrc?: string
 }
 
-export interface CreateBookModelType {
+export interface BaseCreateBookModelType {
   namespace: string;
   reducers: {
     setRootPath: Reducer<CreateBookModelStateType>;
@@ -104,11 +114,9 @@ export interface CreateBookModelType {
     setImportImagesDialog: Reducer<CreateBookModelStateType>;
     setCover: Reducer<CreateBookModelStateType>;
     setLoadingDialog: Reducer<CreateBookModelStateType>;
-    addToPage: Reducer<CreateBookModelStateType>;
     setConfig: Reducer<CreateBookModelStateType>;
     updateConfig: Reducer<CreateBookModelStateType>;
     setPath: Reducer<CreateBookModelStateType>;
-    setPages: Reducer<CreateBookModelStateType>;
     setSelectPage: Reducer<CreateBookModelStateType>;
     setCreateTagDialog: Reducer<CreateBookModelStateType>;
     addTags: Reducer<CreateBookModelStateType>;
@@ -118,7 +126,6 @@ export interface CreateBookModelType {
     clear: Reducer<CreateBookModelStateType>;
     openImageCropDialog: Reducer<CreateBookModelStateType>
     closeImageCropDialog: Reducer<CreateBookModelStateType>
-    updatePage: Reducer<CreateBookModelStateType>
     updateConfigPage: Reducer<CreateBookModelStateType>
     setDisplaySrc: Reducer<CreateBookModelStateType>
   };
@@ -137,13 +144,13 @@ export interface CreateBookModelType {
     autoImport: Effect;
     uploadYouComic: Effect;
     cropCover: Effect
-    cropPage: Effect
   };
   subscriptions: {
     setup: Subscription;
   };
 }
 
+type CreateBookModelType = BaseCreateBookModelType & ImagesModuleTypes & PagesModuleTypes & ViewModuleTypes
 const CreateBookModel: CreateBookModelType = {
   namespace: 'create',
   state: {
@@ -164,7 +171,6 @@ const CreateBookModel: CreateBookModelType = {
     },
     tags: [],
     path: {},
-    pages: [],
     rootDir: '',
     selectPages: [],
     matchInfoDialog: {
@@ -180,6 +186,9 @@ const CreateBookModel: CreateBookModelType = {
       src: '',
       mode: 'cover',
     },
+    ...ImagesModule.state,
+    ...PagesModule.state,
+    ...ViewModule.state,
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -193,6 +202,9 @@ const CreateBookModel: CreateBookModelType = {
     },
   },
   effects: {
+    ...ImagesModule.effects,
+    ...PagesModule.effects,
+    ...ViewModule.effects,
     * generateThumbnails({ payload: { index = 0 } }, { call, put, select }) {
       const { create }: { create: CreateBookModelStateType } = yield select(state => state);
       const dirPath = create.rootDir;
@@ -287,8 +299,10 @@ const CreateBookModel: CreateBookModelType = {
     },
     * init(_, { call, put, select }) {
       const homeState: HomeModelStateType = yield select(state => state.home);
-      // const editPath = homeState.editorPath;
-      const editPath = 'C:\\Users\\takayamaaren\\Desktop\\yc\\projects\\p4';
+      let editPath = homeState.editorPath;
+      if (devVars.enable && devVars["editPath"] !== undefined) {
+        editPath = devVars["editPath"];
+      }
       yield put({
         type: 'clear',
       });
@@ -375,14 +389,16 @@ const CreateBookModel: CreateBookModelType = {
           },
         });
       }
+
+      // set init display image
       createState = yield select(state => state.create);
-      if (createState.pages.length > 0){
+      if (createState.pages.length > 0) {
         yield put({
-          type:"setDisplaySrc",
-          payload:{
-            src: createState.pages[0].path
-          }
-        })
+          type: 'changeDisplayPage',
+          payload: {
+            page: createState.pages[0],
+          },
+        });
       }
       yield put({
         type: 'setLoadingDialog',
@@ -470,6 +486,7 @@ const CreateBookModel: CreateBookModelType = {
     },
     * saveProject(_, { call, put, select }) {
       const createState: CreateBookModelStateType = yield select(state => state.create);
+
       const config: ProjectConfig = {
         title: createState.title,
         pages: createState.pages.map((page: Page) => ({
@@ -713,60 +730,12 @@ const CreateBookModel: CreateBookModelType = {
       });
       message.success('编辑封面成功');
     },
-    * cropPage({ payload: { x, y, width, height, cropWidth, cropHeight } }, { call, put, select }) {
-      const createState: CreateBookModelStateType = yield select(state => state.create);
-      const targetPage = createState.pages.find((page: Page) => page.path === createState.displaySrc);
-      if (targetPage === undefined) {
-        return;
-      }
-      const { filePath, thumbnailPath } = yield call(cropImage, {
-        filePath: createState.displaySrc,
-        outputDir: createState.path.projectPages,
-        outputThumbnailDir: path.join(createState.path.projectPath, 'thumbnails'),
-        x, y, width, height, cropWidth, cropHeight,
-      });
-      yield put({
-        type: 'updatePage',
-        payload: {
-          path: targetPage.path,
-          updatePage: {
-            name: path.basename(filePath),
-            path: filePath,
-            thumbnail: thumbnailPath,
-            thumbnailName: path.basename(thumbnailPath),
-          },
-        },
-      });
-      yield put({
-        type: 'updateConfigPage',
-        payload: {
-          filename: targetPage.name,
-          updatePage: {
-            file: path.basename(filePath),
-            thumbnail: path.basename(thumbnailPath),
-          },
-        },
-      });
-      yield put({
-        type: 'saveProject',
-      });
-      // clear up
-      yield call(removeFiles, { paths: [targetPage.path, targetPage.thumbnail] });
-      yield put({
-        type: 'closeImageCropDialog',
-      });
-      // set display
-      yield put({
-        type:"create/setDisplaySrc",
-        payload:{
-          src:filePath
-        }
-      })
-      message.success('编辑页面成功');
 
-    },
   },
   reducers: {
+    ...ImagesModule.reducers,
+    ...PagesModule.reducers,
+    ...ViewModule.reducers,
     setTitle(state, { payload: { title } }) {
       return {
         ...state,
@@ -792,14 +761,7 @@ const CreateBookModel: CreateBookModelType = {
         loadingDialog: dialog,
       };
     },
-    addToPage(state, { payload: { pages, index = state.pages.length } }) {
-      const newPages = [...state.pages];
-      newPages.splice(index, 0, ...pages);
-      return {
-        ...state,
-        pages: [...newPages],
-      };
-    },
+
     setConfig(state, { payload: { config } }) {
       return {
         ...state,
@@ -824,12 +786,7 @@ const CreateBookModel: CreateBookModelType = {
         },
       };
     },
-    setPages(state, { payload: { pages } }) {
-      return {
-        ...state,
-        pages,
-      };
-    },
+
     setSelectPage(state, { payload: { pages } }) {
       return {
         ...state,
@@ -872,7 +829,7 @@ const CreateBookModel: CreateBookModelType = {
         rootDir: path,
       };
     },
-    clear(state, _) {
+    clear(state, _): any {
       return {
         title: '点击输入标题',
         importImageDialog: {
@@ -902,6 +859,7 @@ const CreateBookModel: CreateBookModelType = {
           progress: 0,
           message: '',
         },
+        zoomRatio: 0.5,
       };
     },
     openImageCropDialog(state, { payload: { mode, path } }): CreateBookModelStateType {
@@ -922,23 +880,7 @@ const CreateBookModel: CreateBookModelType = {
         },
       };
     },
-    updatePage(state, { payload: { path, updatePage } }) {
-      return {
-        ...state,
-        pages: state.pages.map((page: Page) => {
-          if (page.path === path) {
-            console.log('find target !!!!!!!!!!!!!!!');
-            return {
-              ...page,
-              ...updatePage,
-            };
-          }
-          return {
-            ...page,
-          };
-        }),
-      };
-    },
+
     updateConfigPage(state, { payload: { filename, updatePage } }) {
       return {
         ...state,

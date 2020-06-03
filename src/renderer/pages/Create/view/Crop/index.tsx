@@ -11,6 +11,7 @@ import {
   BorderTopOutlined,
 } from '@ant-design/icons/lib';
 import { RadioChangeEvent } from 'antd/es/radio';
+import { getCurrentDisplayPageSrc, getImageWidth } from '@/pages/Create/helpers';
 
 
 interface CropViewPropsType {
@@ -52,19 +53,23 @@ function CropView({ dispatch, create, onExitMode }: CropViewPropsType) {
         cropHeight: cropRef.current.imageRef.offsetHeight,
       },
     });
-    onExitMode()
+    onExitMode();
   };
   return (
     <div>
-      {
-        create.displaySrc &&
-        <ReactCrop
-          src={create.displaySrc}
-          crop={crop}
-          onChange={(crop) => setCrop(crop)}
-          ref={cropRef}
-        />
-      }
+      <div style={{width:"100%",justifyContent:"center",alignItems:"center",display:"flex"}}>
+      <div style={{width:getImageWidth(create),marginTop:90,marginBottom:90}}>
+        {
+          create.currentImageName &&
+          <ReactCrop
+            src={getCurrentDisplayPageSrc(create)}
+            crop={crop}
+            onChange={(crop) => setCrop(crop)}
+            ref={cropRef}
+          />
+        }
+      </div>
+      </div>
       <Card className={styles.cropInfoWindow}>
         <div className={styles.infoWindowTitle}>裁剪</div>
         <div>

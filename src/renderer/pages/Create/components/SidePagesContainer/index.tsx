@@ -17,7 +17,7 @@ interface SidePagesContainerPropsType {
   onAppendPage: () => void
   onDeletePage: (page: Page) => void
   onInsertPage: (index: number) => void
-  selectPagePath?: string[]
+  selectPagePath?: any[]
   onAddSelect: (page: Page) => void
 }
 
@@ -27,7 +27,6 @@ export default function SidePagesContainer({ pages = [], onPageClick, onAppendPa
     <div>
       {pages.map((page: Page, idx) => {
         const isSelected = Boolean(selectPagePath.find(selectedPage => selectedPage.path === page.path));
-        console.log(isSelected)
         const onCardClick = () => {
           onPageClick(page);
         };

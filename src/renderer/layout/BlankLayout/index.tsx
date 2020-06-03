@@ -3,7 +3,6 @@ import styles from './style.less';
 import { connect } from 'dva';
 import { UserModelStateType } from '@/models/user';
 import LoginDialog from '@/layout/BaseLayout/components/LoginDialog';
-import 'antd/dist/antd.css';
 interface BlankLayoutPropsType {
   children: any;
   dispatch: any;
