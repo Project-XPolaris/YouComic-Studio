@@ -29,6 +29,7 @@
 - Linux
 
 ### 📷预览
+![](./other/pv_3.png)
 ![](./other/pv_1.png)
 ![](./other/pv_2.png)
 
