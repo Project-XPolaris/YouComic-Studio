@@ -7,6 +7,7 @@ import { BookFilterModule, BookFilterModuleStateTypes, BookFilterModuleTypes } f
 import { ScanModule, ScanModuleStateTypes, ScanModuleTypes } from '@/pages/Scan/List/modules/scanner';
 import { UploadModule, UploadModuleStateTypes, UploadModuleTypes } from '@/pages/Scan/List/modules/upload';
 import { ListModule, ListModuleStateTypes, ListModuleTypes } from '@/pages/Scan/List/modules/list';
+import { LibraryModule, LibraryModuleStateTypes, LibraryModuleTypes } from '@/pages/Scan/List/modules/library';
 
 export interface Directory {
   path: string;
@@ -18,8 +19,8 @@ export interface Directory {
   coverPath?: string;
   extraTags: Array<{ type: string; name: string }>;
   title?: string;
-  item:{
-    visible:boolean
+  item: {
+    visible: boolean
   }
 }
 
@@ -33,6 +34,7 @@ export type ScanModelStateType =
   & BookFilterModuleStateTypes
   & UploadModuleStateTypes
   & ListModuleStateTypes
+  & LibraryModuleStateTypes
 
 interface BaseScanModelStateType {
   path?: string;
@@ -59,7 +61,7 @@ interface BaseScanModelStateType {
   displayList: string[]
 }
 
-type ScanModelType = BaseScanModelType & ScanModuleTypes & BookFilterModuleTypes & UploadModuleTypes & ListModuleTypes
+type ScanModelType = BaseScanModelType & ScanModuleTypes & BookFilterModuleTypes & UploadModuleTypes & ListModuleTypes & LibraryModuleTypes
 
 export interface BaseScanModelType {
   namespace: string;
@@ -124,6 +126,7 @@ const ScanModel: ScanModelType = {
     ...BookFilterModule.effects,
     ...UploadModule.effects,
     ...ListModule.effects,
+    ...LibraryModule.effects,
     * selectItemCover(_, { call, put, select }) {
       const scanState: ScanModelStateType = yield select(state => state.scan);
 
@@ -146,6 +149,7 @@ const ScanModel: ScanModelType = {
     ...BookFilterModule.reducers,
     ...UploadModule.reducers,
     ...ListModule.reducers,
+    ...LibraryModule.reducers,
     setState(state, { payload: { newState } }) {
       return {
         ...state,

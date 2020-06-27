@@ -21,6 +21,7 @@ import FilterIcon from '@ant-design/icons/FilterFilled';
 import InputTitleDialog from '@/pages/Scan/List/compoennts/InputTitleDialog';
 import { DialogKeys, DialogsModelStateType } from '@/models/dialog';
 import { ClickParam } from 'antd/es/menu';
+import { ExportOutlined } from '@ant-design/icons/lib';
 
 interface ScanHeaderPropsType {
   scan: ScanModelStateType;
@@ -97,6 +98,11 @@ const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHe
       type: 'user/logout',
     });
   };
+  const onExportExternalLibrary = () => {
+    dispatch({
+      type: 'scan/exportAsLibrary',
+    });
+  };
   const menu = (
     <Menu>
       <Menu.Item onClick={onScanMenuAction}>
@@ -107,6 +113,11 @@ const ScanHeader = ({ dispatch, scan, user, dialogs: { activeDialogs } }: ScanHe
       <Menu.Item onClick={openScanOptionDrawer}>
         <SettingIcon/>
         设置扫描参数
+      </Menu.Item>
+      <Menu.Divider/>
+      <Menu.Item onClick={onExportExternalLibrary}>
+        <ExportOutlined/>
+        转换为Library
       </Menu.Item>
       <Menu.Divider/>
       <Menu.Item onClick={onUploadToYouComic}>

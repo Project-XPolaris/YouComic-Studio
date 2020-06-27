@@ -13,7 +13,8 @@ export interface ScanModuleStateTypes {
   scanningDialog: {
     isOpen: boolean;
   };
-  existBook: Book[]
+  existBook: Book[],
+  scanPath: string
 }
 
 export interface ScanModuleTypes {
@@ -29,6 +30,7 @@ export interface ScanModuleTypes {
     closeScanOptionDrawer: Reducer<ScanModelStateType>;
     onScanComplete: Reducer<ScanModelStateType>;
     setExistBook: Reducer<ScanModelStateType>;
+    setScanPath: Reducer<ScanModelStateType>
   }
 }
 
@@ -41,6 +43,7 @@ export const ScanModule: ScanModuleTypes = {
       isOpen: false,
     },
     existBook: [],
+    scanPath: '',
   },
   effects: {
     * scanBookDirectory(state, { call, put, select }) {
@@ -57,6 +60,12 @@ export const ScanModule: ScanModuleTypes = {
       if (devVars.enable && devVars['scanPath'] !== undefined) {
         scanPath = devVars['scanPath'];
       }
+      yield put({
+        type:"setScanPath",
+        payload:{
+          scanPath
+        }
+      })
       const directoryList: Directory[] = yield call(scanBookDirectory, { path: scanPath });
       directoryList.forEach((dir: Directory) => {
         const matchResult = matchTagInfo(dir.name);
@@ -156,6 +165,12 @@ export const ScanModule: ScanModuleTypes = {
       return {
         ...state,
         scanningDialog: dialog,
+      };
+    },
+    setScanPath(state, { payload: { scanPath } }) {
+      return {
+        ...state,
+        scanPath,
       };
     },
   },
