@@ -1,5 +1,5 @@
 // @ts-ignore
-import nodePath from 'path';
+import nodePathD from 'path';
 import nodeFSD from 'fs';
 import formData from 'form-data';
 import http from 'http';
@@ -13,7 +13,8 @@ export const remote = electron.remote;
 export const jimp: typeof jimpD = remote.require('jimp');
 export const directoryTree = remote.require('directory-tree');
 export const crypto = remote.require('crypto');
-export const path: typeof nodePath = remote.require('path');
+export const path: typeof nodePathD = remote.require('path');
+export const nodePath: typeof nodePathD = remote.require('path');
 export const fs: typeof fseD = remote.require('fs-extra');
 export const mkdirp = remote.require('mkdirp');
 export const nodeFormData: typeof formData = remote.require('form-data');

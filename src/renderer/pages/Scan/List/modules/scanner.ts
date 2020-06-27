@@ -4,6 +4,7 @@ import { matchTagInfo } from '@/utils/match';
 import { queryBooks } from '@/services/youcomic/client';
 import { Book } from '@/services/youcomic/model';
 import { devVars } from '@/development';
+import { nodePath } from '@/global';
 
 export interface ScanModuleStateTypes {
   scanOption: {
@@ -59,6 +60,7 @@ export const ScanModule: ScanModuleTypes = {
       const directoryList: Directory[] = yield call(scanBookDirectory, { path: scanPath });
       directoryList.forEach((dir: Directory) => {
         const matchResult = matchTagInfo(dir.name);
+        dir.targetFiles.sort((a, b) => nodePath.basename(a.path) > nodePath.basename(b.path) ? 1 : -1);
         dir.matchInfo = matchResult;
         dir.coverPath = dir.targetFiles[0].path;
         dir.extraTags = [];
