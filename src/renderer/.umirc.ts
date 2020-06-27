@@ -46,6 +46,10 @@ export default defineConfig({
           component: '../pages/Setting/index',
         },
         {
+          path: '/library/create/path',
+          component: '../pages/Library/Create/SelectPath/index',
+        },
+        {
           path: '/',
           component: '../pages/Home/index',
           routes: [],

@@ -34,4 +34,4 @@ function DirectoryHome({ dispatch, directory, fileList }: DirectoryHomePropsType
   );
 }
 
-export default connect(({ directory, fileList }) => ({ directory, fileList }))(DirectoryHome);
+export default connect(({ directory, fileList }:any) => ({ directory, fileList }))(DirectoryHome);

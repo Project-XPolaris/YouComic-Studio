@@ -147,6 +147,15 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
             </Button>
           </div>
         </div>
+        <div className={styles.field}>
+          <div className={styles.fieldTitle}>YouComic 库</div>
+          <div>
+            <Button type="primary" onClick={() => history.push("/library/create/path")}>
+              <SearchIcon/>
+              构建Media Library
+            </Button>
+          </div>
+        </div>
       </div>
       <div className={styles.bottomRight}>
         <Button onClick={onSettingButtonClick} shape={'circle'} type={'primary'} className={styles.settingIcon}>
