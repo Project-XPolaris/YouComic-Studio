@@ -6,6 +6,7 @@ import style from './style.less';
 import { Card, List, Pagination } from 'antd';
 import BookCard from '@/pages/Library/Explore/components/BookCard';
 import { ExportLibraryBook } from '@/pages/Library/Explore/module/config';
+import BookQuickView from '@/pages/Library/Explore/parts/QuickView';
 
 const LibraryExplorePage =
   ({
@@ -31,9 +32,18 @@ const LibraryExplorePage =
         },
       });
     };
+    const onBookCardClick = (item: ExportLibraryBook) => {
+      dispatch({
+        type: 'exploreLibrary/quickView',
+        payload: {
+          book: item,
+        },
+      });
+    };
     return (
       <div className={style.root}>
         <ExploreLibraryHeader/>
+        <BookQuickView/>
         <div className={style.main}>
           <List
             grid={{
@@ -48,7 +58,7 @@ const LibraryExplorePage =
             renderItem={item => (
               <List.Item>
                 <div className={style.item}>
-                  <BookCard item={item} onSelect={() => onBookItemSelect(item)}/>
+                  <BookCard item={item} onSelect={() => onBookItemSelect(item)} onClick={() => onBookCardClick(item)}/>
                 </div>
               </List.Item>
             )}

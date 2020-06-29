@@ -8,7 +8,8 @@ export interface ExportLibraryBook {
   cover: string,
   name: string,
   path: string,
-  isSelect: boolean
+  isSelect: boolean,
+  tags: Array<{ name: string, type: string }>
 }
 
 export interface ConfigModuleStateTypes {

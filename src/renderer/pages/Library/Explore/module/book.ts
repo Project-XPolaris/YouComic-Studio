@@ -4,7 +4,7 @@ import { ExploreLibraryModelStateType, Reducer } from '@@/plugin-dva/connect';
 export interface BookModuleStateTypes {
   books: ExportLibraryBook[],
   page: number,
-  pageSize: number
+  pageSize: number,
 }
 
 export interface BookModuleTypes {

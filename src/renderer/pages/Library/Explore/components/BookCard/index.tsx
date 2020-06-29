@@ -6,10 +6,11 @@ import style from './style.less';
 
 export interface BookCardPropsType {
   item: ExportLibraryBook,
-  onSelect: () => void
+  onSelect: () => void,
+  onClick: () => void
 }
 
-const BookCard = ({ item, onSelect }: BookCardPropsType) => {
+const BookCard = ({ item, onSelect, onClick }: BookCardPropsType) => {
   const menu = (
     <Menu>
       <Menu.Item key="1" onClick={onSelect}><CheckOutlined/>选择</Menu.Item>
@@ -20,6 +21,7 @@ const BookCard = ({ item, onSelect }: BookCardPropsType) => {
       <Card
         hoverable
         style={{ width: 150 }}
+        onClick={onClick}
         cover={<img alt="example" src={item.cover}/>}
       >
         <Card.Meta title={<span className={item.isSelect ? style.titleSelected : undefined}>{item.name}</span>}/>
