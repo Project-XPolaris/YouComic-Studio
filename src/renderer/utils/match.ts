@@ -24,6 +24,7 @@ export function matchTagInfo(text: string): MatchTextInfo | null {
     return info;
   }
 
+
   result = text.match(/^\((.*?)\)\s?\[(.*?)]\s{0,1}(.*?)\s?\[(.*?)]$/);
   if (result !== null) {
     console.log('rule 2');
@@ -47,6 +48,38 @@ export function matchTagInfo(text: string): MatchTextInfo | null {
       title: result[4],
       translator: result[1],
       theme: result[5],
+    };
+    console.log(info);
+    return info;
+  }
+
+  result = text.match(
+    /\((.*?)\)\s{0,1}\[(.*?)]\s{0,1}(.*?)\s{0,1}\((.*?)\)/
+  );
+  if (result !== null) {
+    console.log('rule 4');
+    console.log(result);
+    const info = {
+      series: result[1],
+      artist: result[2],
+      title: result[3],
+      theme: result[4],
+    };
+    console.log(info);
+    return info;
+  }
+
+  result = text.match(
+    /\((.*?)\)\s{0,1}\[(.*?)]\s{0,1}(.*?)$/
+  );
+  if (result !== null) {
+    console.log('rule 5');
+    console.log(result);
+    const info = {
+      series: result[1],
+      artist: result[2],
+      title: result[3],
+      theme: result[4],
     };
     console.log(info);
     return info;

@@ -1,0 +1,48 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.main {
+  flex-grow: 1;
+  background-color: #262626;
+  padding-top: 72px;
+
+
+}
+
+.item {
+  display: flex;
+  justify-content: center;
+}
+
+* {
+  &::-webkit-scrollbar {
+    width: 12px;
+    background-color: #4a4a4a;
+    height: 12px;
+  }
+
+  &::-webkit-scrollbar-track {
+
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #696969;
+
+    &:hover {
+      width: 12px;
+    }
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: #535353;
+  }
+}
+
+.pagination{
+  margin-left: 32px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}

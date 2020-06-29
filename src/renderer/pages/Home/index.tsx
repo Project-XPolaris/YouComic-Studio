@@ -11,6 +11,7 @@ import SettingIcon from '@ant-design/icons/SettingOutlined';
 import FolderIcon from '@ant-design/icons/FolderFilled';
 import CreateIcon from '@ant-design/icons/PlusOutlined';
 import SearchIcon from '@ant-design/icons/SearchOutlined';
+import { ReadOutlined } from '@ant-design/icons/lib';
 
 const { Title } = Typography;
 
@@ -66,7 +67,7 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
           size={'small'}
           className={styles.loginButton}
           onClick={onLoginAccount}
-          icon={ <UserIcon/>}
+          icon={<UserIcon/>}
         >
 
           登录至YouComic
@@ -141,7 +142,7 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
         <div className={styles.field}>
           <div className={styles.fieldTitle}>批量编辑</div>
           <div>
-            <Button type="primary" onClick={onScan}>
+            <Button type="primary" onClick={onScan} className={styles.actionButton}>
               <SearchIcon/>
               扫描文件夹
             </Button>
@@ -150,9 +151,18 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
         <div className={styles.field}>
           <div className={styles.fieldTitle}>YouComic 库</div>
           <div>
-            <Button type="primary" onClick={() => history.push("/library/create/path")}>
+            <Button type="primary" onClick={() => history.push('/library/create/path')} className={styles.actionButton}>
               <SearchIcon/>
               构建Media Library
+            </Button>
+            <br/>
+            <Button
+              type="primary"
+              onClick={() => dispatch({ type: 'home/selectExploreLibrary' })}
+              className={styles.actionButton}
+            >
+              <ReadOutlined/>
+              打开Media Library
             </Button>
           </div>
         </div>

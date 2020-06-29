@@ -1,11 +1,11 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
 
-import { listDirectoryFiles, showSelectFolderDialog, writeFile } from '@/services/file';
+import { checkIsValidateLibrary, listDirectoryFiles, showSelectFolderDialog, writeFile } from '@/services/file';
 import { history } from 'umi';
 import { path } from '@/global';
 import { ProjectConfig } from '@/pages/Create/model';
-import { message } from 'antd';
+import { message, notification } from 'antd';
 
 export interface HomeModelStateType {
   path: string;
@@ -17,6 +17,7 @@ export interface HomeModelStateType {
     isOpen: boolean;
     path: string;
   };
+  exploreLibraryPath: string
 }
 
 export interface HomeModelType {
@@ -29,6 +30,7 @@ export interface HomeModelType {
     openCreateNewProjectDialog: Reducer<HomeModelStateType>;
     closeCreateNewProjectDialog: Reducer<HomeModelStateType>;
     setEditPath: Reducer<HomeModelStateType>;
+    setExploreLibraryPath: Reducer<HomeModelStateType>;
   };
   state: HomeModelStateType;
   effects: {
@@ -38,6 +40,7 @@ export interface HomeModelType {
     createNew: Effect;
     selectNewProjectSaveLocation: Effect;
     openExistProject: Effect;
+    selectExploreLibrary: Effect
   };
   subscriptions: {};
 }
@@ -154,6 +157,30 @@ const HomeModel: HomeModelType = {
         message.error('当前目录不是有效的项目目录');
       }
     },
+    * selectExploreLibrary(_, { call, put, select }) {
+      const dirPaths = showSelectFolderDialog();
+      if (!Boolean(dirPaths)) {
+        return;
+      }
+      const path = dirPaths[0];
+      const isValidate = yield call(checkIsValidateLibrary, { libraryPath: path });
+      if (!isValidate) {
+        notification['error']({
+          message: '错误',
+          description:
+            '该文件夹不是有效的MediaLibrary目录',
+        });
+        return;
+      }
+
+      yield put({
+        type: 'setExploreLibraryPath',
+        payload: {
+          path,
+        },
+      });
+      history.push('/library/explore');
+    },
   },
   reducers: {
     setPath(state: HomeModelStateType, { payload: { path } }) {
@@ -205,6 +232,12 @@ const HomeModel: HomeModelType = {
       return {
         ...state,
         editorPath: path,
+      };
+    },
+    setExploreLibraryPath(state, { payload: { path } }) {
+      return {
+        ...state,
+        exploreLibraryPath: path,
       };
     },
   },

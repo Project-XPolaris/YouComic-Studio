@@ -6,7 +6,7 @@ export default defineConfig({
   title: 'YouComic Studio',
   history: { type: 'hash' },
   antd: {
-    dark:true,
+    dark: true,
   },
   dva: {
     hmr: true,
@@ -48,6 +48,10 @@ export default defineConfig({
         {
           path: '/library/create/path',
           component: '../pages/Library/Create/SelectPath/index',
+        },
+        {
+          path: '/library/explore',
+          component: '../pages/Library/Explore/index',
         },
         {
           path: '/',

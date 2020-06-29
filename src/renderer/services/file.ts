@@ -1,6 +1,7 @@
-import { jimp, path, remote,fs } from '@/global';
+import { jimp, path, remote, fs } from '@/global';
 import directoryTree from 'directory-tree';
 import uuid from 'uuid';
+
 // @ts-ignore
 
 export function showSelectFolderDialog() {
@@ -44,11 +45,11 @@ export async function listDir({ path }) {
 }
 
 export async function loadCoverFile({
-  originFilePath,
-  originThumbnailPath,
-  filePath,
-  projectPath,
-}) {
+                                      originFilePath,
+                                      originThumbnailPath,
+                                      filePath,
+                                      projectPath,
+                                    }) {
   const image = await jimp.read(filePath);
   const sourceFileName = path.posix.basename(filePath);
   const sourceFileExt = path.extname(sourceFileName);
@@ -131,7 +132,7 @@ export function getFilesWithExtension({ sourceDirectoryPath, extensions }) {
       const imageFiles = files.filter(fileName => {
         return (
           extensions.find(
-            extension => path.extname(fileName).toLowerCase() === extension.toLowerCase()
+            extension => path.extname(fileName).toLowerCase() === extension.toLowerCase(),
           ) !== undefined
         );
       });
@@ -140,8 +141,18 @@ export function getFilesWithExtension({ sourceDirectoryPath, extensions }) {
   });
 }
 
-export async function removeFiles({paths}) {
+export async function removeFiles({ paths }) {
   for (const path of paths) {
-    await fs.promises.unlink(path)
+    await fs.promises.unlink(path);
   }
+}
+
+
+export async function readJSONFile({ filepath }: { filepath: string }) {
+  return fs.readJSON(filepath);
+}
+
+export async function checkIsValidateLibrary({ libraryPath }: { libraryPath: string }) {
+  const dirItems = await fs.promises.readdir(libraryPath);
+  return dirItems.find(item => item === 'library_export.json') !== undefined;
 }
