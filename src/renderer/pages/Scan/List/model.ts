@@ -81,8 +81,8 @@ export interface BaseScanModelType {
     setSelectedDirectoryCover: Reducer<ScanModelStateType>;
     setSelectTitle: Reducer<ScanModelStateType>;
     setDisplayDirPath: Reducer<ScanModelStateType>;
-    setExistBook: Reducer
-    setFilterDrawerVisible: Reducer
+    setExistBook: Reducer;
+    setFilterDrawerVisible: Reducer;
 
   };
   state: ScanModelStateType;

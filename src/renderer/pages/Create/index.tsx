@@ -11,7 +11,7 @@ import ImportImageDialog from '@/pages/Create/components/ImportImageDialog';
 import { path } from '@/global';
 import LoadingDialog from '@/pages/Create/components/LoadingDialog';
 import { differenceWith } from 'lodash';
-import CreateTagDialog from '@/pages/Create/components/CreateTagDialog';
+import CreateTagDialog from '@/components/CreateTagDialog';
 import MatchTagDialog from '@/pages/Create/components/MatchTagDialog';
 import AutoImportProgressDialog from '@/pages/Create/components/AutoImportProgressDialog';
 import { UserModelStateType } from '@/models/user';

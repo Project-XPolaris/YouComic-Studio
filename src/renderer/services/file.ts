@@ -1,6 +1,7 @@
 import { jimp, path, remote, fs } from '@/global';
 import directoryTree from 'directory-tree';
 import uuid from 'uuid';
+import ex from 'umi/dist';
 
 // @ts-ignore
 
@@ -156,3 +157,16 @@ export async function checkIsValidateLibrary({ libraryPath }: { libraryPath: str
   const dirItems = await fs.promises.readdir(libraryPath);
   return dirItems.find(item => item === 'library_export.json') !== undefined;
 }
+
+export async function checkFileExist({ filePath }: { filePath: string }) {
+  try {
+    await fs.promises.lstat(filePath);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
+export const copyFile = async ({ from, to }: { from: string, to: string }) => {
+  return fs.promises.copyFile(from,to)
+};

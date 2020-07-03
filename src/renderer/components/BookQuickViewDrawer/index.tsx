@@ -18,7 +18,7 @@ interface BookQuickViewDrawerPropsType {
   title?: string;
   artist?: string;
   theme?: string;
-  dirname?:string;
+  dirname?: string;
   series?: string;
   translator?: string;
   pages: PageItem[];
@@ -26,30 +26,32 @@ interface BookQuickViewDrawerPropsType {
   onSelectCoverAction: () => void;
   onAddTag: () => void;
   extraTags: Array<{ name: string; type: string }>;
+  onDeleteTag?: (name: string, type: string) => void;
 }
 
 export default function BookQuickViewDrawer({
-  coverURL,
-  title,
-  artist,
-  theme,
-  series,
-  translator,
-  visible,
-  onClose,
-  pages,
-  onInfoChange,
-  onSelectCoverAction,
-  onAddTag,
-  dirname,
-  extraTags = [],
-}: BookQuickViewDrawerPropsType) {
+                                              coverURL,
+                                              title,
+                                              artist,
+                                              theme,
+                                              series,
+                                              translator,
+                                              visible,
+                                              onClose,
+                                              pages,
+                                              onInfoChange,
+                                              onSelectCoverAction,
+                                              onAddTag,
+                                              dirname,
+                                              extraTags = [],
+                                              onDeleteTag,
+                                            }: BookQuickViewDrawerPropsType) {
   const PageCollection = () => {
     return (
       <Row gutter={12} className={styles.pageRow}>
         {pages?.slice(0, 5).map(file => (
           <Col key={file.path} className={styles.pageItem}>
-            <img src={file.path} className={styles.pageImage} />
+            <img src={file.path} className={styles.pageImage}/>
           </Col>
         ))}
       </Row>
@@ -58,11 +60,11 @@ export default function BookQuickViewDrawer({
   const menu = (
     <Menu>
       <Menu.Item key="1" onClick={onSelectCoverAction}>
-        <FileIcon />
+        <FileIcon/>
         设置封面
       </Menu.Item>
       <Menu.Item onClick={onAddTag} key="2">
-        <TagIcon />
+        <TagIcon/>
         添加标签
       </Menu.Item>
     </Menu>
@@ -73,12 +75,12 @@ export default function BookQuickViewDrawer({
         <div className={styles.header}>
           <Dropdown overlay={menu}>
             <Button type="primary">
-              菜单 <MenuIcon />
+              菜单 <MenuIcon/>
             </Button>
           </Dropdown>
         </div>
         <div className={styles.coverWrap}>
-          {coverURL && <img src={coverURL} className={styles.cover} />}
+          {coverURL && <img src={coverURL} className={styles.cover}/>}
         </div>
         <Descriptions bordered={true} className={styles.infoWrap} column={1}>
           <Descriptions.Item label={'文件夹名称'}>
@@ -140,9 +142,13 @@ export default function BookQuickViewDrawer({
           </Descriptions.Item>
           <Descriptions.Item label={'其他标签'}>
             {extraTags.length !== 0 &&
-              extraTags.map(tag => {
-                return <Tag key={tag.name}>{tag.name}</Tag>;
-              })}
+            extraTags.map(tag => {
+              return <Tag
+                key={tag.name}
+                closable={Boolean(onDeleteTag)}
+                onClose={() => onDeleteTag(tag.name, tag.type)}
+              >{tag.name}</Tag>;
+            })}
           </Descriptions.Item>
         </Descriptions>
       </div>

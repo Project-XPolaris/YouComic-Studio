@@ -1,3 +1,5 @@
 export const devVars = {
-  enable:false,
-}
+  enable: true,
+  scanPath: 'C:\\Users\\Takay\\PycharmProjects\\fake-comic\\output',
+  exploreLibraryPath:"C:\\Users\\Takay\\Desktop\\output"
+};

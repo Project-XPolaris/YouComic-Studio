@@ -49,10 +49,10 @@ const LibraryExplorePage =
             grid={{
               xs: 1,
               sm: 2,
-              md: 3,
-              lg: 3,
+              md: 4,
+              lg: 4,
               xl: 6,
-              xxl: 6,
+              xxl: 8,
             }}
             dataSource={exploreLibrary.books.slice((exploreLibrary.page - 1) * exploreLibrary.pageSize, exploreLibrary.page * exploreLibrary.pageSize)}
             renderItem={item => (

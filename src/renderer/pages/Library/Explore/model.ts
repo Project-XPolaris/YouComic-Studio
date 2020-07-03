@@ -57,6 +57,7 @@ const CreateLibraryModel: ExploreLibraryModelType & ConfigModuleTypes & UIModule
         message: '读取Media Library',
         description:
           '已读取数据',
+        duration:1
       });
     },
   },

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'umi';
 import DirectoryQuickViewDrawer from '@/pages/Scan/List/compoennts/DirectoryQuickViewDrawer';
 import { ScanModelStateType } from '@/pages/Scan/List/model';
-import CreateTagDialog from '@/pages/Create/components/CreateTagDialog';
+import CreateTagDialog from '@/components/CreateTagDialog';
 
 interface ScanQuickViewPropsType {
   dispatch: any;

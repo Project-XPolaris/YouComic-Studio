@@ -1,23 +1,23 @@
 import { fs } from '@/global';
 
 export interface LibraryExportConfig {
-  name: string
+  name: string,
   books: Array<{
-    name: string
+    name: string,
     path: string,
-    cover:string
+    cover:string,
     pages: Array<{
-      order: number
-      path: string
-    }>
+      order: number,
+      path: string,
+    }>,
     tags: Array<{
       name: string,
-      type: string
-    }>
+      type: string,
+    }>,
+    uuid:string
   }>
 }
 
 export const saveLibraryExportConfigFile = async ({ config, savePath }:{config:LibraryExportConfig,savePath:string}) => {
-  console.log(config)
   await fs.writeJSON(savePath, config);
 };
