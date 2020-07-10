@@ -1,7 +1,7 @@
-import { app, BrowserWindow, Menu, systemPreferences } from 'electron';
+import { app, BrowserWindow, Menu, protocol, systemPreferences } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-
+import slash from 'slash'
 const USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36';
 
@@ -100,6 +100,7 @@ if (process.platform === 'darwin') {
 }
 
 const isMac = 'darwin' === process.platform;
+
 function createWindow() {
   const titleBarStyle = isMac ? 'hiddenInset' : 'default';
   mainWindow = new BrowserWindow({
@@ -116,8 +117,10 @@ function createWindow() {
     acceptFirstMouse: true,
     webPreferences: {
       webSecurity: false,
+      allowRunningInsecureContent: true,
+      nodeIntegration: true,
     },
-    darkTheme:true
+    darkTheme: true,
   });
 
   mainWindow.webContents.setUserAgent(USER_AGENT);
@@ -133,7 +136,7 @@ function createWindow() {
         pathname: path.join(__dirname, './dist/renderer/index.html'),
         protocol: 'file:',
         slashes: true,
-      })
+      }),
     );
   }
 
@@ -155,6 +158,16 @@ function createWindow() {
     } else {
       e.preventDefault();
       mainWindow.hide();
+    }
+  });
+
+  protocol.interceptFileProtocol('file', (req, callback) => {
+    const url = req.url.substr(8);
+    console.log(slash(decodeURI(url)))
+    callback(slash(decodeURI(url)));
+  }, (error) => {
+    if (error) {
+      console.error('Failed to register protocol');
     }
   });
 }

@@ -1,11 +1,11 @@
-import { Effect } from 'dva';
-import { Reducer } from 'redux';
+
 
 import { checkIsValidateLibrary, listDirectoryFiles, showSelectFolderDialog, writeFile } from '@/services/file';
 import { history } from 'umi';
 import { path } from '@/global';
 import { ProjectConfig } from '@/pages/Create/model';
 import { message, notification } from 'antd';
+import { Effect, Reducer } from '@@/plugin-dva/connect';
 
 export interface HomeModelStateType {
   path: string;
@@ -17,7 +17,7 @@ export interface HomeModelStateType {
     isOpen: boolean;
     path: string;
   };
-  exploreLibraryPath: string
+  exploreLibraryPath?: string
 }
 
 export interface HomeModelType {
@@ -34,7 +34,6 @@ export interface HomeModelType {
   };
   state: HomeModelStateType;
   effects: {
-    selectFolder: Effect;
     toNext: Effect;
     onScanFolder: Effect;
     createNew: Effect;
@@ -60,15 +59,6 @@ const HomeModel: HomeModelType = {
   },
   subscriptions: {},
   effects: {
-    * selectFolder(_, { put }) {
-      const path = showSelectFolderDialog()[0];
-      yield put({
-        type: 'setPath',
-        payload: {
-          path,
-        },
-      });
-    },
     * toNext(_, { put }) {
       yield put({
         type: 'setLoadingDirectoryDialog',
@@ -91,15 +81,16 @@ const HomeModel: HomeModelType = {
       });
       history.push('/file/directory/home');
     },
-    * onScanFolder(_, { put }) {
-      const dirPaths = showSelectFolderDialog();
-      if (!Boolean(dirPaths)) {
+    * onScanFolder(_, { put, call }) {
+      const dirPaths = yield call(showSelectFolderDialog, {});
+      if (!Boolean(dirPaths.filePaths)) {
         return;
       }
+      const path = dirPaths.filePaths[0];
       yield put({
         type: 'setPath',
         payload: {
-          path: dirPaths[0],
+          path,
         },
       });
       history.push('/scan/list');
@@ -126,24 +117,25 @@ const HomeModel: HomeModelType = {
       yield put({ type: 'closeCreateNewProjectDialog' });
       history.push('/book/create');
     },
-    * selectNewProjectSaveLocation({}, { put }) {
-      const dirPaths = showSelectFolderDialog();
-      if (!Boolean(dirPaths)) {
+    * selectNewProjectSaveLocation(_, { put, call }) {
+      const dirPaths = yield call(showSelectFolderDialog, {});
+      if (!Boolean(dirPaths.filePaths)) {
         return;
       }
+      const path = dirPaths.filePaths[0];
       yield put({
         type: 'setCreateNewPath',
         payload: {
-          path: dirPaths[0],
+          path,
         },
       });
     },
-    * openExistProject({}, { call, put }) {
-      const dirPaths = showSelectFolderDialog();
-      if (!Boolean(dirPaths)) {
+    * openExistProject(_, { call, put }) {
+      const dirPaths = yield call(showSelectFolderDialog, {});
+      if (!Boolean(dirPaths.filePaths)) {
         return;
       }
-      const path = dirPaths[0];
+      const path = dirPaths.filePaths[0];
       const files: string[] = yield call(listDirectoryFiles, { path });
       if (files.find(filename => filename === 'project.json') !== undefined) {
         yield put({
@@ -158,11 +150,11 @@ const HomeModel: HomeModelType = {
       }
     },
     * selectExploreLibrary(_, { call, put, select }) {
-      const dirPaths = showSelectFolderDialog();
-      if (!Boolean(dirPaths)) {
+      const dirPaths = yield call(showSelectFolderDialog, {});
+      if (!Boolean(dirPaths.filePaths)) {
         return;
       }
-      const path = dirPaths[0];
+      const path = dirPaths.filePaths[0];
       const isValidate = yield call(checkIsValidateLibrary, { libraryPath: path });
       if (!isValidate) {
         notification['error']({

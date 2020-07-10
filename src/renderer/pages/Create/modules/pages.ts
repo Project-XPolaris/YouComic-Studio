@@ -11,8 +11,8 @@ export interface PagesModuleStateTypes {
 export interface PagesModuleTypes {
   state: PagesModuleStateTypes,
   effects: {
-    readPageImageInfo: Effect
-    cropPage: Effect
+    readPageImageInfo: Effect;
+    cropPage: Effect;
 
   }
   reducers: {

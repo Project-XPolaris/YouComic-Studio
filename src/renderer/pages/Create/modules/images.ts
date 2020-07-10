@@ -1,10 +1,10 @@
-import { Effect, Reducer } from '@@/plugin-dva/connect';
 import { readImageInfo } from '@/services/image';
 import { path as nodePath } from '@/global';
+import { Effect, Reducer } from 'umi';
 
 export interface ImageInfo {
-  width: number
-  height: number
+  width: number;
+  height: number;
 }
 export  interface ImagesModuleStateType {
   imagesInfo: { [key: string]: ImageInfo }

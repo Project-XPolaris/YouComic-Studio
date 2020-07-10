@@ -130,9 +130,11 @@ const ScanModel: ScanModelType = {
     * selectItemCover(_, { call, put, select }) {
       const scanState: ScanModelStateType = yield select(state => state.scan);
 
-      const selectFiles: string[] = yield call(selectImageFile, {
-        path: scanState.quickViewDrawer.directory,
-      });
+      const dirPaths = yield call(selectImageFile, { path: scanState.quickViewDrawer.directory });
+      if (!Boolean(dirPaths.filePaths)) {
+        return;
+      }
+      const selectFiles = dirPaths.filePaths;
       if (selectFiles === undefined || selectFiles.length < 1) {
         return;
       }

@@ -1,5 +1,3 @@
-import { Effect, Subscription } from 'dva';
-import { Reducer } from 'redux';
 import { cropImage, generateImageThumbnail } from '@/services/image';
 import { message } from 'antd';
 import {
@@ -7,14 +5,13 @@ import {
   getFilesWithExtension,
   loadCoverFile,
   readFileStat,
-  readProjectConfig, removeFiles,
+  readProjectConfig,
+  removeFiles,
   selectImageFile,
-  selectImageFiles,
   showSelectFolderDialog,
   writeFile,
 } from '@/services/file';
 import { fs, mkdirp, nodeFormData, path, projectPathConfig } from '@/global';
-import moment from 'moment';
 import { differenceWith } from 'lodash';
 import { matchTagInfo } from '@/utils/match';
 import { HomeModelStateType } from '@/pages/Home/model';
@@ -27,11 +24,11 @@ import {
   uploadBookPage,
   uploadCover,
 } from '@/services/youcomic/client';
-import { ImagesModule, ImagesModuleStateType, ImagesModuleTypes } from '@/pages/Create/modules/images';
+import { ImagesModule, ImagesModuleTypes } from '@/pages/Create/modules/images';
 import { PagesModule, PagesModuleStateTypes, PagesModuleTypes } from '@/pages/Create/modules/pages';
 import { ViewModule, ViewModuleStateTypes, ViewModuleTypes } from '@/pages/Create/modules/view';
 import { devVars } from '@/development';
-import { isNullOrUndefined } from 'util';
+import { Effect, Reducer, Subscription } from '@@/plugin-dva/connect';
 
 export interface ProjectConfig {
   pages: Array<{
@@ -50,8 +47,8 @@ export interface Page {
   thumbnail: string;
   thumbnailName: string;
   meta?: {
-    width?: number
-    height?: number
+    width?: number;
+    height?: number;
   }
 }
 
@@ -82,10 +79,10 @@ interface BaseCreateBookModelStateType {
     isOpen: boolean;
   };
   cropImageDialog: {
-    isOpen: boolean
-    mode: 'cover' | 'page'
-    src: string
-  }
+    isOpen: boolean;
+    mode: 'cover' | 'page';
+    src: string;
+  };
   cover?: string;
   coverThumbnail?: string;
   rootDir: string;
@@ -124,10 +121,10 @@ export interface BaseCreateBookModelType {
     setMatchInfoDialog: Reducer<CreateBookModelStateType>;
     setAutoImportDialog: Reducer<CreateBookModelStateType>;
     clear: Reducer<CreateBookModelStateType>;
-    openImageCropDialog: Reducer<CreateBookModelStateType>
-    closeImageCropDialog: Reducer<CreateBookModelStateType>
-    updateConfigPage: Reducer<CreateBookModelStateType>
-    setDisplaySrc: Reducer<CreateBookModelStateType>
+    openImageCropDialog: Reducer<CreateBookModelStateType>;
+    closeImageCropDialog: Reducer<CreateBookModelStateType>;
+    updateConfigPage: Reducer<CreateBookModelStateType>;
+    setDisplaySrc: Reducer<CreateBookModelStateType>;
   };
   state: CreateBookModelStateType;
   effects: {
@@ -211,7 +208,11 @@ const CreateBookModel: CreateBookModelType = {
       if (dirPath === undefined) {
         return;
       }
-      const imageFiles: string[] = yield call(selectImageFiles, { path: dirPath });
+      const dirPaths = yield call(selectImageFile, { path: dirPath });
+      if (!Boolean(dirPaths.filePaths)) {
+        return;
+      }
+      const imageFiles = dirPaths.filePaths;
       let progressCount = 0;
       const pages: Page[] = [];
       mkdirp(create.path.projectPages);
@@ -238,9 +239,9 @@ const CreateBookModel: CreateBookModelType = {
           },
         );
         pages.push({
-          path: imagePath + `?t=${moment().unix()}`,
+          path: imagePath,
           name: imageName,
-          thumbnail: thumbnail + `?t=${moment().unix()}`,
+          thumbnail,
           thumbnailName,
         });
         progressCount += 1;
@@ -249,7 +250,7 @@ const CreateBookModel: CreateBookModelType = {
         type: 'addToPage',
         payload: {
           pages,
-          index,
+          index:index + 1,
         },
       });
       yield put({
@@ -275,11 +276,11 @@ const CreateBookModel: CreateBookModelType = {
         return;
       }
 
-      const selectImage: string[] = yield call(selectImageFile, { path: dirPath });
-      if (selectImage === undefined) {
+      const dirPaths = yield call(selectImageFile, { path: dirPath });
+      if (!Boolean(dirPaths.filePaths)) {
         return;
       }
-      const imagePath: string = selectImage[0];
+      const imagePath = dirPaths.filePaths[0];
       const { cover, thumbnail, coverName, thumbnailName } = yield call(loadCoverFile, {
         originFilePath: create.cover,
         originThumbnailPath: create.coverThumbnail,
@@ -300,8 +301,8 @@ const CreateBookModel: CreateBookModelType = {
     * init(_, { call, put, select }) {
       const homeState: HomeModelStateType = yield select(state => state.home);
       let editPath = homeState.editorPath;
-      if (devVars.enable && devVars["editPath"] !== undefined) {
-        editPath = devVars["editPath"];
+      if (devVars.enable && devVars['editPath'] !== undefined) {
+        editPath = devVars['editPath'];
       }
       yield put({
         type: 'clear',
@@ -530,11 +531,15 @@ const CreateBookModel: CreateBookModelType = {
     },
     * autoImport(_, { call, put, select }) {
       const createState: CreateBookModelStateType = yield select(state => state.create);
-      const dirPaths = showSelectFolderDialog();
-      if (!Boolean(dirPaths)) {
+      const dirPaths = yield call(showSelectFolderDialog, {});
+      if (!Boolean(dirPaths.filePaths)) {
         return;
       }
-      const scanPath: string = dirPaths[0];
+      const scanPath = dirPaths.filePaths[0];
+      if (scanPath === undefined) {
+        message.info('未选择目录');
+        return;
+      }
       yield put({
         type: 'setAutoImportDialog',
         payload: {
