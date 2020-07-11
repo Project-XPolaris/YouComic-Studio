@@ -1,8 +1,11 @@
 .main{
   width: 100%;
   display: flex;
-  height: 100vh;
-  padding-top: 64px;
+  flex-grow: 1;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 }
 
 .title{
@@ -50,11 +53,10 @@
   max-width: 200px;
   min-width: 200px;
   flex-grow: 1;
-  height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
   flex-direction: column;
-  background-color: #535353;
+  background-color: #313335;
   text-align: center;
 
   &::-webkit-scrollbar {
@@ -74,21 +76,18 @@
   }
 }
 .normanCanvas{
-  padding: 90px;
+  align-self: center;
 }
 .leftContent{
-  justify-content: center;
-  align-items: center;
   flex-grow: 15;
   height: 100%;
   background-color: #262626;
   overflow: scroll;
   position: relative;
-  text-align: center;
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 12px;
     background-color: #4a4a4a;
-    height: 6px;
+    height: 12px;
   }
 
   &::-webkit-scrollbar-track {
@@ -107,12 +106,9 @@
 }
 
 .bottomBarWrap{
-  position: fixed;
+  position: absolute;
   z-index: 990;
   bottom: 6px;
-  width: 100%;
-  padding-left: 90px;
-  padding-right: 206px;
 }
 
 .bottomBar{
@@ -121,4 +117,5 @@
   padding-right: 16px;
   padding-top: 8px;
   padding-bottom: 8px;
+  min-width: 480px;
 }

@@ -111,7 +111,7 @@ function createWindow() {
     backgroundColor: 'white',
     titleBarStyle,
     title: 'YouComic Studio',
-    frame: !isMac,
+    frame: false,
     icon: path.join(__dirname, '../../build/icon.png'),
     show: true,
     acceptFirstMouse: true,
@@ -120,6 +120,7 @@ function createWindow() {
       allowRunningInsecureContent: true,
       nodeIntegration: true,
     },
+
     darkTheme: true,
   });
 
@@ -176,7 +177,7 @@ app.on('ready', () => {
   createWindow();
 
   const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
+  Menu.setApplicationMenu(null);
 });
 
 app.on('window-all-closed', () => {

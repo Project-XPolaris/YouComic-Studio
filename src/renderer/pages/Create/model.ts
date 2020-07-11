@@ -29,6 +29,7 @@ import { PagesModule, PagesModuleStateTypes, PagesModuleTypes } from '@/pages/Cr
 import { ViewModule, ViewModuleStateTypes, ViewModuleTypes } from '@/pages/Create/modules/view';
 import { devVars } from '@/development';
 import { Effect, Reducer, Subscription } from '@@/plugin-dva/connect';
+import { LayoutModule, LayoutModuleStateTypes, LayoutModuleTypes } from '@/pages/Create/modules/layout';
 
 export interface ProjectConfig {
   pages: Array<{
@@ -57,7 +58,7 @@ export interface Tag {
   type: string;
 }
 
-export type CreateBookModelStateType = BaseCreateBookModelStateType & PagesModuleStateTypes & ViewModuleStateTypes
+export type CreateBookModelStateType = BaseCreateBookModelStateType & PagesModuleStateTypes & ViewModuleStateTypes & LayoutModuleStateTypes
 
 interface BaseCreateBookModelStateType {
   title: string;
@@ -147,7 +148,7 @@ export interface BaseCreateBookModelType {
   };
 }
 
-type CreateBookModelType = BaseCreateBookModelType & ImagesModuleTypes & PagesModuleTypes & ViewModuleTypes
+type CreateBookModelType = BaseCreateBookModelType & ImagesModuleTypes & PagesModuleTypes & ViewModuleTypes & LayoutModuleTypes
 const CreateBookModel: CreateBookModelType = {
   namespace: 'create',
   state: {
@@ -186,6 +187,7 @@ const CreateBookModel: CreateBookModelType = {
     ...ImagesModule.state,
     ...PagesModule.state,
     ...ViewModule.state,
+    ...LayoutModule.state,
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -202,6 +204,7 @@ const CreateBookModel: CreateBookModelType = {
     ...ImagesModule.effects,
     ...PagesModule.effects,
     ...ViewModule.effects,
+    ...LayoutModule.effects,
     * generateThumbnails({ payload: { index = 0 } }, { call, put, select }) {
       const { create }: { create: CreateBookModelStateType } = yield select(state => state);
       const dirPath = create.rootDir;
@@ -741,6 +744,7 @@ const CreateBookModel: CreateBookModelType = {
     ...ImagesModule.reducers,
     ...PagesModule.reducers,
     ...ViewModule.reducers,
+    ...LayoutModule.reducers,
     setTitle(state, { payload: { title } }) {
       return {
         ...state,

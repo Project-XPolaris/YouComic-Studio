@@ -1,5 +1,3 @@
-
-
 import { checkIsValidateLibrary, listDirectoryFiles, showSelectFolderDialog, writeFile } from '@/services/file';
 import { history } from 'umi';
 import { path } from '@/global';
@@ -83,6 +81,7 @@ const HomeModel: HomeModelType = {
     },
     * onScanFolder(_, { put, call }) {
       const dirPaths = yield call(showSelectFolderDialog, {});
+      console.log(dirPaths)
       if (!Boolean(dirPaths.filePaths)) {
         return;
       }

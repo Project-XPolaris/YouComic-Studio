@@ -15,9 +15,9 @@ export default function BottomBar({ zoomTool, pageInfo }: BottomBarPropsType) {
       <div>
         <PageInfo {...pageInfo}/>
       </div>
-      <div>
-        <ZoomTool {...zoomTool}/>
-      </div>
+      {/*<div>*/}
+      {/*  <ZoomTool {...zoomTool}/>*/}
+      {/*</div>*/}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import ScanningDialog from '@/pages/Scan/List/compoennts/ScanningDialog';
 import { DialogsModelStateType } from '@/models/dialog';
 import { CreateLibraryModelStateType } from '@/pages/Library/Create/model';
 import { connect } from '@@/plugin-dva/exports';
+import { history } from '@@/core/history';
 
 const { Search } = Input;
 
@@ -23,7 +24,7 @@ function SelectBookLibraryPath({ dispatch, dialogs, createLibrary }: SelectBookL
       <ScanningDialog isOpen={Boolean(dialogs?.activeDialogs[CreateLibraryScanDialogKey])}/>
       <PageHeader
         className="site-page-header"
-        onBack={() => null}
+        onBack={() => history.goBack()}
         title="选择构建的媒体库路径"
       />
       <div className={styles.content}>

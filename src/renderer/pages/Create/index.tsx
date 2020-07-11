@@ -22,6 +22,7 @@ import CropView from '@/pages/Create/view/Crop';
 import BottomBar from '@/pages/Create/components/BottomBar';
 import CreateBookBottomBar from '@/pages/Create/bottombar';
 import { getCurrentDisplayPageSrc, getImageWidth } from '@/pages/Create/helpers';
+import CreateBookHeaderToolbar from '@/pages/Create/parts/CreateBookHeaderToolbar';
 
 const { Paragraph } = Typography;
 
@@ -293,8 +294,13 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
       'crop': <CropView  onExitMode={() => setEditMode('normal')}/>,
     }[editMode];
   };
+  const BarFooter = (
+    <div style={{height:32,backgroundColor:"#2a2a2a",marginLeft:-24,marginRight:-24,paddingTop:4,paddingBottom:4}}>
+      <CreateBookHeaderToolbar />
+    </div>
+  )
   return (
-    <div>
+    <div style={{width:"100%",display:"flex",flexGrow:1}}>
       <CreateBookCoverCrop/>
       <LoadingDialog isOpen={create.loadingDialog.isOpen} message={create.loadingDialog.message}/>
       <ImportImageDialog
@@ -311,48 +317,59 @@ function CreateBookPage({ dispatch, create, directory, fileList, user }: CreateB
       />
       {renderCreateTagDialog()}
       {renderMatchTagDialog()}
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-        <Card style={{
-          position: 'fixed',
-          padding: 16,
-          top: 64,
-          height: '100%',
-          left: 0,
-          border: '#262626 1px solid',
-          zIndex: 999,
-        }}
-              bodyStyle={{
-                padding: 8,
-              }}
-        >
-          <ToolBox
-            enterCropMode={() => setEditMode('crop')}
-          />
-        </Card>
-        <div style={{ position: 'fixed', width: '100%', backgroundColor: '#141414' }}>
+      <div style={{ display: 'flex', flexDirection: 'column',width:"100%" }}>
+        {/*<Card style={{*/}
+        {/*  position: 'fixed',*/}
+        {/*  padding: 16,*/}
+        {/*  top: 64,*/}
+        {/*  height: '100%',*/}
+        {/*  left: 0,*/}
+        {/*  border: '#262626 1px solid',*/}
+        {/*  zIndex: 999,*/}
+        {/*}}*/}
+        {/*      bodyStyle={{*/}
+        {/*        padding: 8,*/}
+        {/*      }}*/}
+        {/*>*/}
+
+        {/*</Card>*/}
+        <div style={{  width: '100%', backgroundColor: '#141414' }}>
           <PageHeader
             style={{}}
             onBack={() => history.goBack()}
             title="创建书籍"
             subTitle={dirName}
             extra={renderHeaderAction()}
+            footer={BarFooter}
           />
         </div>
         <div className={styles.main}>
-
-          <div className={styles.leftContent} onWheel={onWheel}>
-            {renderEditMode()}
-          </div>
-          <div className={styles.right}>
+          {renderEditMode()}
+          <div style={{position:"absolute",right:0,height:"100%",overflowY:"scroll",backgroundColor:"#2a2a2a",display:create.showPageCollection?undefined:'none'}}>
             <CreateBookPagesSide/>
           </div>
+          <Card bodyStyle={{paddingLeft:8,paddingRight:8}} style={{position:"absolute",left:0,top:16,backgroundColor:"#2a2a2a",display:create.showToolbar?undefined:'none'}}>
+            <ToolBox
+              enterCropMode={() => setEditMode('crop')}
+            />
+          </Card>
+
+          <div className={styles.bottomBarWrap}>
+            <div className={styles.bottomBar}>
+              <CreateBookBottomBar/>
+            </div>
+          </div>
+
+          {/*<div className={styles.leftContent} onWheel={onWheel}>*/}
+          {/*  */}
+          {/*</div>*/}
+          {/*<div className={styles.right}>*/}
+          {/*  <CreateBookPagesSide/>*/}
+          {/*</div>*/}
         </div>
+
       </div>
-      <div className={styles.bottomBarWrap}>
-        <div className={styles.bottomBar}>
-          <CreateBookBottomBar/>
-        </div>
-      </div>
+
     </div>
   );
 }

@@ -56,7 +56,7 @@ function CropView({ dispatch, create, onExitMode }: CropViewPropsType) {
     onExitMode();
   };
   return (
-    <div>
+    <div style={{width:"100%",flexGrow:1,display:"flex",position:"relative"}}>
       <div style={{width:"100%",justifyContent:"center",alignItems:"center",display:"flex"}}>
       <div style={{width:getImageWidth(create),marginTop:90,marginBottom:90}}>
         {

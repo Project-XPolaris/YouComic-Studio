@@ -9,6 +9,7 @@ interface BaseLayoutPropsType {
 }
 
 const BaseLayout = ({ children }: BaseLayoutPropsType) => {
+
   return (
     <BlankLayout>
       <ProLayout className={styles.main}>{children}</ProLayout>
