@@ -26,30 +26,29 @@ function SettingPage({ dispatch }: SettingPagePropsType) {
     history.goBack();
   };
   return (
-    <div>
+    <div className={styles.root}>
       <div className={styles.headerWrap}>
         <PageHeader
           onBack={onBack}
           title="设置"
           extra={actions}
         />
-
-        <div className={styles.content}>
-          <Row>
-            <Col span={4}>
-              <Menu mode={'inline'} className={styles.nav} selectedKeys={[selectKey]}>
-                <Menu.Item key={'1'} onClick={() => setSelectKey('1')}>
-                  YouComic
-                </Menu.Item>
-              </Menu>
-            </Col>
-            <Col span={20} className={styles.settingContent}>
-              <div style={{ display: selectKey === '1' ? undefined : 'none' }}>
-                <YouComicPanel />
-              </div>
-            </Col>
-          </Row>
-        </div>
+      </div>
+      <div className={styles.content}>
+        <Row className={styles.row}>
+          <Col span={4}>
+            <Menu mode={'inline'} className={styles.nav} selectedKeys={[selectKey]}>
+              <Menu.Item key={'1'} onClick={() => setSelectKey('1')}>
+                YouComic
+              </Menu.Item>
+            </Menu>
+          </Col>
+          <Col span={20} className={styles.settingContent}>
+            <div style={{ display: selectKey === '1' ? undefined : 'none' }}>
+              <YouComicPanel />
+            </div>
+          </Col>
+        </Row>
       </div>
     </div>
   );

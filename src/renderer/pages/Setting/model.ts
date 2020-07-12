@@ -1,6 +1,7 @@
 import { Effect, Subscription } from 'dva';
 import { Reducer } from 'redux';
 import { ApplicationSettingOptions, Option } from '@/pages/Setting/settings';
+import { message } from 'antd';
 
 export interface SettingModelStateType {
   options: Option[];
@@ -49,6 +50,7 @@ const SettingModel: SettingModelType = {
       for (const option of settingState.options) {
         yield call(option.save, { value: option.value });
       }
+      message.success("配置已保存")
     },
   },
   reducers: {

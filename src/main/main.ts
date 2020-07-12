@@ -1,87 +1,14 @@
 import { app, BrowserWindow, Menu, protocol, systemPreferences } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import slash from 'slash'
+const slash = require('slash');
+
 const USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36';
 
 let mainWindow: Electron.BrowserWindow | null;
 let forceQuit = false;
 
-const template = [
-  {
-    label: '查看',
-    submenu: [
-      {
-        label: '重载',
-        accelerator: 'CmdOrCtrl+R',
-        click(item, focusedWindow) {
-          if (focusedWindow) {
-            if (focusedWindow.id === 1) {
-              BrowserWindow.getAllWindows().forEach(win => {
-                if (win.id > 1) {
-                  win.close();
-                }
-              });
-            }
-            focusedWindow.reload();
-          }
-        },
-      },
-      {
-        label: '切换全屏',
-        accelerator: (() => {
-          if (process.platform === 'darwin') {
-            return 'Ctrl+Command+F';
-          } else {
-            return 'F11';
-          }
-        })(),
-        click(item, focusedWindow) {
-          if (focusedWindow) {
-            focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-          }
-        },
-      },
-      {
-        label: '切换开发者工具',
-        accelerator: (() => {
-          if (process.platform === 'darwin') {
-            return 'Alt+Command+I';
-          } else {
-            return 'Ctrl+Shift+I';
-          }
-        })(),
-        click(item, focusedWindow) {
-          if (focusedWindow) {
-            focusedWindow.toggleDevTools();
-          }
-        },
-      },
-    ],
-  },
-  {
-    label: '窗口',
-    role: 'window',
-    submenu: [
-      {
-        label: '最小化',
-        accelerator: 'CmdOrCtrl+M',
-        role: 'minimize',
-      },
-      {
-        label: '关闭',
-        accelerator: 'CmdOrCtrl+W',
-        role: 'close',
-      },
-      {
-        label: '退出',
-        accelerator: 'Cmd+Q',
-        role: 'quit',
-      },
-    ],
-  },
-];
 
 if (process.platform === 'darwin') {
   // template.unshift({
@@ -112,7 +39,7 @@ function createWindow() {
     titleBarStyle,
     title: 'YouComic Studio',
     frame: false,
-    icon: path.join(__dirname, '../../build/icon.png'),
+    // icon: path.join(__dirname, '../../build/icon.png'),
     show: true,
     acceptFirstMouse: true,
     webPreferences: {
@@ -164,7 +91,6 @@ function createWindow() {
 
   protocol.interceptFileProtocol('file', (req, callback) => {
     const url = req.url.substr(8);
-    console.log(slash(decodeURI(url)))
     callback(slash(decodeURI(url)));
   }, (error) => {
     if (error) {
@@ -175,8 +101,6 @@ function createWindow() {
 
 app.on('ready', () => {
   createWindow();
-
-  const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(null);
 });
 

@@ -22,12 +22,11 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "allowJs": true,
-    "skipLibCheck": true,
     "experimentalDecorators": true,
     "strictNullChecks": true,
     "moduleResolution": "node"
   },
-
+  "skipLibCheck": true,
   "include": ["src/renderer/*"],
   "extends": "./node_modules/electron-webpack/tsconfig-base.json",
   "awesomeTypescriptLoaderOptions": {
