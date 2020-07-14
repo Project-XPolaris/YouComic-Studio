@@ -118,7 +118,8 @@ const HomeModel: HomeModelType = {
     },
     * selectNewProjectSaveLocation(_, { put, call }) {
       const dirPaths = yield call(showSelectFolderDialog, {});
-      if (!Boolean(dirPaths.filePaths)) {
+      if (dirPaths.cancel || dirPaths.filePaths.length === 0) {
+        message.warn("未选择扫描目录")
         return;
       }
       const path = dirPaths.filePaths[0];

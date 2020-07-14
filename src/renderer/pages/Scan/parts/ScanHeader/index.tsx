@@ -4,7 +4,7 @@ import { Directory, ScanModelStateType } from '@/pages/Scan/List/model';
 import { history } from 'umi';
 import { Affix, Button, Dropdown, Menu, PageHeader } from 'antd';
 import { differenceWith } from 'lodash';
-import styles from './header.less';
+import styles from './style.less';
 import AccountButton from '@/components/AccountButton';
 import { UserModelStateType } from '@/models/user';
 import SearchIcon from '@ant-design/icons/SearchOutlined';

@@ -15,8 +15,9 @@ const interceptor = (url, options) => {
       },
     };
   }
+  const baseUrl = localStorage.getItem(YOUCOMIC_SERVER_URL_KEY) || "http://localhost:8880"
   return {
-    url: localStorage.getItem(YOUCOMIC_SERVER_URL_KEY) + url,
+    url: baseUrl + url,
     options: newOption,
   };
 };

@@ -172,6 +172,7 @@ const HomePage = ({ home, dispatch, user }: HomePagePropsType) => {
           <SettingIcon/>
         </Button>
       </div>
+
     </div>
   );
 };

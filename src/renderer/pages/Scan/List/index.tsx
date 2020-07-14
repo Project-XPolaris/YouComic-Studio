@@ -1,7 +1,7 @@
 import React from 'react';
 import style from './style.less';
 import { connect } from 'umi';
-import ScanHeader from '@/pages/Scan/List/header';
+import ScanHeader from '@/pages/Scan/parts/ScanHeader';
 import DirectoryCollection from '@/pages/Scan/List/compoennts/DirectoryCollection';
 import { Directory, ScanModelStateType } from '@/pages/Scan/List/model';
 import ScanQuickView from '@/pages/Scan/List/quickview';
@@ -61,6 +61,7 @@ const ScanPage = ({ scan, dispatch }: ScanPagePropsType) => {
         totalPercent={scan.uploadDialog.totalProgress}
         cover={scan.uploadDialog.current?.coverPath}
       />
+
       <div className={style.content}>
         <DirectoryCollection
           directoryList={scan.directoryList}

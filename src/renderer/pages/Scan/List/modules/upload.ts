@@ -10,6 +10,12 @@ import {
 } from '@/services/youcomic/client';
 import { differenceWith, forOwn } from 'lodash';
 import { fs, nodeFormData } from '@/global';
+import { message } from 'antd';
+
+export let stopFlag = false;
+export const stopUpload = () => {
+  stopFlag = true;
+};
 
 export interface UploadModuleStateTypes {
 
@@ -18,11 +24,17 @@ export interface UploadModuleStateTypes {
 export interface UploadModuleTypes {
   state: UploadModuleStateTypes,
   effects: {
-    uploadToYouComic:Effect
+    uploadToYouComic: Effect
   }
   reducers: {
-    updateUploadDialog:Reducer<ScanModelStateType>
+    updateUploadDialog: Reducer<ScanModelStateType>
   }
+}
+
+export interface BookRollBack {
+  id: string
+  tags: string[]
+  pages: string[]
 }
 
 export const UploadModule: UploadModuleTypes = {
@@ -30,6 +42,7 @@ export const UploadModule: UploadModuleTypes = {
   effects: {
     * uploadToYouComic(_, { call, put, select }) {
       const scanState: ScanModelStateType = yield select(state => state.scan);
+
       yield put({
         type: 'updateUploadDialog',
         payload: {
@@ -55,6 +68,19 @@ export const UploadModule: UploadModuleTypes = {
             },
           },
         });
+        if (stopFlag) {
+          yield put({
+            type: 'updateUploadDialog',
+            payload: {
+              dialog: {
+                isOpen: false,
+              },
+            },
+          });
+          message.warn('操作已被用户取消');
+          stopFlag = false;
+          return;
+        }
         // create book
         const book: Book = yield call(createNewBook, { name: dir.title });
         // create tags
