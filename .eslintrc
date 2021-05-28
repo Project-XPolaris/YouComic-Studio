@@ -1,5 +1,5 @@
 {
-  "extends": "eslint-config-umi",
+  "extends": ["eslint-config-umi","plugin:import/typescript"],
   "rules": {
     "no-debugger":"warn",
     "unicode-bom":"off",

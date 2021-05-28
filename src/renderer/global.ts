@@ -22,7 +22,6 @@ export const nodeFormData: typeof formData = remote.require('form-data');
 export const nodeHttp: typeof http = remote.require('http');
 export const nodeURL: typeof url = remote.require('url');
 export const slash: typeof slashD = remote.require('slash');
-export const AdmZip: typeof AdmZipD = remote.require('adm-zip');
 export const app = remote.app;
 export const applicationTempPath = path.dirname(app.getPath('temp')) + '/youcomic';
 export const projectPathConfig = {

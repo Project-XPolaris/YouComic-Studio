@@ -2,7 +2,6 @@ import { app, BrowserWindow, Menu, protocol, systemPreferences } from 'electron'
 import * as path from 'path';
 import * as url from 'url';
 const slash = require('slash');
-
 const USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36';
 
@@ -43,9 +42,14 @@ function createWindow() {
     show: true,
     acceptFirstMouse: true,
     webPreferences: {
+      nodeIntegration: true,
       webSecurity: false,
       allowRunningInsecureContent: true,
-      nodeIntegration: true,
+      nodeIntegrationInWorker: true,
+      nodeIntegrationInSubFrames: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
+      webviewTag: true
     },
 
     darkTheme: true,
